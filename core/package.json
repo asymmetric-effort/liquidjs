@@ -31,6 +31,16 @@
       "types": "./dist/types/jsx-dev-runtime.d.ts",
       "import": "./dist/liquidjs-jsx-dev-runtime.esm.js",
       "require": "./dist/liquidjs-jsx-dev-runtime.cjs.js"
+    },
+    "./client": {
+      "types": "./dist/types/client/index.d.ts",
+      "import": "./dist/liquidjs-client.esm.js",
+      "require": "./dist/liquidjs-client.cjs.js"
+    },
+    "./telemetry": {
+      "types": "./dist/types/telemetry/index.d.ts",
+      "import": "./dist/liquidjs-telemetry.esm.js",
+      "require": "./dist/liquidjs-telemetry.cjs.js"
     }
   },
   "files": [

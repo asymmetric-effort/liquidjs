@@ -36,6 +36,8 @@ const mainConfigs = [
   createConfig('src/server/index.ts', 'liquidjs-server'),
   createConfig('src/jsx-runtime.ts', 'liquidjs-jsx-runtime'),
   createConfig('src/jsx-dev-runtime.ts', 'liquidjs-jsx-dev-runtime'),
+  createConfig('src/client/index.ts', 'liquidjs-client'),
+  createConfig('src/telemetry/index.ts', 'liquidjs-telemetry'),
 ];
 
 // Declaration bundling config — uses the first build's emitted declarations
