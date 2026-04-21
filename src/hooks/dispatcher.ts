@@ -1,0 +1,354 @@
+/**
+ * The concrete hook implementations that get wired up as the dispatcher
+ * when a function component is being rendered.
+ */
+
+import type { LiquidContext, Fiber } from '../shared/types';
+import {
+  allocateHook,
+  areDepsEqual,
+  pushEffect,
+  getCurrentFiber,
+  EffectHookTag,
+} from './hook-state';
+import { scheduleUpdate } from '../core/scheduler';
+
+// ---------------------------------------------------------------------------
+// Fiber render trigger — set by the work loop
+// ---------------------------------------------------------------------------
+let rerenderFiber: ((fiber: Fiber) => void) | null = null;
+
+export function setRerenderCallback(cb: ((fiber: Fiber) => void) | null): void {
+  rerenderFiber = cb;
+}
+
+function getCurrentFiberForDispatch(): Fiber {
+  const fiber = getCurrentFiber();
+  if (!fiber) {
+    throw new Error('Invalid hook call.');
+  }
+  return fiber;
+}
+
+// ---------------------------------------------------------------------------
+// useState
+// ---------------------------------------------------------------------------
+
+export function useStateImpl<T>(
+  initialState: T | (() => T),
+): [T, (action: T | ((prev: T) => T)) => void] {
+  const hook = allocateHook();
+
+  // Mount
+  if (hook.memoizedState === undefined || (hook.queue === null && hook.memoizedState === null)) {
+    const initial = typeof initialState === 'function'
+      ? (initialState as () => T)()
+      : initialState;
+    hook.memoizedState = initial;
+    hook.queue = [];
+  }
+
+  // Process queued updates
+  if (hook.queue && hook.queue.length > 0) {
+    let state = hook.memoizedState as T;
+    for (const update of hook.queue) {
+      const action = update.action as T | ((prev: T) => T);
+      state = typeof action === 'function'
+        ? (action as (prev: T) => T)(state)
+        : action;
+    }
+    hook.memoizedState = state;
+    hook.queue = [];
+  }
+
+  const state = hook.memoizedState as T;
+  const fiber = getCurrentFiberForDispatch();
+
+  const setState = (action: T | ((prev: T) => T)) => {
+    if (!hook.queue) hook.queue = [];
+    hook.queue.push({ action });
+    if (rerenderFiber) {
+      scheduleUpdate(() => rerenderFiber!(fiber));
+    }
+  };
+
+  return [state, setState];
+}
+
+// ---------------------------------------------------------------------------
+// useReducer
+// ---------------------------------------------------------------------------
+
+export function useReducerImpl<S, A>(
+  reducer: (state: S, action: A) => S,
+  initialArg: S,
+  init?: (arg: S) => S,
+): [S, (action: A) => void] {
+  const hook = allocateHook();
+
+  // Mount
+  if (hook.queue === null && hook.memoizedState === null) {
+    hook.memoizedState = init ? init(initialArg) : initialArg;
+    hook.queue = [];
+  }
+
+  // Process queued actions
+  if (hook.queue && hook.queue.length > 0) {
+    let state = hook.memoizedState as S;
+    for (const update of hook.queue) {
+      state = reducer(state, update.action as A);
+    }
+    hook.memoizedState = state;
+    hook.queue = [];
+  }
+
+  const state = hook.memoizedState as S;
+  const fiber = getCurrentFiberForDispatch();
+
+  const dispatch = (action: A) => {
+    if (!hook.queue) hook.queue = [];
+    hook.queue.push({ action });
+    if (rerenderFiber) {
+      scheduleUpdate(() => rerenderFiber!(fiber));
+    }
+  };
+
+  return [state, dispatch];
+}
+
+// ---------------------------------------------------------------------------
+// useEffect / useLayoutEffect / useInsertionEffect
+// ---------------------------------------------------------------------------
+
+function useEffectImpl(
+  tag: EffectHookTag,
+  create: () => void | (() => void),
+  deps?: readonly unknown[],
+): void {
+  const hook = allocateHook();
+
+  const prevEffect = hook.memoizedState as { deps?: readonly unknown[]; destroy?: (() => void) | null } | null;
+
+  if (prevEffect !== null && deps !== undefined) {
+    if (areDepsEqual(prevEffect.deps, deps)) {
+      // Deps haven't changed, skip
+      pushEffect(EffectHookTag.NoEffect, create, prevEffect.destroy ?? null, deps);
+      return;
+    }
+  }
+
+  const effect = pushEffect(
+    EffectHookTag.HasEffect | tag,
+    create,
+    prevEffect?.destroy ?? null,
+    deps,
+  );
+  hook.memoizedState = { deps, destroy: null, effect };
+}
+
+export function useEffectDispatch(
+  create: () => void | (() => void),
+  deps?: readonly unknown[],
+): void {
+  useEffectImpl(EffectHookTag.Passive, create, deps);
+}
+
+export function useLayoutEffectDispatch(
+  create: () => void | (() => void),
+  deps?: readonly unknown[],
+): void {
+  useEffectImpl(EffectHookTag.Layout, create, deps);
+}
+
+export function useInsertionEffectDispatch(
+  create: () => void | (() => void),
+  deps?: readonly unknown[],
+): void {
+  useEffectImpl(EffectHookTag.Insertion, create, deps);
+}
+
+// ---------------------------------------------------------------------------
+// useContext
+// ---------------------------------------------------------------------------
+
+export function useContextImpl<T>(context: LiquidContext<T>): T {
+  allocateHook(); // reserve a slot for consistency
+  return context._currentValue;
+}
+
+// ---------------------------------------------------------------------------
+// useCallback
+// ---------------------------------------------------------------------------
+
+export function useCallbackImpl<T extends (...args: unknown[]) => unknown>(
+  callback: T,
+  deps: readonly unknown[],
+): T {
+  const hook = allocateHook();
+
+  const prevState = hook.memoizedState as [T, readonly unknown[]] | null;
+  if (prevState !== null) {
+    if (areDepsEqual(prevState[1], deps)) {
+      return prevState[0];
+    }
+  }
+
+  hook.memoizedState = [callback, deps];
+  return callback;
+}
+
+// ---------------------------------------------------------------------------
+// useMemo
+// ---------------------------------------------------------------------------
+
+export function useMemoImpl<T>(factory: () => T, deps: readonly unknown[]): T {
+  const hook = allocateHook();
+
+  const prevState = hook.memoizedState as [T, readonly unknown[]] | null;
+  if (prevState !== null) {
+    if (areDepsEqual(prevState[1], deps)) {
+      return prevState[0];
+    }
+  }
+
+  const value = factory();
+  hook.memoizedState = [value, deps];
+  return value;
+}
+
+// ---------------------------------------------------------------------------
+// useRef
+// ---------------------------------------------------------------------------
+
+export function useRefImpl<T>(initialValue?: T): { current: T | undefined } {
+  const hook = allocateHook();
+
+  if (hook.memoizedState === null) {
+    const ref = { current: initialValue };
+    hook.memoizedState = ref;
+  }
+
+  return hook.memoizedState as { current: T | undefined };
+}
+
+// ---------------------------------------------------------------------------
+// useImperativeHandle
+// ---------------------------------------------------------------------------
+
+export function useImperativeHandleImpl<T>(
+  ref: { current: T | null } | ((instance: T | null) => void) | null,
+  createHandle: () => T,
+  deps?: readonly unknown[],
+): void {
+  useEffectImpl(EffectHookTag.Layout, () => {
+    const handle = createHandle();
+    if (ref !== null) {
+      if (typeof ref === 'function') {
+        ref(handle);
+        return () => ref(null);
+      }
+      (ref as { current: T | null }).current = handle;
+      return () => {
+        (ref as { current: T | null }).current = null;
+      };
+    }
+    return undefined;
+  }, deps);
+}
+
+// ---------------------------------------------------------------------------
+// useDebugValue
+// ---------------------------------------------------------------------------
+
+export function useDebugValueImpl<T>(
+  _value: T,
+  _format?: (value: T) => unknown,
+): void {
+  // DevTools integration — no-op in production
+}
+
+// ---------------------------------------------------------------------------
+// useId
+// ---------------------------------------------------------------------------
+
+let idCounter = 0;
+
+export function resetIdCounter(): void {
+  idCounter = 0;
+}
+
+export function useIdImpl(): string {
+  const hook = allocateHook();
+
+  if (hook.memoizedState === null) {
+    hook.memoizedState = `:l${idCounter++}:`;
+  }
+
+  return hook.memoizedState as string;
+}
+
+// ---------------------------------------------------------------------------
+// useDeferredValue
+// ---------------------------------------------------------------------------
+
+export function useDeferredValueImpl<T>(value: T): T {
+  const hook = allocateHook();
+  hook.memoizedState = value;
+  // TODO: integrate with concurrent scheduler for actual deferral
+  return value;
+}
+
+// ---------------------------------------------------------------------------
+// useTransition
+// ---------------------------------------------------------------------------
+
+export function useTransitionImpl(): [boolean, (callback: () => void) => void] {
+  const hook = allocateHook();
+
+  if (hook.memoizedState === null) {
+    hook.memoizedState = false;
+  }
+
+  const isPending = hook.memoizedState as boolean;
+
+  const startTransition = (callback: () => void) => {
+    // TODO: integrate with concurrent scheduler
+    hook.memoizedState = true;
+    callback();
+    hook.memoizedState = false;
+  };
+
+  return [isPending, startTransition];
+}
+
+// ---------------------------------------------------------------------------
+// useSyncExternalStore
+// ---------------------------------------------------------------------------
+
+export function useSyncExternalStoreImpl<T>(
+  subscribe: (onStoreChange: () => void) => () => void,
+  getSnapshot: () => T,
+  _getServerSnapshot?: () => T,
+): T {
+  const hook = allocateHook();
+  const fiber = getCurrentFiberForDispatch();
+
+  const value = getSnapshot();
+  hook.memoizedState = value;
+
+  // Subscribe to store changes and trigger re-render
+  useEffectImpl(EffectHookTag.Passive, () => {
+    const unsubscribe = subscribe(() => {
+      const nextValue = getSnapshot();
+      if (!Object.is(hook.memoizedState, nextValue)) {
+        hook.memoizedState = nextValue;
+        if (rerenderFiber) {
+          scheduleUpdate(() => rerenderFiber!(fiber));
+        }
+      }
+    });
+    return unsubscribe;
+  }, [subscribe, getSnapshot]);
+
+  return value;
+}

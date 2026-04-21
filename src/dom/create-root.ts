@@ -1,4 +1,5 @@
 import type { LiquidNode } from '../shared/types';
+import { createFiberRoot, performSyncWork, fiberRoots } from './work-loop';
 
 export interface Root {
   render(children: LiquidNode): void;
@@ -15,21 +16,25 @@ export interface RootOptions {
  * Equivalent to ReactDOM.createRoot.
  */
 export function createRoot(container: Element | DocumentFragment, _options?: RootOptions): Root {
-  if (!container) {
-    throw new Error('createRoot: container must be a DOM element');
+  if (!container || (!(container instanceof Element) && !(container instanceof DocumentFragment))) {
+    throw new Error('createRoot: container must be a DOM element or DocumentFragment');
   }
+
+  const fiberRoot = createFiberRoot(container);
+  fiberRoots.set(container, fiberRoot);
 
   let isMounted = false;
 
   return {
-    render(_children: LiquidNode): void {
+    render(children: LiquidNode): void {
       isMounted = true;
-      // TODO: pass to reconciler
+      performSyncWork(fiberRoot, children);
     },
     unmount(): void {
       if (!isMounted) return;
       isMounted = false;
-      // TODO: unmount via reconciler
+      performSyncWork(fiberRoot, null);
+      fiberRoots.delete(container);
     },
   };
 }
