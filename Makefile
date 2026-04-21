@@ -36,8 +36,8 @@ clean:
 lint: lint-core lint-go
 
 lint-core:
-	cd core && npx tsc --noEmit
-	cd core && npm run format:check
+	cd core && bun run typecheck
+	cd core && bun run format:check
 	@echo "Core lint passed"
 
 lint-go:
@@ -51,7 +51,7 @@ lint-go:
 test: test-core test-go
 
 test-core:
-	cd core && npm test
+	cd core && bun run test
 	@echo "Core tests passed"
 
 test-go:
@@ -63,14 +63,14 @@ test-go:
 # E2E — run end-to-end tests
 # ============================================================================
 e2e:
-	cd core && npx playwright test
+	cd core && bun x playwright test
 	@echo "E2E tests passed"
 
 # ============================================================================
 # Build — build the LiquidJS library
 # ============================================================================
 build:
-	cd core && npm run build
+	cd core && bun run build
 	@echo "Core build complete"
 
 # ============================================================================

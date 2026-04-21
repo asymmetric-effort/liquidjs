@@ -4,7 +4,7 @@
 
 ### Prerequisites
 
-- Node.js 18+
+- [Bun](https://bun.sh) (JavaScript/TypeScript runtime and package manager)
 - Go 1.25+ (for tools)
 - Docker (for local CI testing)
 
@@ -16,7 +16,7 @@ cd liquidjs
 
 # Core framework
 cd core
-npm install
+bun install
 
 # Go tools
 cd ../tools/liquidjs-debug
@@ -27,10 +27,10 @@ go mod download
 
 ```bash
 # Core — unit/integration
-cd core && npm test
+cd core && bun run test
 
 # Core — E2E
-cd core && npm run test:e2e
+cd core && bun run test:e2e
 
 # Go tools
 cd tools/liquidjs-debug && go test -v ./pkg/...

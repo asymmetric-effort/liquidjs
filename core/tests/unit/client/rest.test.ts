@@ -1,9 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import {
-  createRestClient,
-  RestError,
-  useRest,
-} from '../../../src/client/rest';
+import { createRestClient, RestError, useRest } from '../../../src/client/rest';
 import type {
   RestClient,
   RestClientConfig,
@@ -94,9 +90,9 @@ describe('createRestClient', () => {
 
   describe('GET requests', () => {
     it('sends a GET request and deserializes JSON', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        createMockFetchResponse({ id: 1, name: 'Test' }),
-      );
+      const fetchSpy = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValue(createMockFetchResponse({ id: 1, name: 'Test' }));
 
       const client = createRestClient({ baseURL: 'https://api.example.com' });
       const result = await client.get<{ id: number; name: string }>('/users/1');
@@ -112,9 +108,7 @@ describe('createRestClient', () => {
     });
 
     it('handles baseURL with trailing slash', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        createMockFetchResponse({}),
-      );
+      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(createMockFetchResponse({}));
 
       const client = createRestClient({ baseURL: 'https://api.example.com/' });
       await client.get('/items');
@@ -123,9 +117,7 @@ describe('createRestClient', () => {
     });
 
     it('handles path without leading slash', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        createMockFetchResponse({}),
-      );
+      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(createMockFetchResponse({}));
 
       const client = createRestClient({ baseURL: 'https://api.example.com' });
       await client.get('items');
@@ -136,9 +128,11 @@ describe('createRestClient', () => {
 
   describe('POST requests', () => {
     it('sends a POST request with JSON body', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        createMockFetchResponse({ id: 2 }, { status: 201, statusText: 'Created' }),
-      );
+      const fetchSpy = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValue(
+          createMockFetchResponse({ id: 2 }, { status: 201, statusText: 'Created' }),
+        );
 
       const client = createRestClient({ baseURL: 'https://api.example.com' });
       const result = await client.post<{ id: number }>('/users', { name: 'New User' });
@@ -154,9 +148,9 @@ describe('createRestClient', () => {
 
   describe('PUT requests', () => {
     it('sends a PUT request with body', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        createMockFetchResponse({ updated: true }),
-      );
+      const fetchSpy = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValue(createMockFetchResponse({ updated: true }));
 
       const client = createRestClient({ baseURL: 'https://api.example.com' });
       await client.put('/users/1', { name: 'Updated' });
@@ -170,9 +164,9 @@ describe('createRestClient', () => {
 
   describe('PATCH requests', () => {
     it('sends a PATCH request with body', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        createMockFetchResponse({ patched: true }),
-      );
+      const fetchSpy = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValue(createMockFetchResponse({ patched: true }));
 
       const client = createRestClient({ baseURL: 'https://api.example.com' });
       await client.patch('/users/1', { email: 'new@test.com' });
@@ -185,9 +179,9 @@ describe('createRestClient', () => {
 
   describe('DELETE requests', () => {
     it('sends a DELETE request', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        createMockFetchResponse(null),
-      );
+      const fetchSpy = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValue(createMockFetchResponse(null));
 
       const client = createRestClient({ baseURL: 'https://api.example.com' });
       await client.delete('/users/1');
@@ -201,9 +195,7 @@ describe('createRestClient', () => {
 
   describe('custom headers', () => {
     it('sends default headers from config', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        createMockFetchResponse({}),
-      );
+      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(createMockFetchResponse({}));
 
       const client = createRestClient({
         baseURL: 'https://api.example.com',
@@ -217,9 +209,7 @@ describe('createRestClient', () => {
     });
 
     it('merges per-request headers with defaults', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        createMockFetchResponse({}),
-      );
+      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(createMockFetchResponse({}));
 
       const client = createRestClient({
         baseURL: 'https://api.example.com',
@@ -233,9 +223,7 @@ describe('createRestClient', () => {
     });
 
     it('per-request headers override defaults', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        createMockFetchResponse({}),
-      );
+      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(createMockFetchResponse({}));
 
       const client = createRestClient({
         baseURL: 'https://api.example.com',
@@ -250,9 +238,7 @@ describe('createRestClient', () => {
 
   describe('JSON serialization/deserialization', () => {
     it('serializes request body as JSON', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        createMockFetchResponse({}),
-      );
+      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(createMockFetchResponse({}));
 
       const client = createRestClient({ baseURL: 'https://api.example.com' });
       const body = { nested: { array: [1, 2, 3], flag: true } };
@@ -302,9 +288,7 @@ describe('createRestClient', () => {
     });
 
     it('does not set Content-Type when body is null', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        createMockFetchResponse({}),
-      );
+      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(createMockFetchResponse({}));
 
       const client = createRestClient({ baseURL: 'https://api.example.com' });
       await client.get('/data');
@@ -367,9 +351,7 @@ describe('createRestClient', () => {
     it('clears timeout on successful response', async () => {
       const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
 
-      vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        createMockFetchResponse({ ok: true }),
-      );
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue(createMockFetchResponse({ ok: true }));
 
       const client = createRestClient({
         baseURL: 'https://api.example.com',
@@ -385,10 +367,7 @@ describe('createRestClient', () => {
   describe('error handling', () => {
     it('throws RestError for non-ok responses', async () => {
       vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        createMockFetchResponse(
-          { error: 'not found' },
-          { status: 404, statusText: 'Not Found' },
-        ),
+        createMockFetchResponse({ error: 'not found' }, { status: 404, statusText: 'Not Found' }),
       );
 
       const client = createRestClient({ baseURL: 'https://api.example.com' });
@@ -425,9 +404,7 @@ describe('createRestClient', () => {
 
   describe('request interceptors', () => {
     it('modifies request config via interceptor', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        createMockFetchResponse({}),
-      );
+      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(createMockFetchResponse({}));
 
       const client = createRestClient({
         baseURL: 'https://api.example.com',
@@ -448,9 +425,7 @@ describe('createRestClient', () => {
     });
 
     it('chains multiple request interceptors', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        createMockFetchResponse({}),
-      );
+      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(createMockFetchResponse({}));
 
       const client = createRestClient({
         baseURL: 'https://api.example.com',
@@ -476,9 +451,7 @@ describe('createRestClient', () => {
     });
 
     it('supports async request interceptors', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        createMockFetchResponse({}),
-      );
+      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(createMockFetchResponse({}));
 
       const client = createRestClient({
         baseURL: 'https://api.example.com',
@@ -501,9 +474,7 @@ describe('createRestClient', () => {
 
   describe('response interceptors', () => {
     it('modifies response via interceptor', async () => {
-      vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        createMockFetchResponse({ value: 1 }),
-      );
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue(createMockFetchResponse({ value: 1 }));
 
       const client = createRestClient({
         baseURL: 'https://api.example.com',
@@ -524,9 +495,7 @@ describe('createRestClient', () => {
     });
 
     it('chains multiple response interceptors', async () => {
-      vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        createMockFetchResponse({ count: 0 }),
-      );
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue(createMockFetchResponse({ count: 0 }));
 
       const client = createRestClient({
         baseURL: 'https://api.example.com',
@@ -554,23 +523,21 @@ describe('createRestClient', () => {
   describe('error interceptors', () => {
     it('modifies error via error interceptor', async () => {
       vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        createMockFetchResponse(
-          { error: 'forbidden' },
-          { status: 403, statusText: 'Forbidden' },
-        ),
+        createMockFetchResponse({ error: 'forbidden' }, { status: 403, statusText: 'Forbidden' }),
       );
 
       const client = createRestClient({
         baseURL: 'https://api.example.com',
         interceptors: {
           error: [
-            (err) => new RestError(
-              'Custom: ' + err.message,
-              err.status,
-              err.statusText,
-              err.data,
-              err.config,
-            ),
+            (err) =>
+              new RestError(
+                'Custom: ' + err.message,
+                err.status,
+                err.statusText,
+                err.data,
+                err.config,
+              ),
           ],
         },
       });
@@ -658,7 +625,11 @@ describe('useRest', () => {
 
   it('renders loading state initially on mount', () => {
     const mockClient = createMockClient({
-      get: vi.fn().mockReturnValue(new Promise(() => { /* never resolves */ })),
+      get: vi.fn().mockReturnValue(
+        new Promise(() => {
+          /* never resolves */
+        }),
+      ),
     });
 
     function TestComp() {

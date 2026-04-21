@@ -82,9 +82,7 @@ describe('formatTraceparent', () => {
       spanId: '00f067aa0ba902b7',
       traceFlags: '01',
     };
-    expect(formatTraceparent(ctx)).toBe(
-      '00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01',
-    );
+    expect(formatTraceparent(ctx)).toBe('00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01');
   });
 
   it('round-trips with parseTraceparent', () => {
@@ -248,10 +246,9 @@ describe('useTracing', () => {
     });
 
     // Dynamic import so the mock is applied
-    const { useTracing: useTracingMocked, createTracer: createTracerMocked } = await import(
-      '../../../src/telemetry/tracing'
-    );
-    const hooksMod = await import('../../../src/hooks/index') as unknown as {
+    const { useTracing: useTracingMocked, createTracer: createTracerMocked } =
+      await import('../../../src/telemetry/tracing');
+    const hooksMod = (await import('../../../src/hooks/index')) as unknown as {
       __cleanups: Array<() => void>;
     };
 

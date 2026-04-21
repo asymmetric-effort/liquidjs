@@ -463,7 +463,7 @@ describe('gRPC-Web framing', () => {
   });
 
   it('encodes a trailer frame', () => {
-    const data = new Uint8Array([0xAA]);
+    const data = new Uint8Array([0xaa]);
     const frame = encodeGrpcWebFrame(data, 0x80);
     expect(frame[0]).toBe(0x80);
   });

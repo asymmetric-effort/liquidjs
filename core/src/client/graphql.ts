@@ -115,7 +115,10 @@ export function createGraphQLClient(config: GraphQLClientConfig): GraphQLClient 
   }
 
   const client: GraphQLClient = {
-    async query<T>(query: string, variables?: Record<string, unknown>): Promise<GraphQLResponse<T>> {
+    async query<T>(
+      query: string,
+      variables?: Record<string, unknown>,
+    ): Promise<GraphQLResponse<T>> {
       if (cacheEnabled) {
         const key = buildCacheKey(query, variables);
         const cached = responseCache.get(key);
@@ -251,7 +254,9 @@ export function useMutation<T>(
   };
 
   const mutate = useCallback(
-    ((...args: unknown[]) => mutateFn(args[0] as Record<string, unknown> | undefined)) as (...args: unknown[]) => unknown,
+    ((...args: unknown[]) => mutateFn(args[0] as Record<string, unknown> | undefined)) as (
+      ...args: unknown[]
+    ) => unknown,
     [client, mutation],
   ) as unknown as (variables?: Record<string, unknown>) => Promise<GraphQLResponse<T>>;
 

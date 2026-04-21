@@ -19,10 +19,10 @@ liquidjs/
 
 ```bash
 cd core
-npm install
-npm test              # 465 unit/integration tests
-npm run build         # Rollup build → dist/
-npm run test:e2e      # 27 Playwright browser tests
+bun install
+bun run test          # 600+ unit/integration tests
+bun run build         # Rollup build → dist/
+bun run test:e2e      # 27 Playwright browser tests
 ```
 
 ## Documentation

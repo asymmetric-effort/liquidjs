@@ -117,7 +117,14 @@ describe('client.mutate', () => {
 
 describe('gql template tag', () => {
   it('returns the query string as-is', () => {
-    const query = gql`query { users { id name } }`;
+    const query = gql`
+      query {
+        users {
+          id
+          name
+        }
+      }
+    `;
     expect(query).toBe('query { users { id name } }');
   });
 
@@ -345,11 +352,7 @@ describe('useQuery', () => {
     function TestComponent() {
       const result = useQuery<{ users: { id: string }[] }>(client, 'query { users { id } }');
       states.push({ loading: result.loading, data: result.data, error: result.error });
-      return createElement(
-        'div',
-        null,
-        result.loading ? 'loading' : JSON.stringify(result.data),
-      );
+      return createElement('div', null, result.loading ? 'loading' : JSON.stringify(result.data));
     }
 
     const root = createRoot(container);
@@ -474,7 +477,10 @@ describe('useMutation', () => {
       null;
 
     function TestComponent() {
-      const [mutate] = useMutation(client, 'mutation Create($name: String!) { create(name: $name) }');
+      const [mutate] = useMutation(
+        client,
+        'mutation Create($name: String!) { create(name: $name) }',
+      );
       mutateFn = mutate;
       return createElement('div', null, 'test');
     }

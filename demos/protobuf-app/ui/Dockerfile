@@ -1,11 +1,11 @@
-FROM node:18-alpine AS build
+FROM oven/bun:alpine AS build
 WORKDIR /app
 COPY core/src/ /liquidjs-core/src/
 COPY demos/protobuf-app/ui/package.json ./
-RUN npm install
+RUN bun install
 COPY demos/protobuf-app/ui/ ./
 RUN echo 'import { defineConfig } from "vite"; export default defineConfig({ resolve: { alias: { "liquidjs/hooks": "/liquidjs-core/src/hooks/index.ts", "liquidjs/dom": "/liquidjs-core/src/dom/index.ts", "liquidjs": "/liquidjs-core/src/index.ts" } }, build: { outDir: "dist", minify: "esbuild" } });' > vite.config.js && rm -f vite.config.ts
-RUN npm run build
+RUN bun run build
 
 FROM nginx:alpine
 COPY --from=build /app/dist /usr/share/nginx/html

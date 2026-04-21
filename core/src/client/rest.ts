@@ -187,11 +187,12 @@ export function createRestClient(config: RestClientConfig): RestClient {
         clearTimeout(timeoutId);
       }
 
-      const isAbort =
-        err instanceof DOMException && err.name === 'AbortError';
+      const isAbort = err instanceof DOMException && err.name === 'AbortError';
       const message = isAbort
         ? `Request timeout after ${reqConfig.timeout}ms`
-        : (err instanceof Error ? err.message : 'Network error');
+        : err instanceof Error
+          ? err.message
+          : 'Network error';
 
       let restError = new RestError(message, 0, '', null, reqConfig);
       for (const interceptor of errorInterceptors) {
@@ -345,13 +346,15 @@ export function useRest<T>(
       })
       .catch((err: unknown) => {
         if (mountedRef.current && !controller.signal.aborted) {
-          setError(err instanceof RestError ? err : new RestError(
-            err instanceof Error ? err.message : 'Unknown error',
-            0,
-            '',
-            null,
-            { url: path, method: upperMethod, headers: {} },
-          ));
+          setError(
+            err instanceof RestError
+              ? err
+              : new RestError(err instanceof Error ? err.message : 'Unknown error', 0, '', null, {
+                  url: path,
+                  method: upperMethod,
+                  headers: {},
+                }),
+          );
           setLoading(false);
         }
       });

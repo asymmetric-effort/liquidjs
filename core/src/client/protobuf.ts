@@ -164,7 +164,7 @@ function decodeFieldValue(
         case 'bool':
           return [val !== 0, newOffset];
         case 'int32':
-          return [(val | 0), newOffset]; // sign-extend
+          return [val | 0, newOffset]; // sign-extend
         case 'uint32':
         case 'enum':
           return [val >>> 0, newOffset];
@@ -261,12 +261,7 @@ export function defineMessage<T>(name: string, fields: FieldMap): MessageType<T>
         continue;
       }
 
-      const [value, nextOffset] = decodeFieldValue(
-        entry.descriptor.type,
-        wireType,
-        bytes,
-        offset,
-      );
+      const [value, nextOffset] = decodeFieldValue(entry.descriptor.type, wireType, bytes, offset);
       offset = nextOffset;
 
       if (entry.descriptor.repeated) {
@@ -316,9 +311,7 @@ export function encodeGrpcWebFrame(data: Uint8Array, flags: number = 0): Uint8Ar
 }
 
 /** Decode the first gRPC-Web frame from bytes. Returns [flags, data, bytesConsumed]. */
-export function decodeGrpcWebFrame(
-  bytes: Uint8Array,
-): [number, Uint8Array, number] {
+export function decodeGrpcWebFrame(bytes: Uint8Array): [number, Uint8Array, number] {
   if (bytes.length < 5) {
     throw new Error('gRPC-Web frame too short');
   }
@@ -374,9 +367,7 @@ export function createGrpcWebClient(config: GrpcWebClientConfig): GrpcWebClient 
     // The first frame with flags === 0 contains the data.
     let offset = 0;
     while (offset < responseBytes.length) {
-      const [flags, data, consumed] = decodeGrpcWebFrame(
-        responseBytes.subarray(offset),
-      );
+      const [flags, data, consumed] = decodeGrpcWebFrame(responseBytes.subarray(offset));
       offset += consumed;
 
       // flags === 0 means data frame, flags & 0x80 means trailers
