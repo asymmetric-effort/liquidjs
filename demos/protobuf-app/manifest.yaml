@@ -1,0 +1,12 @@
+name: protobuf-app
+description: Task tracker with binary protobuf-style wire protocol
+features:
+  - binary encoding (ArrayBuffer/DataView)
+  - protobuf-style wire format
+  - kanban board UI
+  - raw bytes inspector
+  - typed message codec
+containers: 2
+ports:
+  - "3000:80"
+  - "8080 (internal)"

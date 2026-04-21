@@ -1,0 +1,13 @@
+name: rest-api
+description: Bookmarks CRUD app — LiquidJS UI + Go REST API
+features:
+  - fetch API
+  - async state management
+  - loading/error states
+  - CRUD operations
+  - custom hooks
+  - nginx reverse proxy
+containers: 2
+ports:
+  - "3000:80"
+  - "8080 (internal)"

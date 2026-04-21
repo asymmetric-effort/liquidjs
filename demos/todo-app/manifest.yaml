@@ -1,0 +1,15 @@
+name: todo-app
+description: Standalone todo list SPA with localStorage persistence
+features:
+  - useState
+  - useRef
+  - useEffect
+  - useCallback
+  - useMemo
+  - keyed lists
+  - conditional rendering
+  - event handling
+  - localStorage
+containers: 1
+ports:
+  - "3000:80"

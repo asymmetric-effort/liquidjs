@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LiquidJS Todo Demo</title>
+  <style>
+    :root { --bg: #f9fafb; --fg: #1f2937; --card: #fff; --border: #e5e7eb; --accent: #3b82f6; --danger: #ef4444; }
+    .dark { --bg: #111827; --fg: #f9fafb; --card: #1f2937; --border: #374151; --accent: #60a5fa; --danger: #f87171; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--fg); min-height: 100vh; transition: background 0.3s, color 0.3s; }
+    .app { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    h1 { font-size: 28px; }
+    .theme-btn { background: none; border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; cursor: pointer; color: var(--fg); }
+    .add-bar { display: flex; gap: 8px; margin-bottom: 16px; }
+    .add-bar input { flex: 1; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 15px; background: var(--card); color: var(--fg); }
+    .add-btn { padding: 10px 20px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; }
+    .filters { display: flex; gap: 8px; margin-bottom: 16px; }
+    .filter-btn { padding: 6px 14px; border: 1px solid var(--border); border-radius: 6px; background: var(--card); color: var(--fg); cursor: pointer; }
+    .filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .todo-list { list-style: none; }
+    .todo-item { display: flex; align-items: center; padding: 12px; margin-bottom: 8px; background: var(--card); border-radius: 8px; border: 1px solid var(--border); }
+    .todo-item.completed .todo-text { text-decoration: line-through; opacity: 0.5; }
+    .todo-label { flex: 1; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+    .todo-text { flex: 1; }
+    .todo-time { font-size: 12px; color: #9ca3af; }
+    .delete-btn { background: none; border: none; font-size: 20px; color: var(--danger); cursor: pointer; padding: 0 8px; }
+    .empty { text-align: center; padding: 32px; color: #9ca3af; }
+    footer { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; font-size: 14px; color: #9ca3af; }
+    .clear-btn { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; cursor: pointer; color: var(--fg); }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="./src/app.ts"></script>
+</body>
+</html>

@@ -11,3 +11,4 @@ test-results/
 # Go
 tools/*/liquidjs-*
 tools/*/__debug_bin*
+bin/

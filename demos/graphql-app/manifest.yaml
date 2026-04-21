@@ -1,0 +1,12 @@
+name: graphql-app
+description: Contact directory — LiquidJS UI + Go GraphQL API
+features:
+  - GraphQL queries
+  - GraphQL mutations
+  - search filtering
+  - optimistic updates
+  - query inspector
+containers: 2
+ports:
+  - "3001:80"
+  - "8080 (internal)"

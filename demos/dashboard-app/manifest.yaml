@@ -1,0 +1,13 @@
+name: dashboard-app
+description: System dashboard with context, memo, useReducer, and live metrics
+features:
+  - createContext
+  - useContext
+  - useReducer
+  - memo
+  - useEffect timers
+  - multi-view navigation
+  - theme switching
+containers: 1
+ports:
+  - "3000:80"

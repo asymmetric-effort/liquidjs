@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LiquidJS Dashboard Demo</title>
+  <style>
+    /* ---- CSS Variables / Theme ---- */
+    :root {
+      --bg: #f3f4f6; --fg: #1f2937; --card: #ffffff; --border: #e5e7eb;
+      --accent: #3b82f6; --accent-hover: #2563eb; --danger: #ef4444;
+      --sidebar-bg: #1e293b; --sidebar-fg: #cbd5e1; --sidebar-active: #3b82f6;
+      --muted: #6b7280;
+    }
+    body.dark {
+      --bg: #0f172a; --fg: #e2e8f0; --card: #1e293b; --border: #334155;
+      --accent: #60a5fa; --accent-hover: #3b82f6; --danger: #f87171;
+      --sidebar-bg: #020617; --sidebar-fg: #94a3b8; --sidebar-active: #60a5fa;
+      --muted: #94a3b8;
+    }
+
+    /* ---- Reset ---- */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg); color: var(--fg);
+      transition: background 0.25s, color 0.25s;
+    }
+
+    /* ---- Layout ---- */
+    .dashboard { display: flex; min-height: 100vh; }
+
+    /* Sidebar */
+    .sidebar {
+      width: 220px; background: var(--sidebar-bg); color: var(--sidebar-fg);
+      display: flex; flex-direction: column; padding: 20px 0; flex-shrink: 0;
+    }
+    .sidebar-brand {
+      font-size: 17px; font-weight: 700; padding: 0 20px 24px; color: #fff;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .nav-list { list-style: none; margin-top: 16px; }
+    .nav-btn {
+      display: block; width: 100%; text-align: left; background: none; border: none;
+      padding: 10px 24px; font-size: 14px; color: var(--sidebar-fg); cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-btn:hover { background: rgba(255,255,255,0.05); color: #fff; }
+    .nav-btn.active { color: #fff; background: var(--sidebar-active); }
+    .theme-toggle {
+      margin-top: auto; margin-left: 20px; margin-right: 20px;
+      padding: 8px 0; background: none; border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 6px; color: var(--sidebar-fg); cursor: pointer; font-size: 13px;
+    }
+    .theme-toggle:hover { border-color: rgba(255,255,255,0.3); color: #fff; }
+
+    /* Main */
+    .main-content { flex: 1; padding: 32px 40px; overflow-y: auto; }
+
+    /* Panel */
+    .panel h2 { font-size: 22px; margin-bottom: 16px; }
+    .hint { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
+
+    /* ---- Overview stats ---- */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+    .stat-box {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 20px; transition: background 0.2s;
+    }
+    .stat-label { font-size: 12px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.5px; }
+    .stat-value { font-size: 28px; font-weight: 700; }
+    .stat-danger .stat-value { color: var(--danger); }
+
+    /* ---- Metrics cards ---- */
+    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+    .metric-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 20px; text-align: center; transition: background 0.2s;
+    }
+    .metric-label { font-size: 13px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .metric-value { font-size: 36px; font-weight: 700; display: block; margin-bottom: 12px; }
+    .metric-actions { display: flex; justify-content: center; gap: 8px; }
+
+    /* ---- Buttons ---- */
+    .btn {
+      padding: 8px 16px; border: none; border-radius: 6px;
+      background: var(--accent); color: #fff; cursor: pointer; font-size: 14px;
+      transition: background 0.15s;
+    }
+    .btn:hover { background: var(--accent-hover); }
+    .btn.small { padding: 4px 14px; font-size: 16px; min-width: 36px; }
+    .reset-btn { background: var(--danger); }
+    .reset-btn:hover { opacity: 0.9; }
+
+    /* ---- Settings form ---- */
+    .settings-form { max-width: 480px; }
+    .setting-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 0; border-bottom: 1px solid var(--border);
+    }
+    .setting-row span { font-size: 14px; }
+    .toggle-btn {
+      padding: 6px 18px; border: none; border-radius: 20px; font-size: 13px;
+      cursor: pointer; font-weight: 600; transition: background 0.15s;
+    }
+    .toggle-btn.on { background: #22c55e; color: #fff; }
+    .toggle-btn.off { background: var(--border); color: var(--fg); }
+    select {
+      padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px;
+      background: var(--card); color: var(--fg); font-size: 14px;
+    }
+    .radio-group { display: flex; gap: 6px; }
+    .radio-btn {
+      padding: 5px 12px; border: 1px solid var(--border); border-radius: 6px;
+      background: var(--card); color: var(--fg); cursor: pointer; font-size: 13px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .radio-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .state-readout {
+      margin-top: 20px; padding: 14px; border-radius: 8px;
+      background: var(--card); border: 1px solid var(--border);
+      font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px;
+      overflow-x: auto; white-space: pre;
+    }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 700px) {
+      .sidebar { width: 60px; }
+      .sidebar-brand, .nav-btn span, .theme-toggle { font-size: 0; }
+      .main-content { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="./src/app.ts"></script>
+</body>
+</html>
