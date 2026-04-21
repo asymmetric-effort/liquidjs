@@ -153,6 +153,24 @@ liquidjs/
 
 ---
 
+## SPA Build & Deployment
+
+### Primary Use Case
+LiquidJS is designed for building **single-page web applications** that compile to minified/obfuscated JavaScript for high-performance browser execution.
+
+### Build Pipeline
+- **Development**: Vite dev server with HMR for instant feedback
+- **Production**: Vite/Rollup builds with tree-shaking, minification (Terser/esbuild), and code splitting
+- **Output**: Single minified JS bundle + HTML shell, ready for CDN deployment
+- Applications should compile to `< 50KB` gzipped including framework overhead
+
+### Performance Requirements
+- Applications must render initial content within 100ms on modern hardware
+- State updates must reflect in the DOM within a single animation frame
+- No unnecessary re-renders — memo, useMemo, useCallback prevent wasted work
+
+---
+
 ## Platform Support
 
 ### Primary Target
