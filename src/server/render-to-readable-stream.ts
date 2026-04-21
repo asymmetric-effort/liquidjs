@@ -1,4 +1,5 @@
 import type { LiquidNode } from '../shared/types';
+import { renderToString } from './render-to-string';
 
 export interface RenderToReadableStreamOptions {
   identifierPrefix?: string;
@@ -11,12 +12,27 @@ export interface RenderToReadableStreamOptions {
  * Equivalent to ReactDOMServer.renderToReadableStream.
  */
 export async function renderToReadableStream(
-  _element: LiquidNode,
-  _options?: RenderToReadableStreamOptions,
+  element: LiquidNode,
+  options?: RenderToReadableStreamOptions,
 ): Promise<ReadableStream<Uint8Array>> {
-  // TODO: implement web stream server renderer
+  const encoder = new TextEncoder();
+
   return new ReadableStream({
     start(controller) {
+      if (options?.signal?.aborted) {
+        controller.close();
+        return;
+      }
+
+      try {
+        const html = renderToString(element);
+        controller.enqueue(encoder.encode(html));
+      } catch (error) {
+        options?.onError?.(error);
+        controller.error(error);
+        return;
+      }
+
       controller.close();
     },
   });

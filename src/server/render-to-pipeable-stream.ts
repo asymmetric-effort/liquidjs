@@ -1,5 +1,6 @@
 import type { LiquidNode } from '../shared/types';
 import type { Writable } from 'stream';
+import { renderToString } from './render-to-string';
 
 export interface PipeableStream {
   pipe<T extends Writable>(destination: T): T;
@@ -19,17 +20,35 @@ export interface RenderToPipeableStreamOptions {
  * Equivalent to ReactDOMServer.renderToPipeableStream.
  */
 export function renderToPipeableStream(
-  _element: LiquidNode,
-  _options?: RenderToPipeableStreamOptions,
+  element: LiquidNode,
+  options?: RenderToPipeableStreamOptions,
 ): PipeableStream {
-  // TODO: implement streaming server renderer
+  let aborted = false;
+
   return {
     pipe<T extends Writable>(destination: T): T {
-      destination.end();
+      if (aborted) {
+        destination.end();
+        return destination;
+      }
+
+      try {
+        const html = renderToString(element);
+        options?.onShellReady?.();
+        destination.write(html);
+        destination.end();
+        options?.onAllReady?.();
+      } catch (error) {
+        options?.onShellError?.(error);
+        options?.onError?.(error);
+        destination.end();
+      }
+
       return destination;
     },
-    abort(_reason?: unknown): void {
-      // no-op placeholder
+    abort(reason?: unknown): void {
+      aborted = true;
+      options?.onError?.(reason);
     },
   };
 }
