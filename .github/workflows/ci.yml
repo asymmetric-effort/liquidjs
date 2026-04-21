@@ -45,7 +45,7 @@ jobs:
         run: npm run test:coverage
 
       - name: Upload coverage report
-        if: always()
+        if: always() && !env.ACT
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
@@ -86,6 +86,7 @@ jobs:
           fi
 
       - name: Upload build artifacts
+        if: ${{ !env.ACT }}
         uses: actions/upload-artifact@v4
         with:
           name: dist
@@ -113,7 +114,7 @@ jobs:
         run: npx playwright test
 
       - name: Upload E2E report
-        if: always()
+        if: always() && !env.ACT
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
