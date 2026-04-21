@@ -199,7 +199,7 @@ function reconcileFunctionComponent(fiber: Fiber): void {
 
   // Store effect list on fiber
   const effects = getEffectList();
-  fiber.updateQueue = effects;
+  fiber.dependencies = effects;
 
   setCurrentFiber(null);
   uninstallDispatcher();
@@ -251,7 +251,7 @@ function reconcileForwardRef(fiber: Fiber): void {
   const children = render(fiber.pendingProps, fiber.ref);
 
   const effects = getEffectList();
-  fiber.updateQueue = effects;
+  fiber.dependencies = effects;
 
   setCurrentFiber(null);
   uninstallDispatcher();
@@ -276,11 +276,8 @@ function reconcileMemoComponent(fiber: Fiber): void {
         : shallowPropsEqual(prevProps, nextProps);
 
       if (shouldSkip) {
-        // Bail out — reuse existing subtree
-        fiber.child = fiber.alternate.child;
-        if (fiber.child) {
-          fiber.child.return = fiber;
-        }
+        // Bail out — clone the child subtree from alternate
+        fiber.child = cloneFiberSubtree(fiber.alternate.child, fiber);
         return;
       }
     }
@@ -293,7 +290,7 @@ function reconcileMemoComponent(fiber: Fiber): void {
   const children = innerType(fiber.pendingProps);
 
   const effects = getEffectList();
-  fiber.updateQueue = effects;
+  fiber.dependencies = effects;
 
   setCurrentFiber(null);
   uninstallDispatcher();
@@ -310,6 +307,52 @@ function shallowPropsEqual(a: Props, b: Props): boolean {
     if (!Object.is(a[key], b[key])) return false;
   }
   return true;
+}
+
+/**
+ * Clone a fiber subtree for bail-out, preserving stateNodes
+ * and setting up alternate links so future reconciliation works.
+ */
+function cloneFiberSubtree(source: Fiber | null, parent: Fiber): Fiber | null {
+  if (source === null) return null;
+
+  const clone: Fiber = {
+    ...source,
+    return: parent,
+    alternate: source,
+    child: null,
+    sibling: null,
+    effectTag: EffectTag.NoEffect,
+    pendingProps: source.memoizedProps ?? source.pendingProps,
+  };
+  source.alternate = clone;
+
+  clone.child = cloneFiberSubtree(source.child, clone);
+
+  let sourceChild = source.child?.sibling ?? null;
+  let prevClonedChild = clone.child;
+  while (sourceChild !== null) {
+    const clonedSibling: Fiber = {
+      ...sourceChild,
+      return: parent,
+      alternate: sourceChild,
+      child: null,
+      sibling: null,
+      effectTag: EffectTag.NoEffect,
+      pendingProps: sourceChild.memoizedProps ?? sourceChild.pendingProps,
+    };
+    sourceChild.alternate = clonedSibling;
+
+    clonedSibling.child = cloneFiberSubtree(sourceChild.child, clonedSibling);
+
+    if (prevClonedChild) {
+      prevClonedChild.sibling = clonedSibling;
+    }
+    prevClonedChild = clonedSibling;
+    sourceChild = sourceChild.sibling;
+  }
+
+  return clone;
 }
 
 // ---------------------------------------------------------------------------
@@ -549,7 +592,7 @@ function isHostParent(fiber: Fiber): boolean {
 function commitEffects(fiber: Fiber): void {
   // Process this fiber's effects
   if (fiber.tag === FiberTag.FunctionComponent || fiber.tag === FiberTag.ForwardRef || fiber.tag === FiberTag.MemoComponent) {
-    const effectList = fiber.updateQueue as EffectHook | null;
+    const effectList = fiber.dependencies as EffectHook | null;
     if (effectList) {
       runEffects(effectList);
     }
@@ -594,7 +637,7 @@ function runEffects(effect: EffectHook): void {
 
 function runCleanupEffects(fiber: Fiber): void {
   if (fiber.tag === FiberTag.FunctionComponent || fiber.tag === FiberTag.ForwardRef) {
-    const effectList = fiber.updateQueue as EffectHook | null;
+    const effectList = fiber.dependencies as EffectHook | null;
     if (effectList) {
       let current: EffectHook | null = effectList;
       while (current !== null) {
