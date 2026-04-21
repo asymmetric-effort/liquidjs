@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LiquidJS Counter App</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 500px; margin: 40px auto; padding: 0 20px; text-align: center; }
+    h1 { margin-bottom: 24px; }
+    .display { margin-bottom: 24px; }
+    .count { font-size: 64px; font-weight: bold; display: block; }
+    .count.positive { color: #22c55e; }
+    .count.negative { color: #ef4444; }
+    .meta { display: flex; justify-content: center; gap: 16px; font-size: 14px; color: #6b7280; margin-top: 8px; }
+    .controls { display: flex; gap: 12px; justify-content: center; margin-bottom: 24px; }
+    .controls button { padding: 10px 20px; font-size: 16px; border: none; border-radius: 8px; cursor: pointer; }
+    .controls button:first-child { background: #ef4444; color: #fff; }
+    .controls button:nth-child(2) { background: #6b7280; color: #fff; }
+    .controls button:last-child { background: #22c55e; color: #fff; }
+    .step-control, .direct-set { margin-bottom: 16px; }
+    .step-control label, .direct-set label { margin-right: 8px; }
+    input[type="range"] { width: 200px; }
+    input[type="number"] { width: 100px; padding: 4px 8px; border: 1px solid #d1d5db; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="./src/app.ts"></script>
+</body>
+</html>

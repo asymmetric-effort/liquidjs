@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LiquidJS Form App</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 500px; margin: 40px auto; padding: 0 20px; }
+    h2 { margin-bottom: 20px; }
+    .theme-toggle { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; margin-bottom: 20px; }
+    .contact-form { padding: 24px; border-radius: 8px; border: 1px solid #e5e7eb; }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; margin-bottom: 4px; font-weight: 500; }
+    .field input, .field textarea { width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; }
+    .field textarea { height: 100px; resize: vertical; }
+    .error { color: #ef4444; font-size: 12px; margin-top: 2px; display: block; }
+    .actions { display: flex; gap: 8px; margin-bottom: 12px; }
+    .actions button { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; }
+    .actions button[type="button"] { background: #e5e7eb; }
+    .status { font-size: 14px; color: #6b7280; }
+    .success { text-align: center; padding: 40px; }
+    .success h2 { margin-bottom: 8px; }
+    .success button { margin-top: 16px; padding: 8px 16px; border: 1px solid #d1d5db; border-radius: 6px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="./src/app.ts"></script>
+</body>
+</html>

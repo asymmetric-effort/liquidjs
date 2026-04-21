@@ -72,10 +72,11 @@ export function performSyncWork(root: FiberRoot, children: LiquidNode): void {
   performWork(root);
 }
 
-function performWork(root: FiberRoot): void {
-  // Set up the re-render callback so setState can trigger updates
+// Install a persistent re-render callback that routes state updates
+// back through scheduleRender for async batching.
+function installPersistentRerenderCallback(): void {
   setRerenderCallback((fiber: Fiber) => {
-    // Find the root for this fiber
+    // Walk up to the root fiber
     let node: Fiber | null = fiber;
     while (node?.return) {
       node = node.return;
@@ -83,10 +84,15 @@ function performWork(root: FiberRoot): void {
     if (node && node.stateNode) {
       const fRoot = findRootForContainer(node.stateNode as Element);
       if (fRoot) {
-        performWork(fRoot);
+        scheduleRender(fRoot, fRoot.pendingChildren);
       }
     }
   });
+}
+
+function performWork(root: FiberRoot): void {
+  // Ensure re-render callback is active
+  installPersistentRerenderCallback();
 
   const currentRoot = root.current;
   const wip = createWorkInProgress(currentRoot, {
@@ -105,8 +111,6 @@ function performWork(root: FiberRoot): void {
 
   // Swap the trees
   root.current = wip;
-
-  setRerenderCallback(null);
 }
 
 function findRootForContainer(container: unknown): FiberRoot | null {
@@ -590,6 +594,15 @@ function isHostParent(fiber: Fiber): boolean {
 // ---------------------------------------------------------------------------
 
 function commitEffects(fiber: Fiber): void {
+  // Attach refs
+  if (fiber.ref && fiber.stateNode) {
+    if (typeof fiber.ref === 'function') {
+      fiber.ref(fiber.stateNode);
+    } else if (typeof fiber.ref === 'object') {
+      (fiber.ref as { current: unknown }).current = fiber.stateNode;
+    }
+  }
+
   // Process this fiber's effects
   if (fiber.tag === FiberTag.FunctionComponent || fiber.tag === FiberTag.ForwardRef || fiber.tag === FiberTag.MemoComponent) {
     const effectList = fiber.dependencies as EffectHook | null;

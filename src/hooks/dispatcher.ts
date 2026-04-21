@@ -39,8 +39,8 @@ export function useStateImpl<T>(
 ): [T, (action: T | ((prev: T) => T)) => void] {
   const hook = allocateHook();
 
-  // Mount
-  if (hook.memoizedState === undefined || (hook.queue === null && hook.memoizedState === null)) {
+  // Mount: initialize state and queue
+  if (hook.queue === null) {
     const initial = typeof initialState === 'function'
       ? (initialState as () => T)()
       : initialState;
@@ -48,25 +48,25 @@ export function useStateImpl<T>(
     hook.queue = [];
   }
 
-  // Process queued updates
-  if (hook.queue && hook.queue.length > 0) {
+  // Process queued updates (mutate the same array to keep closure references valid)
+  const queue = hook.queue!;
+  if (queue.length > 0) {
     let state = hook.memoizedState as T;
-    for (const update of hook.queue) {
+    for (const update of queue) {
       const action = update.action as T | ((prev: T) => T);
       state = typeof action === 'function'
         ? (action as (prev: T) => T)(state)
         : action;
     }
     hook.memoizedState = state;
-    hook.queue = [];
+    queue.length = 0; // Clear in-place to keep reference stable
   }
 
   const state = hook.memoizedState as T;
   const fiber = getCurrentFiberForDispatch();
 
   const setState = (action: T | ((prev: T) => T)) => {
-    if (!hook.queue) hook.queue = [];
-    hook.queue.push({ action });
+    queue.push({ action });
     if (rerenderFiber) {
       scheduleUpdate(() => rerenderFiber!(fiber));
     }
@@ -86,28 +86,28 @@ export function useReducerImpl<S, A>(
 ): [S, (action: A) => void] {
   const hook = allocateHook();
 
-  // Mount
-  if (hook.queue === null && hook.memoizedState === null) {
+  // Mount: initialize state and queue
+  if (hook.queue === null) {
     hook.memoizedState = init ? init(initialArg) : initialArg;
     hook.queue = [];
   }
 
-  // Process queued actions
-  if (hook.queue && hook.queue.length > 0) {
+  // Process queued actions (mutate in-place for stable reference)
+  const queue = hook.queue!;
+  if (queue.length > 0) {
     let state = hook.memoizedState as S;
-    for (const update of hook.queue) {
+    for (const update of queue) {
       state = reducer(state, update.action as A);
     }
     hook.memoizedState = state;
-    hook.queue = [];
+    queue.length = 0;
   }
 
   const state = hook.memoizedState as S;
   const fiber = getCurrentFiberForDispatch();
 
   const dispatch = (action: A) => {
-    if (!hook.queue) hook.queue = [];
-    hook.queue.push({ action });
+    queue.push({ action });
     if (rerenderFiber) {
       scheduleUpdate(() => rerenderFiber!(fiber));
     }
