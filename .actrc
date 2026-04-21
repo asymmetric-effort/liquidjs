@@ -1,2 +1,2 @@
--P ubuntu-latest=node:18-bullseye
+-P ubuntu-latest=catthehacker/ubuntu:act-latest
 --container-architecture linux/amd64
