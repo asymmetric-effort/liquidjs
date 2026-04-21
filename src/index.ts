@@ -40,6 +40,7 @@ export { Profiler } from './components/profiler';
 
 // Utilities
 export { startTransition } from './core/transitions';
+export { act } from './shared/act';
 
 // Types
 export type {
