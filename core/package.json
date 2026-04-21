@@ -50,9 +50,9 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "test": "vitest run",
+    "test": "vitest run --pool forks --no-file-parallelism",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
+    "test:coverage": "vitest run --pool forks --no-file-parallelism --coverage",
     "test:e2e": "playwright test",
     "dev:e2e": "npx vite --port 3000",
     "lint": "eslint src/ tests/",
