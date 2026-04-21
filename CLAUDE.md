@@ -2,6 +2,16 @@
 
 A TypeScript UI framework with 100% feature parity to React.js, built for performance, compatibility, and developer simplicity.
 
+## Monorepo Layout
+
+- `core/` — LiquidJS framework (TypeScript: src, tests, examples, build configs)
+- `tools/` — Ecosystem tooling (Go: liquidjs-debug CLI)
+- `components/` — Community-contributed reusable components
+- `docs/` — Full documentation tree (see [docs/README.md](docs/README.md))
+- `skills/` — Claude skills for LiquidJS developers
+- `.github/workflows/` — CI/CD (5 jobs: lint, test, build, e2e, go-tools)
+- `scripts/` — Repository-wide automation (act-run.sh)
+
 ---
 
 ## Project Vision
