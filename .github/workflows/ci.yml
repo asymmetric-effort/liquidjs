@@ -10,6 +10,9 @@ jobs:
   lint:
     name: Lint & Type Check
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: core
     steps:
       - uses: actions/checkout@v4
 
@@ -17,6 +20,7 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
+          cache-dependency-path: core/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -30,6 +34,9 @@ jobs:
   test:
     name: Unit & Integration Tests
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: core
     steps:
       - uses: actions/checkout@v4
 
@@ -37,6 +44,7 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
+          cache-dependency-path: core/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -49,12 +57,15 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: coverage/
+          path: core/coverage/
           retention-days: 7
 
   build:
     name: Build
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: core
     steps:
       - uses: actions/checkout@v4
 
@@ -62,6 +73,7 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
+          cache-dependency-path: core/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -90,12 +102,15 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dist
-          path: dist/
+          path: core/dist/
           retention-days: 7
 
   e2e:
     name: E2E Tests
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: core
     steps:
       - uses: actions/checkout@v4
 
@@ -103,6 +118,7 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
+          cache-dependency-path: core/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -118,5 +134,28 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
-          path: playwright-report/
+          path: core/playwright-report/
           retention-days: 7
+
+  go-tools:
+    name: Go Tools
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tools/liquidjs-debug
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache-dependency-path: tools/liquidjs-debug/go.sum
+
+      - name: Vet
+        run: go vet -v ./...
+
+      - name: Test
+        run: go test -v -race -coverprofile=coverage.out ./...
+
+      - name: Build
+        run: go build -v -o liquidjs-debug .

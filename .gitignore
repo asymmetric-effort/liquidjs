@@ -7,3 +7,7 @@ playwright-report/
 test-results/
 .DS_Store
 *.log
+
+# Go
+tools/*/liquidjs-*
+tools/*/__debug_bin*
