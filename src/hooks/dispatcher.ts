@@ -127,12 +127,15 @@ function useEffectImpl(
 ): void {
   const hook = allocateHook();
 
-  const prevEffect = hook.memoizedState as { deps?: readonly unknown[]; destroy?: (() => void) | null } | null;
+  // On update, read the previous effect's destroy from the effect object itself
+  // (runEffects sets destroy on the effect, not on hook.memoizedState)
+  const prevState = hook.memoizedState as { deps?: readonly unknown[]; effect?: { destroy?: (() => void) | null } } | null;
+  const prevDestroy = prevState?.effect?.destroy ?? null;
 
-  if (prevEffect !== null && deps !== undefined) {
-    if (areDepsEqual(prevEffect.deps, deps)) {
+  if (prevState !== null && deps !== undefined) {
+    if (areDepsEqual(prevState.deps, deps)) {
       // Deps haven't changed, skip
-      pushEffect(EffectHookTag.NoEffect, create, prevEffect.destroy ?? null, deps);
+      pushEffect(EffectHookTag.NoEffect, create, prevDestroy, deps);
       return;
     }
   }
@@ -140,10 +143,10 @@ function useEffectImpl(
   const effect = pushEffect(
     EffectHookTag.HasEffect | tag,
     create,
-    prevEffect?.destroy ?? null,
+    prevDestroy,
     deps,
   );
-  hook.memoizedState = { deps, destroy: null, effect };
+  hook.memoizedState = { deps, effect };
 }
 
 export function useEffectDispatch(

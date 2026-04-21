@@ -15,7 +15,8 @@ export function jsx<P extends Props>(
 ): LiquidElement<P> {
   const key = maybeKey !== undefined ? maybeKey : config.key !== undefined ? config.key : null;
   const { key: _key, ...props } = config;
-  return createElement(type, { ...props, key } as unknown as P);
+  const configWithKey = key !== null ? { ...props, key } : props;
+  return createElement(type, configWithKey as unknown as P);
 }
 
 export { jsx as jsxs };
