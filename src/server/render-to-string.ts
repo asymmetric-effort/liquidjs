@@ -4,7 +4,6 @@ import {
   type Props,
   type FunctionComponent,
   type ClassComponentInstance,
-  LIQUID_ELEMENT_TYPE,
   LIQUID_FRAGMENT_TYPE,
   LIQUID_STRICT_MODE_TYPE,
   LIQUID_PROFILER_TYPE,
