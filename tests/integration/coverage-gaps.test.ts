@@ -6,13 +6,30 @@ import { createElement, Fragment, Component, createContext } from '../../src/ind
 import { useState, useEffect } from '../../src/hooks/index';
 import { createRoot } from '../../src/dom/create-root';
 import { getFiberTag, coerceToFiberChildren } from '../../src/core/fiber';
-import { FiberTag, LIQUID_CONSUMER_TYPE, LIQUID_SUSPENSE_TYPE, LIQUID_PROFILER_TYPE, LIQUID_PORTAL_TYPE, LIQUID_STRICT_MODE_TYPE } from '../../src/shared/types';
+import {
+  FiberTag,
+  LIQUID_CONSUMER_TYPE,
+  LIQUID_SUSPENSE_TYPE,
+  LIQUID_PROFILER_TYPE,
+  LIQUID_PORTAL_TYPE,
+  LIQUID_STRICT_MODE_TYPE,
+} from '../../src/shared/types';
 import { reconcileChildren } from '../../src/core/reconciler';
 import { createHostRootFiber } from '../../src/core/fiber';
 import { scheduleMicrotask, scheduleUpdate, batchUpdates } from '../../src/core/scheduler';
-import { queueTransitionCallback, startTransition, isInTransition } from '../../src/core/transitions';
+import {
+  queueTransitionCallback,
+  startTransition,
+  isInTransition,
+} from '../../src/core/transitions';
 import { resetIdCounter } from '../../src/hooks/dispatcher';
-import { SyntheticInputEvent, SyntheticTouchEvent, SyntheticMouseEvent, SyntheticKeyboardEvent, createSyntheticEvent } from '../../src/dom/synthetic-event';
+import {
+  SyntheticInputEvent,
+  SyntheticTouchEvent,
+  SyntheticMouseEvent,
+  SyntheticKeyboardEvent,
+  createSyntheticEvent,
+} from '../../src/dom/synthetic-event';
 import { hydrateRoot } from '../../src/dom/create-root';
 import { renderToString } from '../../src/server/render-to-string';
 import { setCurrentFiber, allocateHook } from '../../src/hooks/hook-state';
@@ -81,11 +98,7 @@ describe('reconciler.ts coverage gaps', () => {
     const first = reconcileChildren(
       parent,
       null,
-      [
-        createElement('div', { key: 'a' }),
-        createElement('span', { key: 'b' }),
-        'text-node',
-      ],
+      [createElement('div', { key: 'a' }), createElement('span', { key: 'b' }), 'text-node'],
       0,
     );
 
@@ -93,11 +106,7 @@ describe('reconciler.ts coverage gaps', () => {
     const updated = reconcileChildren(
       parent,
       first,
-      [
-        'new-text',
-        createElement('span', { key: 'b' }),
-        createElement('p', { key: 'c' }),
-      ],
+      ['new-text', createElement('span', { key: 'b' }), createElement('p', { key: 'c' })],
       0,
     );
 
@@ -140,7 +149,9 @@ describe('reconciler.ts coverage gaps', () => {
 describe('scheduler.ts coverage gaps', () => {
   it('scheduleMicrotask runs function asynchronously', async () => {
     let executed = false;
-    scheduleMicrotask(() => { executed = true; });
+    scheduleMicrotask(() => {
+      executed = true;
+    });
     expect(executed).toBe(false);
     await new Promise((r) => setTimeout(r, 10));
     expect(executed).toBe(true);
@@ -154,7 +165,9 @@ describe('transitions.ts coverage gaps', () => {
   it('queueTransitionCallback runs callback at end of transition', () => {
     let called = false;
     startTransition(() => {
-      queueTransitionCallback(() => { called = true; });
+      queueTransitionCallback(() => {
+        called = true;
+      });
     });
     expect(called).toBe(true);
   });
@@ -228,12 +241,7 @@ describe('work-loop.ts coverage gaps', () => {
     }
 
     const root = createRoot(container);
-    root.render(
-      createElement('div', null,
-        createElement(Child, null),
-        createElement(Child, null),
-      ),
-    );
+    root.render(createElement('div', null, createElement(Child, null), createElement(Child, null)));
     expect(container.querySelectorAll('span')).toHaveLength(2);
 
     // Replace with single text child
@@ -267,7 +275,9 @@ describe('work-loop.ts coverage gaps', () => {
 
     // Render two items
     root.render(
-      createElement('div', null,
+      createElement(
+        'div',
+        null,
         createElement('span', { key: 'a' }, 'A'),
         createElement('span', { key: 'c' }, 'C'),
       ),
@@ -275,7 +285,9 @@ describe('work-loop.ts coverage gaps', () => {
 
     // Insert B between A and C
     root.render(
-      createElement('div', null,
+      createElement(
+        'div',
+        null,
         createElement('span', { key: 'a' }, 'A'),
         createElement('span', { key: 'b' }, 'B'),
         createElement('span', { key: 'c' }, 'C'),
@@ -291,7 +303,9 @@ describe('work-loop.ts coverage gaps', () => {
 
   it('handles component that returns fragment with siblings', () => {
     function Multi() {
-      return createElement(Fragment, null,
+      return createElement(
+        Fragment,
+        null,
         createElement('em', null, '1'),
         createElement('em', null, '2'),
       );
@@ -299,10 +313,7 @@ describe('work-loop.ts coverage gaps', () => {
 
     const root = createRoot(container);
     root.render(
-      createElement('div', null,
-        createElement(Multi, null),
-        createElement('b', null, 'after'),
-      ),
+      createElement('div', null, createElement(Multi, null), createElement('b', null, 'after')),
     );
     expect(container.querySelectorAll('em')).toHaveLength(2);
     expect(container.querySelector('b')?.textContent).toBe('after');

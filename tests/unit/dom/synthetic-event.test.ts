@@ -172,11 +172,25 @@ describe('EVENT_NAME_MAP', () => {
 
   it('covers all common events', () => {
     const expectedEvents = [
-      'onClick', 'onMouseDown', 'onMouseUp', 'onMouseMove',
-      'onKeyDown', 'onKeyUp', 'onFocus', 'onBlur',
-      'onChange', 'onInput', 'onSubmit', 'onScroll',
-      'onWheel', 'onDrag', 'onDrop', 'onContextMenu',
-      'onCopy', 'onCut', 'onPaste',
+      'onClick',
+      'onMouseDown',
+      'onMouseUp',
+      'onMouseMove',
+      'onKeyDown',
+      'onKeyUp',
+      'onFocus',
+      'onBlur',
+      'onChange',
+      'onInput',
+      'onSubmit',
+      'onScroll',
+      'onWheel',
+      'onDrag',
+      'onDrop',
+      'onContextMenu',
+      'onCopy',
+      'onCut',
+      'onPaste',
     ];
     for (const name of expectedEvents) {
       expect(EVENT_NAME_MAP).toHaveProperty(name);

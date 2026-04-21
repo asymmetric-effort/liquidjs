@@ -1,0 +1,2 @@
+-P ubuntu-latest=node:18-bullseye
+--container-architecture linux/amd64

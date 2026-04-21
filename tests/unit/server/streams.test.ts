@@ -22,12 +22,13 @@ describe('renderToPipeableStream', () => {
 
   it('calls onShellReady', () => {
     const onShellReady = vi.fn();
-    const writable = new Writable({ write(_c, _e, cb) { cb(); } });
+    const writable = new Writable({
+      write(_c, _e, cb) {
+        cb();
+      },
+    });
 
-    const stream = renderToPipeableStream(
-      createElement('div', null, 'ready'),
-      { onShellReady },
-    );
+    const stream = renderToPipeableStream(createElement('div', null, 'ready'), { onShellReady });
     stream.pipe(writable);
 
     expect(onShellReady).toHaveBeenCalledTimes(1);
@@ -35,12 +36,13 @@ describe('renderToPipeableStream', () => {
 
   it('calls onAllReady', () => {
     const onAllReady = vi.fn();
-    const writable = new Writable({ write(_c, _e, cb) { cb(); } });
+    const writable = new Writable({
+      write(_c, _e, cb) {
+        cb();
+      },
+    });
 
-    const stream = renderToPipeableStream(
-      createElement('div', null, 'all'),
-      { onAllReady },
-    );
+    const stream = renderToPipeableStream(createElement('div', null, 'all'), { onAllReady });
     stream.pipe(writable);
 
     expect(onAllReady).toHaveBeenCalledTimes(1);
@@ -64,10 +66,7 @@ describe('renderToPipeableStream', () => {
 
   it('abort calls onError', () => {
     const onError = vi.fn();
-    const stream = renderToPipeableStream(
-      createElement('div', null, 'err'),
-      { onError },
-    );
+    const stream = renderToPipeableStream(createElement('div', null, 'err'), { onError });
     stream.abort(new Error('aborted'));
     expect(onError).toHaveBeenCalledWith(expect.any(Error));
   });
@@ -75,15 +74,18 @@ describe('renderToPipeableStream', () => {
   it('handles render errors', () => {
     const onShellError = vi.fn();
     const onError = vi.fn();
-    const writable = new Writable({ write(_c, _e, cb) { cb(); } });
+    const writable = new Writable({
+      write(_c, _e, cb) {
+        cb();
+      },
+    });
 
     // A component that throws
-    const Broken = () => { throw new Error('render fail'); };
+    const Broken = () => {
+      throw new Error('render fail');
+    };
 
-    const stream = renderToPipeableStream(
-      createElement(Broken, null),
-      { onShellError, onError },
-    );
+    const stream = renderToPipeableStream(createElement(Broken, null), { onShellError, onError });
     stream.pipe(writable);
 
     expect(onShellError).toHaveBeenCalledTimes(1);
@@ -105,12 +107,11 @@ describe('renderToReadableStream', () => {
 
   it('handles render errors', async () => {
     const onError = vi.fn();
-    const Broken = () => { throw new Error('stream fail'); };
+    const Broken = () => {
+      throw new Error('stream fail');
+    };
 
-    const stream = await renderToReadableStream(
-      createElement(Broken, null),
-      { onError },
-    );
+    const stream = await renderToReadableStream(createElement(Broken, null), { onError });
 
     const reader = stream.getReader();
     try {
@@ -126,10 +127,9 @@ describe('renderToReadableStream', () => {
     const controller = new AbortController();
     controller.abort();
 
-    const stream = await renderToReadableStream(
-      createElement('div', null, 'aborted'),
-      { signal: controller.signal },
-    );
+    const stream = await renderToReadableStream(createElement('div', null, 'aborted'), {
+      signal: controller.signal,
+    });
 
     const reader = stream.getReader();
     const { done } = await reader.read();

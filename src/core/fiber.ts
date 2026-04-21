@@ -63,7 +63,14 @@ export function createFiberFromElement(element: LiquidElement, lanes: number = 0
  * Creates a fiber for a text node.
  */
 export function createFiberFromText(content: string | number, lanes: number = 0): Fiber {
-  return createFiber(FiberTag.HostText, null, null, null, { text: content } as unknown as Props, lanes);
+  return createFiber(
+    FiberTag.HostText,
+    null,
+    null,
+    null,
+    { text: content } as unknown as Props,
+    lanes,
+  );
 }
 
 /**
@@ -143,7 +150,9 @@ export function createWorkInProgress(current: Fiber, pendingProps: Props): Fiber
 /**
  * Converts LiquidNode children into fiber-compatible form.
  */
-export function coerceToFiberChildren(children: LiquidNode): Array<LiquidElement | string | number> {
+export function coerceToFiberChildren(
+  children: LiquidNode,
+): Array<LiquidElement | string | number> {
   if (children == null || typeof children === 'boolean') {
     return [];
   }

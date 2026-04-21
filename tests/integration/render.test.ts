@@ -1,6 +1,16 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createElement, Fragment, Component, createContext } from '../../src/index';
-import { useState, useEffect, useReducer, useMemo, useCallback, useRef, useContext, useId, useLayoutEffect } from '../../src/hooks/index';
+import {
+  useState,
+  useEffect,
+  useReducer,
+  useMemo,
+  useCallback,
+  useRef,
+  useContext,
+  useId,
+  useLayoutEffect,
+} from '../../src/hooks/index';
 import { createRoot } from '../../src/dom/create-root';
 import { memo } from '../../src/core/memo';
 import { forwardRef } from '../../src/core/forward-ref';
@@ -25,7 +35,9 @@ describe('basic rendering', () => {
   it('renders nested elements', () => {
     const root = createRoot(container);
     root.render(
-      createElement('div', { className: 'wrapper' },
+      createElement(
+        'div',
+        { className: 'wrapper' },
         createElement('h1', null, 'Title'),
         createElement('p', null, 'Paragraph'),
       ),
@@ -37,16 +49,16 @@ describe('basic rendering', () => {
 
   it('renders text and number children', () => {
     const root = createRoot(container);
-    root.render(
-      createElement('span', null, 'Count: ', 42),
-    );
+    root.render(createElement('span', null, 'Count: ', 42));
     expect(container.innerHTML).toBe('<span>Count: 42</span>');
   });
 
   it('renders with Fragment', () => {
     const root = createRoot(container);
     root.render(
-      createElement(Fragment, null,
+      createElement(
+        Fragment,
+        null,
         createElement('span', null, 'A'),
         createElement('span', null, 'B'),
       ),
@@ -263,10 +275,7 @@ describe('hooks - useId', () => {
 
     const root = createRoot(container);
     root.render(
-      createElement(Fragment, null,
-        createElement(Comp1, null),
-        createElement(Comp2, null),
-      ),
+      createElement(Fragment, null, createElement(Comp1, null), createElement(Comp2, null)),
     );
 
     expect(id1).toBeDefined();
@@ -374,15 +383,13 @@ describe('updates and re-renders', () => {
   it('adds and removes children', () => {
     const root = createRoot(container);
 
-    root.render(
-      createElement('ul', null,
-        createElement('li', { key: 'a' }, 'A'),
-      ),
-    );
+    root.render(createElement('ul', null, createElement('li', { key: 'a' }, 'A')));
     expect(container.querySelectorAll('li')).toHaveLength(1);
 
     root.render(
-      createElement('ul', null,
+      createElement(
+        'ul',
+        null,
         createElement('li', { key: 'a' }, 'A'),
         createElement('li', { key: 'b' }, 'B'),
       ),

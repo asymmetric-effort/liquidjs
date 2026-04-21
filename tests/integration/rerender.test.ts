@@ -54,7 +54,7 @@ describe('setState triggers re-render', () => {
     setCountFn!(1);
 
     // Wait for microtask
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
 
     // Check if re-render happened
     expect(container.innerHTML).toBe('<span>1</span>');

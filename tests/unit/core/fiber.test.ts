@@ -26,7 +26,9 @@ describe('getFiberTag', () => {
 
   it('returns ClassComponent for class components', () => {
     class MyComp extends Component {
-      render() { return null; }
+      render() {
+        return null;
+      }
     }
     expect(getFiberTag(MyComp)).toBe(FiberTag.ClassComponent);
   });

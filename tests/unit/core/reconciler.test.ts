@@ -1,11 +1,21 @@
 import { describe, it, expect } from 'vitest';
 import { reconcileChildren } from '../../../src/core/reconciler';
-import { createHostRootFiber, createFiberFromElement, createFiberFromText } from '../../../src/core/fiber';
+import {
+  createHostRootFiber,
+  createFiberFromElement,
+  createFiberFromText,
+} from '../../../src/core/fiber';
 import { createElement } from '../../../src/index';
 import { FiberTag, EffectTag } from '../../../src/shared/types';
 
 function collectChildren(firstChild: ReturnType<typeof reconcileChildren>) {
-  const children: Array<{ tag: number; type: unknown; key: unknown; index: number; effectTag: number }> = [];
+  const children: Array<{
+    tag: number;
+    type: unknown;
+    key: unknown;
+    index: number;
+    effectTag: number;
+  }> = [];
   let child = firstChild;
   while (child !== null) {
     children.push({
@@ -24,12 +34,7 @@ describe('reconcileChildren', () => {
   describe('initial render (no current children)', () => {
     it('creates a single host element', () => {
       const parent = createHostRootFiber();
-      const child = reconcileChildren(
-        parent,
-        null,
-        createElement('div', { id: 'root' }),
-        0,
-      );
+      const child = reconcileChildren(parent, null, createElement('div', { id: 'root' }), 0);
       expect(child).not.toBeNull();
       expect(child!.tag).toBe(FiberTag.HostComponent);
       expect(child!.type).toBe('div');
@@ -50,11 +55,7 @@ describe('reconcileChildren', () => {
       const child = reconcileChildren(
         parent,
         null,
-        [
-          createElement('div', { key: 'a' }),
-          createElement('span', { key: 'b' }),
-          'text',
-        ],
+        [createElement('div', { key: 'a' }), createElement('span', { key: 'b' }), 'text'],
         0,
       );
 
@@ -116,19 +117,9 @@ describe('reconcileChildren', () => {
     it('replaces fiber when type changes on single child', () => {
       const parent = createHostRootFiber();
 
-      const firstChild = reconcileChildren(
-        parent,
-        null,
-        createElement('div', null),
-        0,
-      );
+      const firstChild = reconcileChildren(parent, null, createElement('div', null), 0);
 
-      const updated = reconcileChildren(
-        parent,
-        firstChild,
-        createElement('span', null),
-        0,
-      );
+      const updated = reconcileChildren(parent, firstChild, createElement('span', null), 0);
 
       expect(updated).not.toBeNull();
       expect(updated!.type).toBe('span');
@@ -142,20 +133,14 @@ describe('reconcileChildren', () => {
       const first = reconcileChildren(
         parent,
         null,
-        [
-          createElement('div', { key: 'a' }),
-          createElement('span', { key: 'b' }),
-        ],
+        [createElement('div', { key: 'a' }), createElement('span', { key: 'b' })],
         0,
       );
 
       const updated = reconcileChildren(
         parent,
         first,
-        [
-          createElement('div', { key: 'a', className: 'new' }),
-          createElement('span', { key: 'b' }),
-        ],
+        [createElement('div', { key: 'a', className: 'new' }), createElement('span', { key: 'b' })],
         0,
       );
 
@@ -220,10 +205,7 @@ describe('reconcileChildren', () => {
       const updated = reconcileChildren(
         parent,
         first,
-        [
-          createElement('div', { key: 'a' }),
-          createElement('p', { key: 'c' }),
-        ],
+        [createElement('div', { key: 'a' }), createElement('p', { key: 'c' })],
         0,
       );
 
@@ -241,20 +223,12 @@ describe('reconcileChildren', () => {
     it('adds new children', () => {
       const parent = createHostRootFiber();
 
-      const first = reconcileChildren(
-        parent,
-        null,
-        [createElement('div', { key: 'a' })],
-        0,
-      );
+      const first = reconcileChildren(parent, null, [createElement('div', { key: 'a' })], 0);
 
       const updated = reconcileChildren(
         parent,
         first,
-        [
-          createElement('div', { key: 'a' }),
-          createElement('span', { key: 'b' }),
-        ],
+        [createElement('div', { key: 'a' }), createElement('span', { key: 'b' })],
         0,
       );
 
@@ -268,12 +242,7 @@ describe('reconcileChildren', () => {
       const parent = createHostRootFiber();
       const textFiber = reconcileChildren(parent, null, 'old text', 0);
 
-      const updated = reconcileChildren(
-        parent,
-        textFiber,
-        createElement('div', null),
-        0,
-      );
+      const updated = reconcileChildren(parent, textFiber, createElement('div', null), 0);
 
       expect(updated!.tag).toBe(FiberTag.HostComponent);
       expect(updated!.type).toBe('div');
@@ -281,12 +250,7 @@ describe('reconcileChildren', () => {
 
     it('replaces element with text', () => {
       const parent = createHostRootFiber();
-      const elementFiber = reconcileChildren(
-        parent,
-        null,
-        createElement('div', null),
-        0,
-      );
+      const elementFiber = reconcileChildren(parent, null, createElement('div', null), 0);
 
       const updated = reconcileChildren(parent, elementFiber, 'new text', 0);
       expect(updated!.tag).toBe(FiberTag.HostText);

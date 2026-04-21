@@ -6,10 +6,7 @@ import { LIQUID_ELEMENT_TYPE, LIQUID_PORTAL_TYPE } from '../../../src/shared/typ
 describe('createPortal', () => {
   it('creates a portal element', () => {
     const portalContainer = document.createElement('div');
-    const portal = createPortal(
-      createElement('span', null, 'portal content'),
-      portalContainer,
-    );
+    const portal = createPortal(createElement('span', null, 'portal content'), portalContainer);
     expect(portal.$$typeof).toBe(LIQUID_ELEMENT_TYPE);
     expect(portal.type).toBe(LIQUID_PORTAL_TYPE);
   });

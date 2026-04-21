@@ -14,12 +14,14 @@ import {
   FiberTag,
   EffectTag,
 } from '../shared/types';
-import {
-  createHostRootFiber,
-  createWorkInProgress,
-} from '../core/fiber';
+import { createHostRootFiber, createWorkInProgress } from '../core/fiber';
 import { reconcileChildren } from '../core/reconciler';
-import { setCurrentFiber, getEffectList, type EffectHook, EffectHookTag } from '../hooks/hook-state';
+import {
+  setCurrentFiber,
+  getEffectList,
+  type EffectHook,
+  EffectHookTag,
+} from '../hooks/hook-state';
 import { installDispatcher, uninstallDispatcher } from '../hooks/install-dispatcher';
 import { setRerenderCallback } from '../hooks/dispatcher';
 import { scheduleMicrotask } from '../core/scheduler';
@@ -247,7 +249,9 @@ function reconcileContextProvider(fiber: Fiber): void {
 }
 
 function reconcileForwardRef(fiber: Fiber): void {
-  const { render } = fiber.type as unknown as { render: (props: Props, ref: unknown) => LiquidNode };
+  const { render } = fiber.type as unknown as {
+    render: (props: Props, ref: unknown) => LiquidNode;
+  };
 
   installDispatcher();
   setCurrentFiber(fiber);
@@ -470,10 +474,7 @@ function commitDeletion(fiber: Fiber): void {
   // Find the nearest host parent
   let parentFiber = fiber.return;
   while (parentFiber !== null) {
-    if (
-      parentFiber.tag === FiberTag.HostComponent ||
-      parentFiber.tag === FiberTag.HostRoot
-    ) {
+    if (parentFiber.tag === FiberTag.HostComponent || parentFiber.tag === FiberTag.HostRoot) {
       break;
     }
     parentFiber = parentFiber.return;
@@ -604,7 +605,11 @@ function commitEffects(fiber: Fiber): void {
   }
 
   // Process this fiber's effects
-  if (fiber.tag === FiberTag.FunctionComponent || fiber.tag === FiberTag.ForwardRef || fiber.tag === FiberTag.MemoComponent) {
+  if (
+    fiber.tag === FiberTag.FunctionComponent ||
+    fiber.tag === FiberTag.ForwardRef ||
+    fiber.tag === FiberTag.MemoComponent
+  ) {
     const effectList = fiber.dependencies as EffectHook | null;
     if (effectList) {
       runEffects(effectList);
@@ -732,7 +737,10 @@ export function updateDOMProperties(
     } else if (key === 'dangerouslySetInnerHTML') {
       const html = (value as { __html: string }).__html;
       dom.innerHTML = html;
-    } else if (key === 'value' && (dom.tagName === 'INPUT' || dom.tagName === 'TEXTAREA' || dom.tagName === 'SELECT')) {
+    } else if (
+      key === 'value' &&
+      (dom.tagName === 'INPUT' || dom.tagName === 'TEXTAREA' || dom.tagName === 'SELECT')
+    ) {
       (dom as HTMLInputElement).value = String(value ?? '');
     } else if (key === 'checked' && dom.tagName === 'INPUT') {
       (dom as HTMLInputElement).checked = Boolean(value);

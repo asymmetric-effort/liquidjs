@@ -21,7 +21,17 @@ describe('hooks guard (called outside component)', () => {
   const hooks = [
     ['useState', () => useState(0)],
     ['useEffect', () => useEffect(() => {})],
-    ['useContext', () => useContext({ $$typeof: Symbol(), Provider: Symbol(), Consumer: Symbol(), _currentValue: 0, _defaultValue: 0 })],
+    [
+      'useContext',
+      () =>
+        useContext({
+          $$typeof: Symbol(),
+          Provider: Symbol(),
+          Consumer: Symbol(),
+          _currentValue: 0,
+          _defaultValue: 0,
+        }),
+    ],
     ['useReducer', () => useReducer((s: number) => s, 0)],
     ['useCallback', () => useCallback(() => {}, [])],
     ['useMemo', () => useMemo(() => 1, [])],
@@ -32,7 +42,14 @@ describe('hooks guard (called outside component)', () => {
     ['useId', () => useId()],
     ['useDeferredValue', () => useDeferredValue(0)],
     ['useTransition', () => useTransition()],
-    ['useSyncExternalStore', () => useSyncExternalStore(() => () => {}, () => 0)],
+    [
+      'useSyncExternalStore',
+      () =>
+        useSyncExternalStore(
+          () => () => {},
+          () => 0,
+        ),
+    ],
     ['useInsertionEffect', () => useInsertionEffect(() => {})],
   ] as const;
 

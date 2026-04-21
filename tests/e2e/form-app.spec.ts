@@ -41,7 +41,9 @@ test.describe('Form App', () => {
     await page.getByTestId('message-input').fill('Short');
     await page.getByTestId('submit-btn').click();
 
-    await expect(page.getByTestId('message-error')).toHaveText('Message must be at least 10 characters');
+    await expect(page.getByTestId('message-error')).toHaveText(
+      'Message must be at least 10 characters',
+    );
   });
 
   test('submits valid form and shows success', async ({ page }) => {

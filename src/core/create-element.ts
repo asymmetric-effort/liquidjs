@@ -47,7 +47,10 @@ export function createElement<P extends Props>(
   }
 
   // Apply default props for component types
-  if (typeof type === 'function' && (type as unknown as { defaultProps?: Partial<P> }).defaultProps) {
+  if (
+    typeof type === 'function' &&
+    (type as unknown as { defaultProps?: Partial<P> }).defaultProps
+  ) {
     const defaultProps = (type as unknown as { defaultProps: Partial<P> }).defaultProps;
     for (const propName in defaultProps) {
       if (props[propName] === undefined) {

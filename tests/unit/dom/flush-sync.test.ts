@@ -17,13 +17,17 @@ describe('flushSync', () => {
 
   it('propagates errors from callback', () => {
     expect(() => {
-      flushSync(() => { throw new Error('sync error'); });
+      flushSync(() => {
+        throw new Error('sync error');
+      });
     }).toThrow('sync error');
   });
 
   it('works with void callbacks', () => {
     let sideEffect = false;
-    flushSync(() => { sideEffect = true; });
+    flushSync(() => {
+      sideEffect = true;
+    });
     expect(sideEffect).toBe(true);
   });
 });

@@ -1,5 +1,12 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { createElement, Component, PureComponent, Fragment, createRef, createContext } from '../../src/index';
+import {
+  createElement,
+  Component,
+  PureComponent,
+  Fragment,
+  createRef,
+  createContext,
+} from '../../src/index';
 import { useState, useEffect, useRef } from '../../src/hooks/index';
 import { createRoot } from '../../src/dom/create-root';
 import { forwardRef } from '../../src/core/forward-ref';
@@ -167,7 +174,9 @@ describe('Fragment', () => {
   it('renders children without wrapper', () => {
     const root = createRoot(container);
     root.render(
-      createElement(Fragment, null,
+      createElement(
+        Fragment,
+        null,
         createElement('span', null, 'A'),
         createElement('span', null, 'B'),
         createElement('span', null, 'C'),
@@ -179,10 +188,10 @@ describe('Fragment', () => {
   it('handles nested fragments', () => {
     const root = createRoot(container);
     root.render(
-      createElement(Fragment, null,
-        createElement(Fragment, null,
-          createElement('span', null, 'deep'),
-        ),
+      createElement(
+        Fragment,
+        null,
+        createElement(Fragment, null, createElement('span', null, 'deep')),
       ),
     );
     expect(container.innerHTML).toBe('<span>deep</span>');
@@ -201,11 +210,7 @@ describe('lists with keys', () => {
     const items = ['apple', 'banana', 'cherry'];
 
     root.render(
-      createElement('ul', null,
-        ...items.map((item) =>
-          createElement('li', { key: item }, item),
-        ),
-      ),
+      createElement('ul', null, ...items.map((item) => createElement('li', { key: item }, item))),
     );
 
     expect(container.querySelectorAll('li')).toHaveLength(3);
@@ -217,7 +222,9 @@ describe('lists with keys', () => {
     const root = createRoot(container);
 
     root.render(
-      createElement('ul', null,
+      createElement(
+        'ul',
+        null,
         createElement('li', { key: 'a' }, 'A'),
         createElement('li', { key: 'b' }, 'B'),
         createElement('li', { key: 'c' }, 'C'),
@@ -225,7 +232,9 @@ describe('lists with keys', () => {
     );
 
     root.render(
-      createElement('ul', null,
+      createElement(
+        'ul',
+        null,
         createElement('li', { key: 'c' }, 'C'),
         createElement('li', { key: 'a' }, 'A'),
         createElement('li', { key: 'b' }, 'B'),
@@ -242,7 +251,9 @@ describe('lists with keys', () => {
     const root = createRoot(container);
 
     root.render(
-      createElement('ul', null,
+      createElement(
+        'ul',
+        null,
         createElement('li', { key: 'a' }, 'A'),
         createElement('li', { key: 'b' }, 'B'),
         createElement('li', { key: 'c' }, 'C'),
@@ -251,7 +262,9 @@ describe('lists with keys', () => {
     expect(container.querySelectorAll('li')).toHaveLength(3);
 
     root.render(
-      createElement('ul', null,
+      createElement(
+        'ul',
+        null,
         createElement('li', { key: 'a' }, 'A'),
         createElement('li', { key: 'c' }, 'C'),
       ),
@@ -264,9 +277,7 @@ describe('lists with keys', () => {
 describe('nested component trees', () => {
   it('renders a complex nested tree', () => {
     function Header() {
-      return createElement('header', null,
-        createElement('h1', null, 'Title'),
-      );
+      return createElement('header', null, createElement('h1', null, 'Title'));
     }
 
     function ListItem(props: { text: string }) {
@@ -275,13 +286,17 @@ describe('nested component trees', () => {
 
     function Content() {
       const items = ['One', 'Two', 'Three'];
-      return createElement('ul', null,
+      return createElement(
+        'ul',
+        null,
         ...items.map((t) => createElement(ListItem, { key: t, text: t })),
       );
     }
 
     function App() {
-      return createElement('div', { className: 'app' },
+      return createElement(
+        'div',
+        { className: 'app' },
         createElement(Header, null),
         createElement(Content, null),
       );
@@ -299,9 +314,7 @@ describe('nested component trees', () => {
 describe('conditional rendering', () => {
   it('conditionally renders based on props', () => {
     function Cond(props: { show: boolean }) {
-      return props.show
-        ? createElement('span', null, 'visible')
-        : null;
+      return props.show ? createElement('span', null, 'visible') : null;
     }
 
     const root = createRoot(container);
@@ -314,9 +327,7 @@ describe('conditional rendering', () => {
 
   it('handles ternary between different element types', () => {
     function Toggle(props: { on: boolean }) {
-      return props.on
-        ? createElement('button', null, 'ON')
-        : createElement('span', null, 'OFF');
+      return props.on ? createElement('button', null, 'ON') : createElement('span', null, 'OFF');
     }
 
     const root = createRoot(container);

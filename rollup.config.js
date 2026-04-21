@@ -29,15 +29,20 @@ function createConfig(input, outputName) {
   };
 }
 
-export default [
+// Generate declaration files in a separate pass
+const mainConfigs = [
   createConfig('src/index.ts', 'liquidjs'),
   createConfig('src/dom/index.ts', 'liquidjs-dom'),
   createConfig('src/server/index.ts', 'liquidjs-server'),
   createConfig('src/jsx-runtime.ts', 'liquidjs-jsx-runtime'),
   createConfig('src/jsx-dev-runtime.ts', 'liquidjs-jsx-dev-runtime'),
-  {
-    input: 'dist/types/index.d.ts',
-    output: [{ file: 'dist/liquidjs.d.ts', format: 'esm' }],
-    plugins: [dts()],
-  },
 ];
+
+// Declaration bundling config — uses the first build's emitted declarations
+const declarationConfig = {
+  input: 'src/index.ts',
+  output: [{ file: 'dist/liquidjs.d.ts', format: 'esm' }],
+  plugins: [dts()],
+};
+
+export default [...mainConfigs, declarationConfig];

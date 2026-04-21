@@ -6,10 +6,7 @@ import type { Props, LiquidNode, ErrorInfo } from '../shared/types';
  */
 export class Component<P extends Props = Props, S = unknown> {
   static contextType?: unknown;
-  static getDerivedStateFromProps?(
-    _props: Props,
-    _state: unknown,
-  ): Partial<unknown> | null;
+  static getDerivedStateFromProps?(_props: Props, _state: unknown): Partial<unknown> | null;
   static getDerivedStateFromError?(_error: unknown): Partial<unknown> | null;
 
   props: P;

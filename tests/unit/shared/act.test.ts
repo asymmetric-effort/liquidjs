@@ -30,7 +30,9 @@ describe('act', () => {
 
   it('handles callbacks that return void (no return)', () => {
     let sideEffect = 0;
-    act(() => { sideEffect = 1; });
+    act(() => {
+      sideEffect = 1;
+    });
     expect(sideEffect).toBe(1);
   });
 });

@@ -37,7 +37,9 @@ describe('ErrorBoundary', () => {
 
   it('componentDidCatch calls onError prop', () => {
     let capturedError: unknown = null;
-    const onError = (err: unknown) => { capturedError = err; };
+    const onError = (err: unknown) => {
+      capturedError = err;
+    };
     const eb = new ErrorBoundary({ onError });
     const error = new Error('caught');
     eb.componentDidCatch(error, { componentStack: '' });

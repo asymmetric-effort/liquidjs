@@ -19,25 +19,17 @@ describe('renderToString', () => {
     });
 
     it('renders nested elements', () => {
-      const html = renderToString(
-        createElement('div', null,
-          createElement('span', null, 'inner'),
-        ),
-      );
+      const html = renderToString(createElement('div', null, createElement('span', null, 'inner')));
       expect(html).toBe('<div><span>inner</span></div>');
     });
 
     it('renders multiple children', () => {
-      const html = renderToString(
-        createElement('div', null, 'a', 'b', 'c'),
-      );
+      const html = renderToString(createElement('div', null, 'a', 'b', 'c'));
       expect(html).toBe('<div>abc</div>');
     });
 
     it('skips null, undefined, and boolean children', () => {
-      const html = renderToString(
-        createElement('div', null, null, true, false, undefined, 'text'),
-      );
+      const html = renderToString(createElement('div', null, null, true, false, undefined, 'text'));
       expect(html).toBe('<div>text</div>');
     });
   });
@@ -56,9 +48,7 @@ describe('renderToString', () => {
     });
 
     it('renders id attribute', () => {
-      expect(renderToString(createElement('div', { id: 'test' }))).toBe(
-        '<div id="test"></div>',
-      );
+      expect(renderToString(createElement('div', { id: 'test' }))).toBe('<div id="test"></div>');
     });
 
     it('renders boolean attributes', () => {
@@ -74,9 +64,9 @@ describe('renderToString', () => {
     });
 
     it('omits null and undefined attributes', () => {
-      expect(
-        renderToString(createElement('div', { 'data-x': null, 'data-y': undefined })),
-      ).toBe('<div></div>');
+      expect(renderToString(createElement('div', { 'data-x': null, 'data-y': undefined }))).toBe(
+        '<div></div>',
+      );
     });
 
     it('escapes attribute values', () => {
@@ -86,9 +76,9 @@ describe('renderToString', () => {
     });
 
     it('omits event handlers', () => {
-      expect(
-        renderToString(createElement('button', { onClick: () => {} }, 'Click')),
-      ).toBe('<button>Click</button>');
+      expect(renderToString(createElement('button', { onClick: () => {} }, 'Click'))).toBe(
+        '<button>Click</button>',
+      );
     });
 
     it('omits key and ref', () => {
@@ -107,16 +97,12 @@ describe('renderToString', () => {
     });
 
     it('adds px suffix to numbers', () => {
-      const html = renderToString(
-        createElement('div', { style: { width: 100 } }),
-      );
+      const html = renderToString(createElement('div', { style: { width: 100 } }));
       expect(html).toBe('<div style="width:100px"></div>');
     });
 
     it('does not add px to unitless properties', () => {
-      const html = renderToString(
-        createElement('div', { style: { opacity: 0.5, zIndex: 10 } }),
-      );
+      const html = renderToString(createElement('div', { style: { opacity: 0.5, zIndex: 10 } }));
       expect(html).toBe('<div style="opacity:0.5;z-index:10"></div>');
     });
   });
@@ -129,9 +115,7 @@ describe('renderToString', () => {
     });
 
     it('renders input as self-closing', () => {
-      expect(renderToString(createElement('input', { type: 'text' }))).toBe(
-        '<input type="text"/>',
-      );
+      expect(renderToString(createElement('input', { type: 'text' }))).toBe('<input type="text"/>');
     });
 
     it('renders br as self-closing', () => {
@@ -160,16 +144,16 @@ describe('renderToString', () => {
     });
 
     it('escapes ampersands', () => {
-      expect(renderToString(createElement('div', null, 'a & b'))).toBe(
-        '<div>a &amp; b</div>',
-      );
+      expect(renderToString(createElement('div', null, 'a & b'))).toBe('<div>a &amp; b</div>');
     });
   });
 
   describe('Fragment', () => {
     it('renders fragment children without wrapper', () => {
       const html = renderToString(
-        createElement(Fragment, null,
+        createElement(
+          Fragment,
+          null,
           createElement('span', null, 'A'),
           createElement('span', null, 'B'),
         ),
@@ -179,10 +163,7 @@ describe('renderToString', () => {
 
     it('renders nested fragments', () => {
       const html = renderToString(
-        createElement(Fragment, null,
-          createElement(Fragment, null, 'a'),
-          'b',
-        ),
+        createElement(Fragment, null, createElement(Fragment, null, 'a'), 'b'),
       );
       expect(html).toBe('ab');
     });
@@ -194,9 +175,7 @@ describe('renderToString', () => {
         return createElement('h1', null, `Hello, ${props.name}!`);
       }
 
-      expect(renderToString(createElement(Greeting, { name: 'SSR' }))).toBe(
-        '<h1>Hello, SSR!</h1>',
-      );
+      expect(renderToString(createElement(Greeting, { name: 'SSR' }))).toBe('<h1>Hello, SSR!</h1>');
     });
 
     it('renders nested function components', () => {
@@ -207,9 +186,7 @@ describe('renderToString', () => {
         return createElement('div', null, createElement(Inner, null));
       }
 
-      expect(renderToString(createElement(Outer, null))).toBe(
-        '<div><em>deep</em></div>',
-      );
+      expect(renderToString(createElement(Outer, null))).toBe('<div><em>deep</em></div>');
     });
 
     it('handles component returning null', () => {
@@ -228,9 +205,7 @@ describe('renderToString', () => {
         }
       }
 
-      expect(renderToString(createElement(Hello, { name: 'Class' }))).toBe(
-        '<span>Hi Class</span>',
-      );
+      expect(renderToString(createElement(Hello, { name: 'Class' }))).toBe('<span>Hi Class</span>');
     });
   });
 
@@ -239,9 +214,9 @@ describe('renderToString', () => {
       const Inner = (props: { x: number }) => createElement('span', null, String(props.x));
       const Memoized = memo(Inner);
 
-      expect(
-        renderToString(createElement(Memoized as unknown as () => null, { x: 42 })),
-      ).toBe('<span>42</span>');
+      expect(renderToString(createElement(Memoized as unknown as () => null, { x: 42 }))).toBe(
+        '<span>42</span>',
+      );
     });
   });
 
@@ -251,9 +226,9 @@ describe('renderToString', () => {
         return createElement('input', { type: 'text', className: 'fancy' });
       });
 
-      expect(
-        renderToString(createElement(FancyInput as unknown as () => null, null)),
-      ).toBe('<input type="text" class="fancy"/>');
+      expect(renderToString(createElement(FancyInput as unknown as () => null, null))).toBe(
+        '<input type="text" class="fancy"/>',
+      );
     });
   });
 
@@ -304,7 +279,9 @@ describe('renderToStaticMarkup', () => {
   });
 
   it('renders the same markup as renderToString for basic elements', () => {
-    const element = createElement('div', { className: 'test' },
+    const element = createElement(
+      'div',
+      { className: 'test' },
       createElement('span', null, 'hello'),
     );
     expect(renderToStaticMarkup(element)).toBe(renderToString(element));

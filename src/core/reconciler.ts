@@ -8,11 +8,7 @@ import {
   EffectTag,
 } from '../shared/types';
 import { isValidElement } from './is-valid-element';
-import {
-  createFiberFromElement,
-  createFiberFromText,
-  coerceToFiberChildren,
-} from './fiber';
+import { createFiberFromElement, createFiberFromText, coerceToFiberChildren } from './fiber';
 
 /**
  * The reconciler is responsible for diffing old and new virtual trees,

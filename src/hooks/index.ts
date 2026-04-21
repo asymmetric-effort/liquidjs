@@ -42,14 +42,13 @@ function resolveDispatcher(): Dispatcher {
   return currentDispatcher;
 }
 
-export function useState<T>(initialState: T | (() => T)): [T, (action: T | ((prev: T) => T)) => void] {
+export function useState<T>(
+  initialState: T | (() => T),
+): [T, (action: T | ((prev: T) => T)) => void] {
   return resolveDispatcher().useState(initialState);
 }
 
-export function useEffect(
-  create: () => void | (() => void),
-  deps?: readonly unknown[],
-): void {
+export function useEffect(create: () => void | (() => void), deps?: readonly unknown[]): void {
   return resolveDispatcher().useEffect(create, deps);
 }
 

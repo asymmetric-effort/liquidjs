@@ -61,7 +61,7 @@ describe('useReducer full coverage', () => {
 
     function Counter() {
       const [count, dispatch] = useReducer(
-        (state: number, action: Action) => action === 'inc' ? state + 1 : state - 1,
+        (state: number, action: Action) => (action === 'inc' ? state + 1 : state - 1),
         0,
       );
       dispatchFn = dispatch;
@@ -264,9 +264,13 @@ describe('useImperativeHandle full coverage', () => {
     const ref = { current: null as { focus: () => string } | null };
 
     const FancyInput = forwardRef((_props, fwdRef) => {
-      useImperativeHandle(fwdRef as { current: { focus: () => string } | null }, () => ({
-        focus: () => 'focused!',
-      }), []);
+      useImperativeHandle(
+        fwdRef as { current: { focus: () => string } | null },
+        () => ({
+          focus: () => 'focused!',
+        }),
+        [],
+      );
       return createElement('input', { type: 'text' });
     });
 
@@ -283,9 +287,13 @@ describe('useImperativeHandle full coverage', () => {
     };
 
     const Comp = forwardRef((_props, ref) => {
-      useImperativeHandle(ref as (instance: { getValue: () => number } | null) => void, () => ({
-        getValue: () => 42,
-      }), []);
+      useImperativeHandle(
+        ref as (instance: { getValue: () => number } | null) => void,
+        () => ({
+          getValue: () => 42,
+        }),
+        [],
+      );
       return createElement('div', null, 'imperative');
     });
 
@@ -408,7 +416,9 @@ describe('useContext with provider full coverage', () => {
 
     const root = createRoot(container);
     root.render(
-      createElement(Ctx.Provider as unknown as () => null, { value: 99 },
+      createElement(
+        Ctx.Provider as unknown as () => null,
+        { value: 99 },
         createElement(Display, null),
       ),
     );
@@ -428,7 +438,9 @@ describe('useId uniqueness', () => {
 
     const root = createRoot(container);
     root.render(
-      createElement(Fragment, null,
+      createElement(
+        Fragment,
+        null,
         createElement(IdComp, null),
         createElement(IdComp, null),
         createElement(IdComp, null),

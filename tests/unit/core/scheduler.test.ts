@@ -1,5 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { scheduleUpdate, batchUpdates, flushPendingTasks, isBatching } from '../../../src/core/scheduler';
+import {
+  scheduleUpdate,
+  batchUpdates,
+  flushPendingTasks,
+  isBatching,
+} from '../../../src/core/scheduler';
 
 describe('scheduler', () => {
   describe('scheduleUpdate', () => {

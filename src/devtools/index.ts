@@ -22,9 +22,8 @@ export function connectDevTools(): void {
     (globalThis as unknown as { __LIQUID_DEVTOOLS_GLOBAL_HOOK__?: DevToolsHook })
       .__LIQUID_DEVTOOLS_GLOBAL_HOOK__
   ) {
-    devToolsHook = (
-      globalThis as unknown as { __LIQUID_DEVTOOLS_GLOBAL_HOOK__: DevToolsHook }
-    ).__LIQUID_DEVTOOLS_GLOBAL_HOOK__;
+    devToolsHook = (globalThis as unknown as { __LIQUID_DEVTOOLS_GLOBAL_HOOK__: DevToolsHook })
+      .__LIQUID_DEVTOOLS_GLOBAL_HOOK__;
   }
 }
 

@@ -41,9 +41,7 @@ export function useStateImpl<T>(
 
   // Mount: initialize state and queue
   if (hook.queue === null) {
-    const initial = typeof initialState === 'function'
-      ? (initialState as () => T)()
-      : initialState;
+    const initial = typeof initialState === 'function' ? (initialState as () => T)() : initialState;
     hook.memoizedState = initial;
     hook.queue = [];
   }
@@ -54,9 +52,7 @@ export function useStateImpl<T>(
     let state = hook.memoizedState as T;
     for (const update of queue) {
       const action = update.action as T | ((prev: T) => T);
-      state = typeof action === 'function'
-        ? (action as (prev: T) => T)(state)
-        : action;
+      state = typeof action === 'function' ? (action as (prev: T) => T)(state) : action;
     }
     hook.memoizedState = state;
     queue.length = 0; // Clear in-place to keep reference stable
@@ -129,7 +125,10 @@ function useEffectImpl(
 
   // On update, read the previous effect's destroy from the effect object itself
   // (runEffects sets destroy on the effect, not on hook.memoizedState)
-  const prevState = hook.memoizedState as { deps?: readonly unknown[]; effect?: { destroy?: (() => void) | null } } | null;
+  const prevState = hook.memoizedState as {
+    deps?: readonly unknown[];
+    effect?: { destroy?: (() => void) | null };
+  } | null;
   const prevDestroy = prevState?.effect?.destroy ?? null;
 
   if (prevState !== null && deps !== undefined) {
@@ -140,12 +139,7 @@ function useEffectImpl(
     }
   }
 
-  const effect = pushEffect(
-    EffectHookTag.HasEffect | tag,
-    create,
-    prevDestroy,
-    deps,
-  );
+  const effect = pushEffect(EffectHookTag.HasEffect | tag, create, prevDestroy, deps);
   hook.memoizedState = { deps, effect };
 }
 
@@ -243,30 +237,31 @@ export function useImperativeHandleImpl<T>(
   createHandle: () => T,
   deps?: readonly unknown[],
 ): void {
-  useEffectImpl(EffectHookTag.Layout, () => {
-    const handle = createHandle();
-    if (ref !== null) {
-      if (typeof ref === 'function') {
-        ref(handle);
-        return () => ref(null);
+  useEffectImpl(
+    EffectHookTag.Layout,
+    () => {
+      const handle = createHandle();
+      if (ref !== null) {
+        if (typeof ref === 'function') {
+          ref(handle);
+          return () => ref(null);
+        }
+        (ref as { current: T | null }).current = handle;
+        return () => {
+          (ref as { current: T | null }).current = null;
+        };
       }
-      (ref as { current: T | null }).current = handle;
-      return () => {
-        (ref as { current: T | null }).current = null;
-      };
-    }
-    return undefined;
-  }, deps);
+      return undefined;
+    },
+    deps,
+  );
 }
 
 // ---------------------------------------------------------------------------
 // useDebugValue
 // ---------------------------------------------------------------------------
 
-export function useDebugValueImpl<T>(
-  _value: T,
-  _format?: (value: T) => unknown,
-): void {
+export function useDebugValueImpl<T>(_value: T, _format?: (value: T) => unknown): void {
   // DevTools integration — no-op in production
 }
 
@@ -340,18 +335,22 @@ export function useSyncExternalStoreImpl<T>(
   hook.memoizedState = value;
 
   // Subscribe to store changes and trigger re-render
-  useEffectImpl(EffectHookTag.Passive, () => {
-    const unsubscribe = subscribe(() => {
-      const nextValue = getSnapshot();
-      if (!Object.is(hook.memoizedState, nextValue)) {
-        hook.memoizedState = nextValue;
-        if (rerenderFiber) {
-          scheduleUpdate(() => rerenderFiber!(fiber));
+  useEffectImpl(
+    EffectHookTag.Passive,
+    () => {
+      const unsubscribe = subscribe(() => {
+        const nextValue = getSnapshot();
+        if (!Object.is(hook.memoizedState, nextValue)) {
+          hook.memoizedState = nextValue;
+          if (rerenderFiber) {
+            scheduleUpdate(() => rerenderFiber!(fiber));
+          }
         }
-      }
-    });
-    return unsubscribe;
-  }, [subscribe, getSnapshot]);
+      });
+      return unsubscribe;
+    },
+    [subscribe, getSnapshot],
+  );
 
   return value;
 }

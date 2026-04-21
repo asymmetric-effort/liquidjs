@@ -15,8 +15,20 @@ import { isValidElement } from '../core/is-valid-element';
 
 // Self-closing HTML tags
 const VOID_ELEMENTS = new Set([
-  'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
-  'link', 'meta', 'param', 'source', 'track', 'wbr',
+  'area',
+  'base',
+  'br',
+  'col',
+  'embed',
+  'hr',
+  'img',
+  'input',
+  'link',
+  'meta',
+  'param',
+  'source',
+  'track',
+  'wbr',
 ]);
 
 // Map of prop names to HTML attribute names
@@ -43,9 +55,7 @@ const PROP_TO_ATTR: Record<string, string> = {
 };
 
 // Props that should not be rendered as attributes
-const RESERVED_PROPS = new Set([
-  'children', 'key', 'ref', 'dangerouslySetInnerHTML',
-]);
+const RESERVED_PROPS = new Set(['children', 'key', 'ref', 'dangerouslySetInnerHTML']);
 
 const EVENT_RE = /^on[A-Z]/;
 
@@ -217,9 +227,10 @@ function renderStyle(style: Record<string, string | number>): string {
 
     // Convert camelCase to kebab-case
     const cssProp = prop.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
-    const cssValue = typeof value === 'number' && value !== 0 && !isUnitlessProp(prop)
-      ? `${value}px`
-      : String(value);
+    const cssValue =
+      typeof value === 'number' && value !== 0 && !isUnitlessProp(prop)
+        ? `${value}px`
+        : String(value);
 
     parts.push(`${cssProp}:${cssValue}`);
   }
@@ -227,14 +238,49 @@ function renderStyle(style: Record<string, string | number>): string {
 }
 
 const UNITLESS_PROPS = new Set([
-  'animationIterationCount', 'aspectRatio', 'borderImageOutset', 'borderImageSlice',
-  'borderImageWidth', 'boxFlex', 'boxFlexGroup', 'boxOrdinalGroup', 'columnCount',
-  'columns', 'flex', 'flexGrow', 'flexPositive', 'flexShrink', 'flexNegative',
-  'flexOrder', 'gridArea', 'gridRow', 'gridRowEnd', 'gridRowSpan', 'gridRowStart',
-  'gridColumn', 'gridColumnEnd', 'gridColumnSpan', 'gridColumnStart', 'fontWeight',
-  'lineClamp', 'lineHeight', 'opacity', 'order', 'orphans', 'tabSize', 'widows',
-  'zIndex', 'zoom', 'fillOpacity', 'floodOpacity', 'stopOpacity', 'strokeDasharray',
-  'strokeDashoffset', 'strokeMiterlimit', 'strokeOpacity', 'strokeWidth',
+  'animationIterationCount',
+  'aspectRatio',
+  'borderImageOutset',
+  'borderImageSlice',
+  'borderImageWidth',
+  'boxFlex',
+  'boxFlexGroup',
+  'boxOrdinalGroup',
+  'columnCount',
+  'columns',
+  'flex',
+  'flexGrow',
+  'flexPositive',
+  'flexShrink',
+  'flexNegative',
+  'flexOrder',
+  'gridArea',
+  'gridRow',
+  'gridRowEnd',
+  'gridRowSpan',
+  'gridRowStart',
+  'gridColumn',
+  'gridColumnEnd',
+  'gridColumnSpan',
+  'gridColumnStart',
+  'fontWeight',
+  'lineClamp',
+  'lineHeight',
+  'opacity',
+  'order',
+  'orphans',
+  'tabSize',
+  'widows',
+  'zIndex',
+  'zoom',
+  'fillOpacity',
+  'floodOpacity',
+  'stopOpacity',
+  'strokeDasharray',
+  'strokeDashoffset',
+  'strokeMiterlimit',
+  'strokeOpacity',
+  'strokeWidth',
 ]);
 
 function isUnitlessProp(prop: string): boolean {
@@ -248,11 +294,21 @@ function escapeHtml(str: string): string {
   for (let i = 0; i < str.length; i++) {
     let escaped: string | undefined;
     switch (str.charCodeAt(i)) {
-      case 34: escaped = '&quot;'; break; // "
-      case 38: escaped = '&amp;'; break;  // &
-      case 39: escaped = '&#x27;'; break; // '
-      case 60: escaped = '&lt;'; break;   // <
-      case 62: escaped = '&gt;'; break;   // >
+      case 34:
+        escaped = '&quot;';
+        break; // "
+      case 38:
+        escaped = '&amp;';
+        break; // &
+      case 39:
+        escaped = '&#x27;';
+        break; // '
+      case 60:
+        escaped = '&lt;';
+        break; // <
+      case 62:
+        escaped = '&gt;';
+        break; // >
     }
     if (escaped !== undefined) {
       if (lastIndex !== i) {

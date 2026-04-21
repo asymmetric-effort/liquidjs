@@ -22,12 +22,18 @@ describe('useState with setState triggering re-renders', () => {
   it('updates DOM when setState is called via event handler', () => {
     function Counter() {
       const [count, setCount] = useState(0);
-      return createElement('div', null,
+      return createElement(
+        'div',
+        null,
         createElement('span', { id: 'count' }, String(count)),
-        createElement('button', {
-          id: 'inc',
-          onClick: () => setCount(count + 1),
-        }, '+'),
+        createElement(
+          'button',
+          {
+            id: 'inc',
+            onClick: () => setCount(count + 1),
+          },
+          '+',
+        ),
       );
     }
 
@@ -107,9 +113,12 @@ describe('useReducer with dispatch triggering re-renders', () => {
 
     function reducer(state: number, action: Action): number {
       switch (action.type) {
-        case 'inc': return state + 1;
-        case 'dec': return state - 1;
-        case 'set': return action.value;
+        case 'inc':
+          return state + 1;
+        case 'dec':
+          return state - 1;
+        case 'set':
+          return action.value;
       }
     }
 
@@ -135,7 +144,7 @@ describe('useReducer with dispatch triggering re-renders', () => {
 
     function Counter() {
       const [count, dispatch] = useReducer(
-        (s: number, a: Action) => a === 'add' ? s + 10 : s - 3,
+        (s: number, a: Action) => (a === 'add' ? s + 10 : s - 3),
         100,
       );
       dispatchFn = dispatch;
@@ -184,11 +193,7 @@ describe('effect cleanup through tree deletion', () => {
     }
 
     const root = createRoot(container);
-    root.render(
-      createElement('div', null,
-        createElement(ChildWrapper, null),
-      ),
-    );
+    root.render(createElement('div', null, createElement(ChildWrapper, null)));
     expect(willUnmount).not.toHaveBeenCalled();
 
     root.render(createElement('div', null, 'no child'));

@@ -1,4 +1,11 @@
-import { LIQUID_ELEMENT_TYPE, type LiquidElement, type Props, type Key, type Ref, type LiquidNode } from '../shared/types';
+import {
+  LIQUID_ELEMENT_TYPE,
+  type LiquidElement,
+  type Props,
+  type Key,
+  type Ref,
+  type LiquidNode,
+} from '../shared/types';
 import { isValidElement } from './is-valid-element';
 
 /**

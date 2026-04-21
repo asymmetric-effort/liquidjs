@@ -16,11 +16,21 @@ beforeEach(() => {
 
 describe('deeply nested component trees', () => {
   it('renders 5 levels deep', () => {
-    function L5() { return createElement('span', null, 'leaf'); }
-    function L4() { return createElement('div', null, createElement(L5, null)); }
-    function L3() { return createElement('div', null, createElement(L4, null)); }
-    function L2() { return createElement('div', null, createElement(L3, null)); }
-    function L1() { return createElement('div', null, createElement(L2, null)); }
+    function L5() {
+      return createElement('span', null, 'leaf');
+    }
+    function L4() {
+      return createElement('div', null, createElement(L5, null));
+    }
+    function L3() {
+      return createElement('div', null, createElement(L4, null));
+    }
+    function L2() {
+      return createElement('div', null, createElement(L3, null));
+    }
+    function L1() {
+      return createElement('div', null, createElement(L2, null));
+    }
 
     const root = createRoot(container);
     root.render(createElement(L1, null));
@@ -36,7 +46,9 @@ describe('sibling traversal edge cases', () => {
 
     const root = createRoot(container);
     root.render(
-      createElement('div', null,
+      createElement(
+        'div',
+        null,
         createElement('span', null, 'text'),
         createElement(Inline, null),
         createElement('b', null, 'bold'),
@@ -49,8 +61,12 @@ describe('sibling traversal edge cases', () => {
   it('handles fragments as siblings', () => {
     const root = createRoot(container);
     root.render(
-      createElement('div', null,
-        createElement(Fragment, null,
+      createElement(
+        'div',
+        null,
+        createElement(
+          Fragment,
+          null,
           createElement('span', null, 'a'),
           createElement('span', null, 'b'),
         ),
@@ -121,9 +137,7 @@ describe('SSR edge cases', () => {
   });
 
   it('renders checked attribute on checkbox', () => {
-    const html = renderToString(
-      createElement('input', { checked: true, type: 'checkbox' }),
-    );
+    const html = renderToString(createElement('input', { checked: true, type: 'checkbox' }));
     expect(html).toContain('checked');
   });
 
@@ -138,13 +152,17 @@ describe('SSR edge cases', () => {
   });
 
   it('handles style with null value', () => {
-    const html = renderToString(createElement('div', { style: { color: null as unknown as string } }));
+    const html = renderToString(
+      createElement('div', { style: { color: null as unknown as string } }),
+    );
     // null value should be skipped
     expect(html).toBe('<div style=""></div>');
   });
 
   it('renderToStaticMarkup with function component', () => {
-    function Comp() { return createElement('b', null, 'static'); }
+    function Comp() {
+      return createElement('b', null, 'static');
+    }
     expect(renderToStaticMarkup(createElement(Comp, null))).toBe('<b>static</b>');
   });
 });
@@ -171,7 +189,9 @@ describe('reconciler edge cases', () => {
   it('handles replacing all children with empty', () => {
     const root = createRoot(container);
     root.render(
-      createElement('ul', null,
+      createElement(
+        'ul',
+        null,
         createElement('li', { key: 'a' }, 'A'),
         createElement('li', { key: 'b' }, 'B'),
       ),
@@ -199,10 +219,7 @@ describe('unmount with effects cleanup', () => {
 
     const root = createRoot(container);
     root.render(
-      createElement(Fragment, null,
-        createElement(Child1, null),
-        createElement(Child2, null),
-      ),
+      createElement(Fragment, null, createElement(Child1, null), createElement(Child2, null)),
     );
     expect(cleanup1).not.toHaveBeenCalled();
     expect(cleanup2).not.toHaveBeenCalled();
@@ -222,8 +239,12 @@ describe('context provider in SSR', () => {
     }
 
     const html = renderToString(
-      createElement(Ctx.Provider as unknown as () => null, { value: 'outer' },
-        createElement(Ctx.Provider as unknown as () => null, { value: 'inner' },
+      createElement(
+        Ctx.Provider as unknown as () => null,
+        { value: 'outer' },
+        createElement(
+          Ctx.Provider as unknown as () => null,
+          { value: 'inner' },
           createElement(Inner, null),
         ),
         createElement(Inner, null),

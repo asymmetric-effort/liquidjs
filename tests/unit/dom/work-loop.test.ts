@@ -34,7 +34,15 @@ describe('updateDOMProperties', () => {
   it('adds event listener', () => {
     const el = document.createElement('div');
     let clicked = false;
-    updateDOMProperties(el, {}, { onClick: () => { clicked = true; } });
+    updateDOMProperties(
+      el,
+      {},
+      {
+        onClick: () => {
+          clicked = true;
+        },
+      },
+    );
     el.click();
     expect(clicked).toBe(true);
   });

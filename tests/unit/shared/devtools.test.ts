@@ -1,5 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { connectDevTools, isDevToolsConnected, notifyDevToolsOfCommit, notifyDevToolsOfUnmount } from '../../../src/devtools/index';
+import {
+  connectDevTools,
+  isDevToolsConnected,
+  notifyDevToolsOfCommit,
+  notifyDevToolsOfUnmount,
+} from '../../../src/devtools/index';
 
 describe('DevTools integration', () => {
   afterEach(() => {
@@ -44,6 +49,8 @@ describe('DevTools integration', () => {
 
   it('does not throw when devtools not connected', () => {
     expect(() => notifyDevToolsOfCommit({})).not.toThrow();
-    expect(() => notifyDevToolsOfUnmount({} as Parameters<typeof notifyDevToolsOfUnmount>[0])).not.toThrow();
+    expect(() =>
+      notifyDevToolsOfUnmount({} as Parameters<typeof notifyDevToolsOfUnmount>[0]),
+    ).not.toThrow();
   });
 });
