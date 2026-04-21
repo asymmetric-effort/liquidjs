@@ -1,0 +1,30 @@
+import { defineConfig } from 'vitest/config';
+import path from 'path';
+
+export default defineConfig({
+  resolve: {
+    alias: {
+      'liquidjs': path.resolve(__dirname, 'src/index.ts'),
+      'liquidjs/dom': path.resolve(__dirname, 'src/dom/index.ts'),
+      'liquidjs/server': path.resolve(__dirname, 'src/server/index.ts'),
+    },
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    include: ['tests/unit/**/*.test.ts', 'tests/integration/**/*.test.ts'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'text-summary', 'lcov', 'html'],
+      include: ['src/**/*.ts'],
+      exclude: ['src/**/index.ts', 'src/**/*.d.ts'],
+      thresholds: {
+        statements: 98,
+        branches: 98,
+        functions: 98,
+        lines: 98,
+      },
+    },
+    setupFiles: ['tests/setup.ts'],
+  },
+});

@@ -1,0 +1,83 @@
+{
+  "name": "liquidjs-framework",
+  "version": "0.1.0",
+  "description": "A declarative TypeScript UI framework with React.js feature parity",
+  "type": "module",
+  "main": "dist/liquidjs.cjs.js",
+  "module": "dist/liquidjs.esm.js",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/liquidjs.esm.js",
+      "require": "./dist/liquidjs.cjs.js"
+    },
+    "./dom": {
+      "types": "./dist/types/dom/index.d.ts",
+      "import": "./dist/liquidjs-dom.esm.js",
+      "require": "./dist/liquidjs-dom.cjs.js"
+    },
+    "./server": {
+      "types": "./dist/types/server/index.d.ts",
+      "import": "./dist/liquidjs-server.esm.js",
+      "require": "./dist/liquidjs-server.cjs.js"
+    },
+    "./jsx-runtime": {
+      "types": "./dist/types/jsx-runtime.d.ts",
+      "import": "./dist/liquidjs-jsx-runtime.esm.js",
+      "require": "./dist/liquidjs-jsx-runtime.cjs.js"
+    },
+    "./jsx-dev-runtime": {
+      "types": "./dist/types/jsx-dev-runtime.d.ts",
+      "import": "./dist/liquidjs-jsx-dev-runtime.esm.js",
+      "require": "./dist/liquidjs-jsx-dev-runtime.cjs.js"
+    }
+  },
+  "files": [
+    "dist",
+    "types"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "lint": "eslint src/ tests/",
+    "format": "prettier --write 'src/**/*.ts' 'tests/**/*.ts'",
+    "format:check": "prettier --check 'src/**/*.ts' 'tests/**/*.ts'",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "keywords": [
+    "ui",
+    "framework",
+    "virtual-dom",
+    "components",
+    "declarative",
+    "typescript"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.59.0",
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-typescript": "^12.0.0",
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "@vitest/coverage-v8": "^3.0.0",
+    "eslint": "^9.0.0",
+    "jsdom": "^25.0.0",
+    "prettier": "^3.0.0",
+    "rollup": "^4.0.0",
+    "rollup-plugin-dts": "^6.0.0",
+    "tslib": "^2.6.0",
+    "typescript": "^5.6.0",
+    "vitest": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

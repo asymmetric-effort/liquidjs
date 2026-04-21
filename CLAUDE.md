@@ -188,6 +188,13 @@ liquidjs/
 - Deprecation warnings before removing any API
 - JSDoc comments on all public APIs
 
+### Supply Chain Integrity
+- **Zero runtime dependencies** — The published library has no third-party deps
+- Minimize third-party dev dependencies to essential build/test tooling only
+- Solve problems inline rather than importing packages
+- All algorithms (diffing, scheduling, event normalization) are implemented from scratch
+- Dev-only deps (TypeScript, Vitest, Playwright, Rollup) are acceptable since they don't ship to consumers
+
 ### Performance Targets
 - Virtual DOM diffing must be competitive with React's reconciler
 - Memory allocation should be minimized during renders
