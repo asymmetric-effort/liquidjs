@@ -14,7 +14,11 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    include: ['tests/unit/**/*.test.ts', 'tests/integration/**/*.test.ts'],
+    include: [
+      'tests/unit/**/*.test.ts',
+      'tests/integration/**/*.test.ts',
+      '../components/*/tests/**/*.test.ts',
+    ],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'text-summary', 'lcov', 'html'],

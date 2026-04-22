@@ -1,0 +1,11 @@
+{
+  "name": "@liquidjs/2d-bar-graph",
+  "version": "0.0.1",
+  "description": "2D bar graph visualization component for LiquidJS — renders bar charts as SVG",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": {
+    "liquidjs": "*"
+  },
+  "keywords": ["liquidjs", "component", "bar-graph", "chart", "visualization", "svg", "2d"]
+}

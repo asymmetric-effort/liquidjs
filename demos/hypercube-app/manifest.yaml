@@ -1,0 +1,13 @@
+name: hypercube-app
+description: Interactive N-dimensional hypercube visualization with rotation controls
+features:
+  - HypercubeGraph component
+  - VizWrapper component
+  - useState
+  - useMemo
+  - SVG rendering
+  - requestAnimationFrame animation
+  - mouse-drag rotation
+containers: 1
+ports:
+  - "3000:80"

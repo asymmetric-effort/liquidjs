@@ -1,0 +1,22 @@
+{
+  "name": "@liquidjs/2d-pie-graph",
+  "version": "0.1.0",
+  "description": "Zero-dependency 2D pie and donut chart SVG component for LiquidJS",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "files": [
+    "src"
+  ],
+  "keywords": [
+    "liquidjs",
+    "pie-chart",
+    "donut-chart",
+    "svg",
+    "visualization",
+    "component"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "@liquidjs/core": ">=0.1.0"
+  }
+}
