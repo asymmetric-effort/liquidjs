@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/nav-menubar",
+  "version": "0.0.1",
+  "description": "Horizontal menu bar with dropdown menus for LiquidJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}

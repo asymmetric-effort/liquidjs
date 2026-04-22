@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/nav-pagination",
+  "version": "0.0.1",
+  "description": "Page navigation component for LiquidJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}
