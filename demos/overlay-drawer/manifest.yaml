@@ -1,0 +1,12 @@
+name: overlay-drawer
+description: Slide-in drawer panel demo with position variants and overlay toggle
+features:
+  - useState
+  - slide animation
+  - overlay backdrop
+  - escape key close
+  - position variants (left, right, top, bottom)
+  - scroll lock
+containers: 1
+ports:
+  - "3000:80"

@@ -1,0 +1,13 @@
+name: overlay-modal
+description: Interactive modal dialog demo with size variants, footer, and close behavior controls
+features:
+  - useState
+  - useCallback
+  - overlay backdrop
+  - escape key close
+  - outside click close
+  - focus trap
+  - scroll lock
+containers: 1
+ports:
+  - "3000:80"

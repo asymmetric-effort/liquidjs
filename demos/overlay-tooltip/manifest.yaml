@@ -1,0 +1,12 @@
+name: overlay-tooltip
+description: Lightweight hover tooltip demo with placement variants, delay controls, and max width
+features:
+  - useState
+  - hover and focus triggers
+  - placement variants (top, bottom, left, right)
+  - configurable delay
+  - max width text wrapping
+  - arrow indicator
+containers: 1
+ports:
+  - "3000:80"

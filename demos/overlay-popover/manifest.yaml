@@ -1,0 +1,12 @@
+name: overlay-popover
+description: Positioned popover demo with placement variants, controlled mode, and arrow support
+features:
+  - useState
+  - useCallback
+  - controlled and uncontrolled modes
+  - placement variants (top, bottom, left, right)
+  - arrow indicator
+  - click outside close
+containers: 1
+ports:
+  - "3000:80"

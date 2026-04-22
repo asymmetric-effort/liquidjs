@@ -1,0 +1,14 @@
+name: overlay-context-menu
+description: Right-click context menu demo with nested submenus, keyboard navigation, and disabled items
+features:
+  - useState
+  - useCallback
+  - right-click trigger
+  - nested submenus
+  - keyboard navigation (arrows, enter, escape)
+  - disabled items
+  - divider separators
+  - click outside close
+containers: 1
+ports:
+  - "3000:80"

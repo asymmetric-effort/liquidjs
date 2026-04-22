@@ -1,0 +1,15 @@
+name: overlay-toast
+description: Toast notification system demo with type variants, actions, persistent toasts, and dismiss controls
+features:
+  - useState
+  - useCallback
+  - useRef
+  - createToaster factory
+  - toast types (info, success, warning, error)
+  - action buttons
+  - persistent toasts
+  - dismiss all
+  - auto-dismiss timer
+containers: 1
+ports:
+  - "3000:80"
