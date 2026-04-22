@@ -1,0 +1,14 @@
+name: avatar
+description: Avatar demo with image, initials fallback, status indicators, sizes, and shapes
+features:
+  - useState
+  - image avatars
+  - initials fallback
+  - status indicators
+  - size presets
+  - custom sizes
+  - circle/square shapes
+  - custom colors
+containers: 1
+ports:
+  - "3000:80"

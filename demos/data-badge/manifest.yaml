@@ -1,0 +1,14 @@
+name: badge
+description: Badge demo with count, dot, overlay mode, sizes, variants, and color presets
+features:
+  - useState
+  - useCallback
+  - count badges
+  - dot indicator
+  - overlay mode
+  - max value
+  - color presets
+  - size variants
+containers: 1
+ports:
+  - "3000:80"

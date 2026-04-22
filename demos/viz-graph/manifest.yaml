@@ -1,0 +1,11 @@
+name: viz-graph
+description: Interactive HypercubeGraph component demo
+features:
+  - useState
+  - HypercubeGraph component
+  - N-dimensional
+  - auto-rotation
+  - drag interaction
+containers: 1
+ports:
+  - "3000:80"

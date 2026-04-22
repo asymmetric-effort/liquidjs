@@ -1,0 +1,14 @@
+name: list-view
+description: ListView demo with item rendering, dividers, selection, and header/footer
+features:
+  - useState
+  - useCallback
+  - item rendering
+  - dividers
+  - selection
+  - hoverable
+  - header/footer
+  - empty state
+containers: 1
+ports:
+  - "3000:80"

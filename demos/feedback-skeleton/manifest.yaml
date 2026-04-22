@@ -1,0 +1,12 @@
+name: feedback-skeleton
+description: Interactive Skeleton component demo
+features:
+  - useState
+  - Skeleton component
+  - text lines
+  - circular
+  - rectangular
+  - shimmer animation
+containers: 1
+ports:
+  - "3000:80"

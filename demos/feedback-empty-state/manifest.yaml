@@ -1,0 +1,13 @@
+name: feedback-empty-state
+description: Interactive EmptyState component demo
+features:
+  - useState
+  - EmptyState component
+  - icon
+  - title
+  - description
+  - action button
+  - image
+containers: 1
+ports:
+  - "3000:80"

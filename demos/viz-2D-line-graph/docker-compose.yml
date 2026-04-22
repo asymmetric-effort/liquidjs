@@ -1,0 +1,8 @@
+services:
+  ui:
+    build:
+      context: ../..
+      dockerfile: demos/viz-2D-line-graph/ui/Dockerfile
+    ports:
+      - "3000:80"
+    restart: unless-stopped

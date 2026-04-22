@@ -1,0 +1,12 @@
+name: media-carousel
+description: Interactive Carousel component demo
+features:
+  - useState
+  - Carousel component
+  - slide animation
+  - fade animation
+  - auto-play
+  - keyboard navigation
+containers: 1
+ports:
+  - "3000:80"

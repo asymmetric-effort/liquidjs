@@ -1,0 +1,12 @@
+name: viz-2D-line-graph
+description: Interactive LineGraph component demo
+features:
+  - useState
+  - LineGraph component
+  - area fill
+  - grid
+  - multi-line
+  - animation
+containers: 1
+ports:
+  - "3000:80"

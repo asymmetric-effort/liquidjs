@@ -1,0 +1,11 @@
+name: feedback-spinner
+description: Interactive Spinner component demo
+features:
+  - useState
+  - Spinner component
+  - sizes
+  - colors
+  - speeds
+containers: 1
+ports:
+  - "3000:80"

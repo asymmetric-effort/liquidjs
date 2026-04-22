@@ -1,0 +1,11 @@
+name: viz-wrapper
+description: Interactive VizWrapper component demo
+features:
+  - useState
+  - VizWrapper component
+  - title positioning
+  - legend
+  - layout
+containers: 1
+ports:
+  - "3000:80"

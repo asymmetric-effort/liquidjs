@@ -1,0 +1,12 @@
+name: media-image
+description: Interactive Image component demo
+features:
+  - useState
+  - Image component
+  - lazy loading
+  - placeholders
+  - fallback
+  - caption
+containers: 1
+ports:
+  - "3000:80"

@@ -1,0 +1,15 @@
+name: data-grid
+description: Interactive DataGrid demo with sorting, filtering, pagination, and row selection
+features:
+  - useState
+  - useCallback
+  - useMemo
+  - sorting
+  - filtering
+  - pagination
+  - row selection
+  - striped rows
+  - sticky header
+containers: 1
+ports:
+  - "3000:80"

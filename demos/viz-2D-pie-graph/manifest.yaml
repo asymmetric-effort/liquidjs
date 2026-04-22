@@ -1,0 +1,12 @@
+name: viz-2D-pie-graph
+description: Interactive PieGraph component demo
+features:
+  - useState
+  - PieGraph component
+  - donut chart
+  - legend
+  - labels
+  - custom colors
+containers: 1
+ports:
+  - "3000:80"

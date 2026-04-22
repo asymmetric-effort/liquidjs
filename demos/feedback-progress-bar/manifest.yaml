@@ -1,0 +1,13 @@
+name: feedback-progress-bar
+description: Interactive progress bar demo with bar and circular variants
+features:
+  - useState
+  - useCallback
+  - ProgressBar component
+  - bar variant
+  - circular variant
+  - indeterminate mode
+  - animated shimmer
+containers: 1
+ports:
+  - "3000:80"

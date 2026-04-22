@@ -1,0 +1,13 @@
+name: virtual-scroll
+description: VirtualScroll demo rendering 10,000+ items efficiently with configurable height and overscan
+features:
+  - useState
+  - useCallback
+  - useRef
+  - virtual scrolling
+  - overscan buffer
+  - large datasets
+  - scroll events
+containers: 1
+ports:
+  - "3000:80"

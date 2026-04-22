@@ -1,0 +1,12 @@
+name: media-video-player
+description: Interactive VideoPlayer component demo
+features:
+  - useState
+  - VideoPlayer component
+  - custom controls
+  - play pause
+  - volume
+  - fullscreen
+containers: 1
+ports:
+  - "3000:80"

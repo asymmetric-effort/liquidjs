@@ -1,0 +1,12 @@
+name: feedback-alert
+description: Interactive Alert component demo
+features:
+  - useState
+  - Alert component
+  - info success warning error
+  - filled outline subtle
+  - closable
+  - action button
+containers: 1
+ports:
+  - "3000:80"

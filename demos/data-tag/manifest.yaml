@@ -1,0 +1,13 @@
+name: tag
+description: Tag/chip demo with variants, sizes, remove buttons, and click interactions
+features:
+  - useState
+  - useCallback
+  - tag variants
+  - removable tags
+  - disabled state
+  - click interactions
+  - dynamic add/remove
+containers: 1
+ports:
+  - "3000:80"

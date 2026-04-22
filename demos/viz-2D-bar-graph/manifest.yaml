@@ -1,0 +1,12 @@
+name: viz-2D-bar-graph
+description: Interactive BarGraph component demo
+features:
+  - useState
+  - BarGraph component
+  - vertical horizontal
+  - stacked
+  - grouped
+  - animation
+containers: 1
+ports:
+  - "3000:80"
