@@ -1,0 +1,13 @@
+name: layout-tabs
+description: Interactive demo of the Tabs component with position, variant, disabled tabs, and keyboard navigation
+features:
+  - Tab list with line, card, and pill variants
+  - Position top, bottom, left, right
+  - Disabled tab support
+  - Keyboard navigation (arrow keys, Home, End)
+  - ARIA tablist/tab/tabpanel roles
+  - Controlled and uncontrolled active tab
+  - useState for interactive controls
+containers: 1
+ports:
+  - "3000:80"

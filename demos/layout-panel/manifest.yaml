@@ -1,0 +1,12 @@
+name: layout-panel
+description: Interactive demo of the Panel component with collapsible body, icon, header slots, and configurable border/shadow
+features:
+  - Panel with title and icon
+  - Collapsible with animated max-height transition
+  - Header right slot
+  - Default collapsed state
+  - Configurable border and shadow
+  - useState for interactive controls
+containers: 1
+ports:
+  - "3000:80"

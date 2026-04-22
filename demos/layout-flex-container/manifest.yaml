@@ -1,0 +1,11 @@
+name: layout-flex-container
+description: Interactive demo of the FlexContainer component with configurable direction, wrap, gap, alignment, and FlexItem controls
+features:
+  - FlexContainer with direction and wrap
+  - FlexItem with flex, grow, shrink, basis
+  - Configurable gap, alignItems, justifyContent
+  - Inline flex toggle
+  - useState for interactive controls
+containers: 1
+ports:
+  - "3000:80"

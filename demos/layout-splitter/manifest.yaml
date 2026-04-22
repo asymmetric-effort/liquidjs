@@ -1,0 +1,12 @@
+name: layout-splitter
+description: Interactive demo of the Splitter resizable split pane with draggable divider, direction toggle, and size constraints
+features:
+  - Horizontal and vertical split directions
+  - Draggable divider with mouse events
+  - Configurable initial split percentage
+  - Min size constraint
+  - Adjustable divider size
+  - useState for interactive controls
+containers: 1
+ports:
+  - "3000:80"

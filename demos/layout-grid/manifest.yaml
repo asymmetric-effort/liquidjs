@@ -1,0 +1,11 @@
+name: layout-grid
+description: Interactive demo of the Grid CSS Grid layout component with configurable columns, gap, auto-fit, and alignment
+features:
+  - Grid component with numeric/string columns
+  - GridItem with span and area placement
+  - Auto-fit responsive columns with minColWidth
+  - Configurable gap and alignment
+  - useState for interactive controls
+containers: 1
+ports:
+  - "3000:80"

@@ -1,0 +1,12 @@
+name: layout-scroll-container
+description: Interactive demo of the ScrollContainer with configurable direction, scrollbar visibility, edge shadows, and padding
+features:
+  - Vertical, horizontal, and both scroll directions
+  - Scrollbar visibility modes (auto, always, hover, never)
+  - Inset edge shadows on scroll
+  - Configurable maxHeight, maxWidth, padding
+  - Dynamic item count
+  - useState for interactive controls
+containers: 1
+ports:
+  - "3000:80"
