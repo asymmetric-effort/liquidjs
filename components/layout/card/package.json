@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/layout-card",
+  "version": "0.0.1",
+  "description": "Content card with header, body, footer slots for LiquidJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}

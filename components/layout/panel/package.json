@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/layout-panel",
+  "version": "0.0.1",
+  "description": "Collapsible panel with header bar for LiquidJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/layout-scroll-container",
+  "version": "0.0.1",
+  "description": "Scrollable container with custom scrollbar styling for LiquidJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}
