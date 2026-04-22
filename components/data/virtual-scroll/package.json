@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/virtual-scroll",
+  "version": "0.0.1",
+  "description": "Virtualized scrolling list for large datasets in LiquidJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}

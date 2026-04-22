@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/data-grid",
+  "version": "0.0.1",
+  "description": "Full-featured data table/grid component for LiquidJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}

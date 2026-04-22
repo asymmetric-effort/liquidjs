@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/tag",
+  "version": "0.0.1",
+  "description": "Tag/chip element component for LiquidJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}
