@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/form-datepicker",
+  "version": "0.0.1",
+  "description": "Date picker component for LiquidJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}

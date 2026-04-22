@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/form-number-spinner",
+  "version": "0.0.1",
+  "description": "Numeric input with +/- buttons for LiquidJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}

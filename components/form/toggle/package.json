@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/form-toggle",
+  "version": "0.0.1",
+  "description": "Toggle/switch component for LiquidJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}
