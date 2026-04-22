@@ -16,6 +16,10 @@ function cleanup(container: HTMLElement) {
   document.body.removeChild(container);
 }
 
+async function tick() {
+  await new Promise(r => setTimeout(r, 0));
+}
+
 const sampleMenus: MenuDefinition[] = [
   {
     id: 'file',
@@ -58,7 +62,7 @@ describe('Menubar', () => {
       cleanup(container);
     });
 
-    it('shows menu items when top-level menu is clicked', () => {
+    it('shows menu items when top-level menu is clicked', async () => {
       const container = renderToContainer(
         createElement(Menubar, { menus: sampleMenus }),
       );
@@ -69,6 +73,7 @@ describe('Menubar', () => {
       ) as HTMLElement;
       if (fileTrigger) {
         fileTrigger.click();
+        await tick();
         // After click, submenu items should be visible
         expect(container.textContent).toContain('New');
         expect(container.textContent).toContain('Open');
@@ -100,7 +105,7 @@ describe('Menubar', () => {
       cleanup(container);
     });
 
-    it('renders disabled menu items', () => {
+    it('renders disabled menu items', async () => {
       const onClick = vi.fn();
       const menus: MenuDefinition[] = [
         {
@@ -118,6 +123,7 @@ describe('Menubar', () => {
       const trigger = container.querySelector('[role="menuitem"]') as HTMLElement;
       if (trigger) {
         trigger.click();
+        await tick();
         const disabledItem = container.querySelector('[aria-disabled="true"]');
         if (disabledItem) {
           (disabledItem as HTMLElement).click();
@@ -142,7 +148,7 @@ describe('Menubar', () => {
   // -- Interaction tests ------------------------------------------------------
 
   describe('interaction', () => {
-    it('calls onClick when menu item is clicked', () => {
+    it('calls onClick when menu item is clicked', async () => {
       const onClick = vi.fn();
       const menus: MenuDefinition[] = [
         {
@@ -158,7 +164,10 @@ describe('Menubar', () => {
       );
       // Open the menu
       const trigger = container.querySelector('[role="menuitem"]') as HTMLElement;
-      if (trigger) trigger.click();
+      if (trigger) {
+        trigger.click();
+        await tick();
+      }
       // Find and click the sub-item
       const allItems = container.querySelectorAll('[role="menuitem"]');
       const doItem = Array.from(allItems).find(
@@ -166,32 +175,37 @@ describe('Menubar', () => {
       ) as HTMLElement;
       if (doItem) {
         doItem.click();
+        await tick();
         expect(onClick).toHaveBeenCalledTimes(1);
       }
       cleanup(container);
     });
 
-    it('closes menu on Escape key', () => {
+    it('closes menu on Escape key', async () => {
       const container = renderToContainer(
         createElement(Menubar, { menus: sampleMenus }),
       );
       const trigger = container.querySelector('[role="menuitem"]') as HTMLElement;
       if (trigger) {
         trigger.click();
+        await tick();
         document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        await tick();
       }
       cleanup(container);
     });
 
-    it('toggles menu open and closed on trigger click', () => {
+    it('toggles menu open and closed on trigger click', async () => {
       const container = renderToContainer(
         createElement(Menubar, { menus: sampleMenus }),
       );
       const trigger = container.querySelector('[role="menuitem"]') as HTMLElement;
       if (trigger) {
         trigger.click(); // open
+        await tick();
         expect(container.textContent).toContain('New');
         trigger.click(); // close
+        await tick();
       }
       cleanup(container);
     });

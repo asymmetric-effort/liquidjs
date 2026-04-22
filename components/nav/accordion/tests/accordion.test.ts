@@ -16,6 +16,10 @@ function cleanup(container: HTMLElement) {
   document.body.removeChild(container);
 }
 
+async function tick() {
+  await new Promise(r => setTimeout(r, 0));
+}
+
 const sampleSections: AccordionSection[] = [
   { id: 'sec-1', header: 'Section One', content: 'Content for section one' },
   { id: 'sec-2', header: 'Section Two', content: 'Content for section two' },
@@ -47,36 +51,40 @@ describe('Accordion', () => {
       cleanup(container);
     });
 
-    it('expands a section on header click', () => {
+    it('expands a section on header click', async () => {
       const container = renderToContainer(
         createElement(Accordion, { sections: sampleSections }),
       );
       const header = container.querySelector('[data-section-id="sec-2"]') as HTMLElement;
       expect(header.getAttribute('aria-expanded')).toBe('false');
       header.click();
+      await tick();
       expect(header.getAttribute('aria-expanded')).toBe('true');
       cleanup(container);
     });
 
-    it('collapses an expanded section on header click', () => {
+    it('collapses an expanded section on header click', async () => {
       const container = renderToContainer(
         createElement(Accordion, { sections: sampleSections, defaultExpanded: ['sec-1'] }),
       );
       const header = container.querySelector('[data-section-id="sec-1"]') as HTMLElement;
       expect(header.getAttribute('aria-expanded')).toBe('true');
       header.click();
+      await tick();
       expect(header.getAttribute('aria-expanded')).toBe('false');
       cleanup(container);
     });
 
-    it('supports multiple sections open when allowMultiple is true', () => {
+    it('supports multiple sections open when allowMultiple is true', async () => {
       const container = renderToContainer(
         createElement(Accordion, { sections: sampleSections, allowMultiple: true }),
       );
       const h1 = container.querySelector('[data-section-id="sec-1"]') as HTMLElement;
       const h2 = container.querySelector('[data-section-id="sec-2"]') as HTMLElement;
       h1.click();
+      await tick();
       h2.click();
+      await tick();
       expect(h1.getAttribute('aria-expanded')).toBe('true');
       expect(h2.getAttribute('aria-expanded')).toBe('true');
       cleanup(container);
@@ -133,38 +141,41 @@ describe('Accordion', () => {
   // -- Interaction tests ------------------------------------------------------
 
   describe('interaction', () => {
-    it('calls onChange with expanded IDs on toggle', () => {
+    it('calls onChange with expanded IDs on toggle', async () => {
       const onChange = vi.fn();
       const container = renderToContainer(
         createElement(Accordion, { sections: sampleSections, onChange }),
       );
       const header = container.querySelector('[data-section-id="sec-1"]') as HTMLElement;
       header.click();
+      await tick();
       expect(onChange).toHaveBeenCalledWith(['sec-1']);
       cleanup(container);
     });
 
-    it('toggles via Enter key', () => {
+    it('toggles via Enter key', async () => {
       const container = renderToContainer(
         createElement(Accordion, { sections: sampleSections }),
       );
       const header = container.querySelector('[data-section-id="sec-1"]') as HTMLElement;
       header.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+      await tick();
       expect(header.getAttribute('aria-expanded')).toBe('true');
       cleanup(container);
     });
 
-    it('toggles via Space key', () => {
+    it('toggles via Space key', async () => {
       const container = renderToContainer(
         createElement(Accordion, { sections: sampleSections }),
       );
       const header = container.querySelector('[data-section-id="sec-2"]') as HTMLElement;
       header.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+      await tick();
       expect(header.getAttribute('aria-expanded')).toBe('true');
       cleanup(container);
     });
 
-    it('in single mode, expanding one collapses the other', () => {
+    it('in single mode, expanding one collapses the other', async () => {
       const container = renderToContainer(
         createElement(Accordion, { sections: sampleSections, defaultExpanded: ['sec-1'] }),
       );
@@ -172,6 +183,7 @@ describe('Accordion', () => {
       const h2 = container.querySelector('[data-section-id="sec-2"]') as HTMLElement;
       expect(h1.getAttribute('aria-expanded')).toBe('true');
       h2.click();
+      await tick();
       expect(h1.getAttribute('aria-expanded')).toBe('false');
       expect(h2.getAttribute('aria-expanded')).toBe('true');
       cleanup(container);

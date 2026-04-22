@@ -16,6 +16,10 @@ function cleanup(container: HTMLElement) {
   document.body.removeChild(container);
 }
 
+async function tick() {
+  await new Promise(r => setTimeout(r, 0));
+}
+
 const sampleItems: SidebarItem[] = [
   { id: 'home', label: 'Home', icon: 'H' },
   {
@@ -150,7 +154,7 @@ describe('Sidebar', () => {
       cleanup(container);
     });
 
-    it('expands nested items on parent click', () => {
+    it('expands nested items on parent click', async () => {
       const container = renderToContainer(
         createElement(Sidebar, { items: sampleItems }),
       );
@@ -163,6 +167,7 @@ describe('Sidebar', () => {
       });
       if (settingsBtn) {
         settingsBtn.click();
+        await tick();
         // After expanding, children should be visible
         expect(container.textContent).toContain('General');
         expect(container.textContent).toContain('Security');
@@ -170,7 +175,7 @@ describe('Sidebar', () => {
       cleanup(container);
     });
 
-    it('collapses nested items on second parent click', () => {
+    it('collapses nested items on second parent click', async () => {
       const container = renderToContainer(
         createElement(Sidebar, { items: sampleItems }),
       );
@@ -181,7 +186,9 @@ describe('Sidebar', () => {
       });
       if (settingsBtn) {
         settingsBtn.click(); // expand
+        await tick();
         settingsBtn.click(); // collapse
+        await tick();
       }
       cleanup(container);
     });

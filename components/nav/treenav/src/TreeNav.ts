@@ -246,8 +246,8 @@ function TreeNodeRow(props: TreeNodeRowProps) {
     {
       ref: rowRef,
       role: 'treeitem',
-      'aria-expanded': isLeaf ? undefined : node.expanded,
-      'aria-selected': isSelected,
+      'aria-expanded': isLeaf ? undefined : String(node.expanded),
+      'aria-selected': isSelected ? 'true' : 'false',
       'aria-level': depth + 1,
       tabIndex: isFocused ? 0 : -1,
       style: {

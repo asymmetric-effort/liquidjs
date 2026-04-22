@@ -287,7 +287,7 @@ function MenuTrigger(props: {
         style: triggerStyle,
         onClick: handleClick,
         'aria-haspopup': 'true',
-        'aria-expanded': isOpen,
+        'aria-expanded': String(isOpen),
         tabIndex: 0,
       },
       menu.label,

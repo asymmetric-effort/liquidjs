@@ -186,7 +186,7 @@ function SidebarNavItem(props: {
       onClick: handleClick,
       onMouseEnter,
       onMouseLeave,
-      'aria-selected': isSelected || undefined,
+      'aria-selected': isSelected ? 'true' : 'false',
       title: collapsed ? item.label : undefined,
     },
     iconEl,

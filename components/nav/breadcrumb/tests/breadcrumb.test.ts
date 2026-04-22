@@ -16,6 +16,10 @@ function cleanup(container: HTMLElement) {
   document.body.removeChild(container);
 }
 
+async function tick() {
+  await new Promise(r => setTimeout(r, 0));
+}
+
 const sampleItems: BreadcrumbItem[] = [
   { label: 'Home', href: '/' },
   { label: 'Products', href: '/products' },
@@ -160,7 +164,7 @@ describe('Breadcrumb', () => {
       cleanup(container);
     });
 
-    it('expands collapsed items when ellipsis is clicked', () => {
+    it('expands collapsed items when ellipsis is clicked', async () => {
       const manyItems: BreadcrumbItem[] = [
         { label: 'Home', href: '/' },
         { label: 'A', href: '/a' },
@@ -174,6 +178,7 @@ describe('Breadcrumb', () => {
       const ellipsisBtn = container.querySelector('[aria-label="Show all breadcrumb items"]') as HTMLElement;
       expect(ellipsisBtn).toBeTruthy();
       ellipsisBtn.click();
+      await tick();
       // After expanding, all items should be visible
       expect(container.textContent).toContain('A');
       expect(container.textContent).toContain('B');

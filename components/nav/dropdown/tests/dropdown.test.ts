@@ -16,6 +16,10 @@ function cleanup(container: HTMLElement) {
   document.body.removeChild(container);
 }
 
+async function tick() {
+  await new Promise(r => setTimeout(r, 0));
+}
+
 const sampleItems: DropdownItem[] = [
   { id: 'a', label: 'Alpha', onClick: vi.fn() },
   { id: 'b', label: 'Beta', onClick: vi.fn() },
@@ -36,12 +40,13 @@ describe('Dropdown', () => {
       cleanup(container);
     });
 
-    it('shows dropdown items when trigger is clicked', () => {
+    it('shows dropdown items when trigger is clicked', async () => {
       const container = renderToContainer(
         createElement(Dropdown, { label: 'Menu', items: sampleItems }),
       );
       const trigger = container.querySelector('button')!;
       trigger.click();
+      await tick();
       const menuItems = container.querySelectorAll('[role="menuitem"]');
       expect(menuItems.length).toBe(3);
       expect(menuItems[0]!.textContent).toContain('Alpha');
@@ -50,18 +55,19 @@ describe('Dropdown', () => {
       cleanup(container);
     });
 
-    it('sets aria-expanded on trigger', () => {
+    it('sets aria-expanded on trigger', async () => {
       const container = renderToContainer(
         createElement(Dropdown, { label: 'Menu', items: sampleItems }),
       );
       const trigger = container.querySelector('button')!;
       expect(trigger.getAttribute('aria-expanded')).toBe('false');
       trigger.click();
+      await tick();
       expect(trigger.getAttribute('aria-expanded')).toBe('true');
       cleanup(container);
     });
 
-    it('renders items with icons', () => {
+    it('renders items with icons', async () => {
       const items: DropdownItem[] = [
         { id: 'x', label: 'Save', icon: 'S' },
       ];
@@ -69,13 +75,14 @@ describe('Dropdown', () => {
         createElement(Dropdown, { label: 'File', items }),
       );
       container.querySelector('button')!.click();
+      await tick();
       const menuItem = container.querySelector('[role="menuitem"]')!;
       expect(menuItem.textContent).toContain('S');
       expect(menuItem.textContent).toContain('Save');
       cleanup(container);
     });
 
-    it('renders divider items', () => {
+    it('renders divider items', async () => {
       const items: DropdownItem[] = [
         { id: 'a', label: 'One' },
         { id: 'div', label: '', divider: true },
@@ -85,6 +92,7 @@ describe('Dropdown', () => {
         createElement(Dropdown, { label: 'Menu', items }),
       );
       container.querySelector('button')!.click();
+      await tick();
       const separator = container.querySelector('[role="separator"]');
       expect(separator).toBeTruthy();
       cleanup(container);
@@ -94,18 +102,19 @@ describe('Dropdown', () => {
   // -- Sad path tests ---------------------------------------------------------
 
   describe('sad path', () => {
-    it('renders with empty items array', () => {
+    it('renders with empty items array', async () => {
       const container = renderToContainer(
         createElement(Dropdown, { label: 'Empty', items: [] }),
       );
       const trigger = container.querySelector('button')!;
       trigger.click();
+      await tick();
       const menuItems = container.querySelectorAll('[role="menuitem"]');
       expect(menuItems.length).toBe(0);
       cleanup(container);
     });
 
-    it('renders disabled items as non-interactive', () => {
+    it('renders disabled items as non-interactive', async () => {
       const onClick = vi.fn();
       const items: DropdownItem[] = [
         { id: 'dis', label: 'Disabled', disabled: true, onClick },
@@ -114,6 +123,7 @@ describe('Dropdown', () => {
         createElement(Dropdown, { label: 'Menu', items }),
       );
       container.querySelector('button')!.click();
+      await tick();
       const menuItem = container.querySelector('[role="menuitem"]') as HTMLButtonElement;
       expect(menuItem.getAttribute('aria-disabled')).toBe('true');
       menuItem.click();
@@ -121,7 +131,7 @@ describe('Dropdown', () => {
       cleanup(container);
     });
 
-    it('handles missing onClick on items', () => {
+    it('handles missing onClick on items', async () => {
       const items: DropdownItem[] = [
         { id: 'no-handler', label: 'No handler' },
       ];
@@ -129,6 +139,7 @@ describe('Dropdown', () => {
         createElement(Dropdown, { label: 'Menu', items }),
       );
       container.querySelector('button')!.click();
+      await tick();
       const menuItem = container.querySelector('[role="menuitem"]') as HTMLButtonElement;
       expect(() => menuItem.click()).not.toThrow();
       cleanup(container);
@@ -138,30 +149,34 @@ describe('Dropdown', () => {
   // -- Interaction tests ------------------------------------------------------
 
   describe('interaction', () => {
-    it('closes dropdown when trigger is clicked again', () => {
+    it('closes dropdown when trigger is clicked again', async () => {
       const container = renderToContainer(
         createElement(Dropdown, { label: 'Menu', items: sampleItems }),
       );
       const trigger = container.querySelector('button')!;
       trigger.click();
+      await tick();
       expect(container.querySelectorAll('[role="menuitem"]').length).toBe(3);
       trigger.click();
+      await tick();
       expect(container.querySelectorAll('[role="menuitem"]').length).toBe(0);
       cleanup(container);
     });
 
-    it('closes dropdown on Escape key', () => {
+    it('closes dropdown on Escape key', async () => {
       const container = renderToContainer(
         createElement(Dropdown, { label: 'Menu', items: sampleItems }),
       );
       container.querySelector('button')!.click();
+      await tick();
       expect(container.querySelectorAll('[role="menuitem"]').length).toBe(3);
       document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+      await tick();
       expect(container.querySelectorAll('[role="menuitem"]').length).toBe(0);
       cleanup(container);
     });
 
-    it('calls onClick when item is clicked', () => {
+    it('calls onClick when item is clicked', async () => {
       const onClick = vi.fn();
       const items: DropdownItem[] = [
         { id: 'click-me', label: 'Click Me', onClick },
@@ -170,19 +185,23 @@ describe('Dropdown', () => {
         createElement(Dropdown, { label: 'Menu', items }),
       );
       container.querySelector('button')!.click();
+      await tick();
       const menuItem = container.querySelector('[role="menuitem"]') as HTMLElement;
       menuItem.click();
+      await tick();
       expect(onClick).toHaveBeenCalledTimes(1);
       cleanup(container);
     });
 
-    it('closes on item select when closeOnSelect is true', () => {
+    it('closes on item select when closeOnSelect is true', async () => {
       const container = renderToContainer(
         createElement(Dropdown, { label: 'Menu', items: sampleItems, closeOnSelect: true }),
       );
       container.querySelector('button')!.click();
+      await tick();
       const menuItem = container.querySelector('[role="menuitem"]') as HTMLElement;
       menuItem.click();
+      await tick();
       expect(container.querySelectorAll('[role="menuitem"]').length).toBe(0);
       cleanup(container);
     });
