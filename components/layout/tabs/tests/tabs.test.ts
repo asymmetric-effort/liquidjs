@@ -72,10 +72,11 @@ describe('Tabs', () => {
       expect(panel.textContent).toBe('Content 2');
     });
 
-    it('switches tab on click', () => {
+    it('switches tab on click', async () => {
       render(createElement(Tabs, { tabs: makeTabs() }));
       const buttons = container.querySelectorAll('[role="tab"]');
       (buttons[1] as HTMLElement).click();
+      await new Promise((r) => setTimeout(r, 20));
       const panel = container.querySelector('[role="tabpanel"]') as HTMLElement;
       expect(panel.textContent).toBe('Content 2');
     });
@@ -201,65 +202,87 @@ describe('Tabs', () => {
   });
 
   describe('keyboard navigation', () => {
-    it('ArrowRight moves to next tab', () => {
+    it('ArrowRight moves to next tab', async () => {
       render(createElement(Tabs, { tabs: makeTabs() }));
       const buttons = container.querySelectorAll('[role="tab"]');
       const event = new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true });
       (buttons[0] as HTMLElement).dispatchEvent(event);
+      await new Promise((r) => setTimeout(r, 20));
       const panel = container.querySelector('[role="tabpanel"]') as HTMLElement;
       expect(panel.textContent).toBe('Content 2');
     });
 
-    it('ArrowLeft moves to previous tab', () => {
-      render(createElement(Tabs, { tabs: makeTabs(), activeTab: 'tab2' }));
+    it('ArrowLeft moves to previous tab', async () => {
+      render(createElement(Tabs, { tabs: makeTabs() }));
+      // Navigate to tab2 first via click (uncontrolled mode)
       const buttons = container.querySelectorAll('[role="tab"]');
+      (buttons[1] as HTMLElement).click();
+      await new Promise((r) => setTimeout(r, 20));
+      // Now press ArrowLeft to go back to tab1
+      const updatedButtons = container.querySelectorAll('[role="tab"]');
       const event = new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true });
-      (buttons[1] as HTMLElement).dispatchEvent(event);
+      (updatedButtons[1] as HTMLElement).dispatchEvent(event);
+      await new Promise((r) => setTimeout(r, 20));
       const panel = container.querySelector('[role="tabpanel"]') as HTMLElement;
       expect(panel.textContent).toBe('Content 1');
     });
 
-    it('Home selects first tab', () => {
-      render(createElement(Tabs, { tabs: makeTabs(), activeTab: 'tab3' }));
+    it('Home selects first tab', async () => {
+      render(createElement(Tabs, { tabs: makeTabs() }));
+      // Navigate to tab3 first via click (uncontrolled mode)
       const buttons = container.querySelectorAll('[role="tab"]');
+      (buttons[2] as HTMLElement).click();
+      await new Promise((r) => setTimeout(r, 20));
+      // Now press Home to go to first tab
+      const updatedButtons = container.querySelectorAll('[role="tab"]');
       const event = new KeyboardEvent('keydown', { key: 'Home', bubbles: true });
-      (buttons[2] as HTMLElement).dispatchEvent(event);
+      (updatedButtons[2] as HTMLElement).dispatchEvent(event);
+      await new Promise((r) => setTimeout(r, 20));
       const panel = container.querySelector('[role="tabpanel"]') as HTMLElement;
       expect(panel.textContent).toBe('Content 1');
     });
 
-    it('End selects last tab', () => {
+    it('End selects last tab', async () => {
       render(createElement(Tabs, { tabs: makeTabs() }));
       const buttons = container.querySelectorAll('[role="tab"]');
       const event = new KeyboardEvent('keydown', { key: 'End', bubbles: true });
       (buttons[0] as HTMLElement).dispatchEvent(event);
+      await new Promise((r) => setTimeout(r, 20));
       const panel = container.querySelector('[role="tabpanel"]') as HTMLElement;
       expect(panel.textContent).toBe('Content 3');
     });
 
-    it('ArrowRight wraps from last to first', () => {
-      render(createElement(Tabs, { tabs: makeTabs(), activeTab: 'tab3' }));
+    it('ArrowRight wraps from last to first', async () => {
+      render(createElement(Tabs, { tabs: makeTabs() }));
+      // Navigate to tab3 first via click (uncontrolled mode)
       const buttons = container.querySelectorAll('[role="tab"]');
+      (buttons[2] as HTMLElement).click();
+      await new Promise((r) => setTimeout(r, 20));
+      // Now press ArrowRight to wrap to first tab
+      const updatedButtons = container.querySelectorAll('[role="tab"]');
       const event = new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true });
-      (buttons[2] as HTMLElement).dispatchEvent(event);
+      (updatedButtons[2] as HTMLElement).dispatchEvent(event);
+      await new Promise((r) => setTimeout(r, 20));
       const panel = container.querySelector('[role="tabpanel"]') as HTMLElement;
       expect(panel.textContent).toBe('Content 1');
     });
 
-    it('ArrowLeft wraps from first to last', () => {
+    it('ArrowLeft wraps from first to last', async () => {
       render(createElement(Tabs, { tabs: makeTabs() }));
       const buttons = container.querySelectorAll('[role="tab"]');
       const event = new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true });
       (buttons[0] as HTMLElement).dispatchEvent(event);
+      await new Promise((r) => setTimeout(r, 20));
       const panel = container.querySelector('[role="tabpanel"]') as HTMLElement;
       expect(panel.textContent).toBe('Content 3');
     });
 
-    it('vertical tabs use ArrowUp/ArrowDown', () => {
+    it('vertical tabs use ArrowUp/ArrowDown', async () => {
       render(createElement(Tabs, { tabs: makeTabs(), position: 'left' }));
       const buttons = container.querySelectorAll('[role="tab"]');
       const event = new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true });
       (buttons[0] as HTMLElement).dispatchEvent(event);
+      await new Promise((r) => setTimeout(r, 20));
       const panel = container.querySelector('[role="tabpanel"]') as HTMLElement;
       expect(panel.textContent).toBe('Content 2');
     });

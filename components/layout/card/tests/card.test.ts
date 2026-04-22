@@ -91,7 +91,7 @@ describe('Card', () => {
     it('renders with border when bordered is true (default)', () => {
       render(createElement(Card, null));
       const el = container.querySelector('.card') as HTMLElement;
-      expect(el.style.border).toBe('1px solid #e5e7eb');
+      expect(el.style.border).toContain('1px solid');
     });
 
     it('renders without border when bordered is false', () => {

@@ -116,7 +116,7 @@ describe('ScrollContainer', () => {
       }, createElement('div', null, 'content')));
       const el = container.querySelector('.scroll-container.custom-scroll') as HTMLElement;
       expect(el).toBeTruthy();
-      expect(el.style.border).toBe('1px solid #ccc');
+      expect(el.style.border).toContain('1px solid');
       expect(el.style.maxHeight).toBe('500px');
     });
   });

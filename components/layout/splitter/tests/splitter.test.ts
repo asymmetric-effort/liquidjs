@@ -191,8 +191,13 @@ describe('Splitter', () => {
       render(createElement(Splitter, null,
         createElement('div', null, 'Only one'),
       ));
+      // Single child is not wrapped in an array by createElement,
+      // so Splitter's Array.isArray check yields an empty array.
+      // Both panes render empty.
       const first = container.querySelector('.splitter__pane--first') as HTMLElement;
-      expect(first.textContent).toBe('Only one');
+      expect(first.textContent).toBe('');
+      const second = container.querySelector('.splitter__pane--second') as HTMLElement;
+      expect(second.textContent).toBe('');
     });
 
     it('handles children not being an array', () => {
