@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/overlay-modal",
+  "version": "0.0.1",
+  "description": "Modal dialog overlay component for LiquidJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}

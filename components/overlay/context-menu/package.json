@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/overlay-context-menu",
+  "version": "0.0.1",
+  "description": "Right-click context menu component for LiquidJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}

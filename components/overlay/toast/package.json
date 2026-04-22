@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/overlay-toast",
+  "version": "0.0.1",
+  "description": "Toast notification system for LiquidJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}
