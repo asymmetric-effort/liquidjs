@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/nav-treenav",
+  "version": "0.0.1",
+  "description": "Accessible tree navigation component for LiquidJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}

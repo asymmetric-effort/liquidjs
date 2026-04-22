@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/nav-dropdown",
+  "version": "0.0.1",
+  "description": "Dropdown menu navigation component for LiquidJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}

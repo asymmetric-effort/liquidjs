@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/nav-wrapper",
+  "version": "0.0.1",
+  "description": "Base container for LiquidJS navigation components",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}

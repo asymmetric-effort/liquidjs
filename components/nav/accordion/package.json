@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/nav-accordion",
+  "version": "0.0.1",
+  "description": "Accordion navigation component for LiquidJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}

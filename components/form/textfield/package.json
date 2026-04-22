@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/form-textfield",
+  "version": "0.0.1",
+  "description": "Single-line text input component for LiquidJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}
