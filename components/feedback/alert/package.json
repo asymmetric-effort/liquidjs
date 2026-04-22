@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/feedback-alert",
+  "version": "0.0.1",
+  "description": "Alert/banner message for LiquidJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}

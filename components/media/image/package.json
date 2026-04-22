@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/media-image",
+  "version": "0.0.1",
+  "description": "Enhanced image with lazy loading and fallback for LiquidJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}

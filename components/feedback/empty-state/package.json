@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/feedback-empty-state",
+  "version": "0.0.1",
+  "description": "Empty content placeholder for LiquidJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}

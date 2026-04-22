@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/feedback-progress-bar",
+  "version": "0.0.1",
+  "description": "Progress indicator bar for LiquidJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}

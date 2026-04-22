@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/media-video-player",
+  "version": "0.0.1",
+  "description": "Simple video player wrapper for LiquidJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}
