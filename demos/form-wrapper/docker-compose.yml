@@ -1,0 +1,8 @@
+services:
+  ui:
+    build:
+      context: ../..
+      dockerfile: demos/form-wrapper/ui/Dockerfile
+    ports:
+      - "3000:80"
+    restart: unless-stopped

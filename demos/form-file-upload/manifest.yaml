@@ -1,0 +1,10 @@
+name: form-file-upload
+description: Interactive demo of the FileUpload form component - drag-and-drop file upload with validation
+features:
+  - useState
+  - useCallback
+  - createElement
+  - form components
+containers: 1
+ports:
+  - "3000:80"

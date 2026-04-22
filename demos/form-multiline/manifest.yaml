@@ -1,0 +1,10 @@
+name: form-multiline
+description: Interactive demo of the MultilineField form component - textarea, auto-resize, character count
+features:
+  - useState
+  - useCallback
+  - createElement
+  - form components
+containers: 1
+ports:
+  - "3000:80"

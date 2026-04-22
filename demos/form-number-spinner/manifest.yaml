@@ -1,0 +1,10 @@
+name: form-number-spinner
+description: Interactive demo of the NumberSpinner form component - numeric input with increment/decrement
+features:
+  - useState
+  - useCallback
+  - createElement
+  - form components
+containers: 1
+ports:
+  - "3000:80"

@@ -1,0 +1,10 @@
+name: form-textfield
+description: Interactive demo of the TextField form component - single-line input, prefix/suffix, validation
+features:
+  - useState
+  - useCallback
+  - createElement
+  - form components
+containers: 1
+ports:
+  - "3000:80"

@@ -1,0 +1,10 @@
+name: form-select
+description: Interactive demo of the Select form component - dropdown with search, multi-select, clearable
+features:
+  - useState
+  - useCallback
+  - createElement
+  - form components
+containers: 1
+ports:
+  - "3000:80"

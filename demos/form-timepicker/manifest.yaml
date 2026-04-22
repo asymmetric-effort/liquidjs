@@ -1,0 +1,10 @@
+name: form-timepicker
+description: Interactive demo of the TimePicker form component - time selection with hour/minute spinners
+features:
+  - useState
+  - useCallback
+  - createElement
+  - form components
+containers: 1
+ports:
+  - "3000:80"

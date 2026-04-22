@@ -1,0 +1,10 @@
+name: form-datepicker
+description: Interactive demo of the DatePicker form component - calendar dropdown with date constraints
+features:
+  - useState
+  - useCallback
+  - createElement
+  - form components
+containers: 1
+ports:
+  - "3000:80"

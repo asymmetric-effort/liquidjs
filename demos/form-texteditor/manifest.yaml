@@ -1,0 +1,10 @@
+name: form-texteditor
+description: Interactive demo of the TextEditor form component - WYSIWYG editor with formatting toolbar
+features:
+  - useState
+  - useCallback
+  - createElement
+  - form components
+containers: 1
+ports:
+  - "3000:80"

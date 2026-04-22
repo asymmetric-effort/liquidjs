@@ -1,0 +1,10 @@
+name: form-toggle
+description: Interactive demo of the Toggle form component - toggle switch with sliding animation
+features:
+  - useState
+  - useCallback
+  - createElement
+  - form components
+containers: 1
+ports:
+  - "3000:80"

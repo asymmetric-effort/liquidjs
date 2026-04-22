@@ -1,0 +1,10 @@
+name: form-slider
+description: Interactive demo of the Slider form component - range slider with marks and dual handles
+features:
+  - useState
+  - useCallback
+  - createElement
+  - form components
+containers: 1
+ports:
+  - "3000:80"

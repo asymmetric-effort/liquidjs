@@ -1,0 +1,10 @@
+name: form-color-picker
+description: Interactive demo of the ColorPicker form component - color swatch grid with hex input
+features:
+  - useState
+  - useCallback
+  - createElement
+  - form components
+containers: 1
+ports:
+  - "3000:80"

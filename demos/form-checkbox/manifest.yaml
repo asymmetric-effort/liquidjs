@@ -1,0 +1,10 @@
+name: form-checkbox
+description: Interactive demo of the Checkbox form component - custom checkbox with indeterminate state
+features:
+  - useState
+  - useCallback
+  - createElement
+  - form components
+containers: 1
+ports:
+  - "3000:80"
