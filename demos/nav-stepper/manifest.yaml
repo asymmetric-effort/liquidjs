@@ -1,0 +1,12 @@
+name: nav-stepper
+description: Interactive demo of the Stepper step wizard indicator component
+features:
+  - step progression with prev/next
+  - clickable steps
+  - horizontal and vertical orientation
+  - circle and dot variants
+  - completed/active/pending states
+  - step descriptions
+containers: 1
+ports:
+  - "3006:80"

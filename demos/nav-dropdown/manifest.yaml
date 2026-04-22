@@ -1,0 +1,11 @@
+name: nav-dropdown
+description: Interactive demo of the Dropdown navigation menu component
+features:
+  - dropdown trigger and panel
+  - nested submenus
+  - dividers and icons
+  - disabled items
+  - close on select and Escape
+containers: 1
+ports:
+  - "3001:80"

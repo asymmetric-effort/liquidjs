@@ -1,0 +1,8 @@
+services:
+  ui:
+    build:
+      context: ../..
+      dockerfile: demos/nav-sidebar/ui/Dockerfile
+    ports:
+      - "3007:80"
+    restart: unless-stopped

@@ -1,0 +1,12 @@
+name: nav-menubar
+description: Interactive demo of the Menubar application menu bar component
+features:
+  - top-level menu triggers
+  - dropdown menu panels
+  - dividers between item groups
+  - keyboard shortcut labels
+  - disabled menu items
+  - close on Escape
+containers: 1
+ports:
+  - "3009:80"

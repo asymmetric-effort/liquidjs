@@ -1,0 +1,11 @@
+name: nav-wrapper
+description: Interactive demo of the NavWrapper base navigation container component
+features:
+  - NavWrapper component
+  - orientation toggle
+  - keyboard navigation
+  - hover and active states
+  - buildNavItemStyle helper
+containers: 1
+ports:
+  - "3000:80"

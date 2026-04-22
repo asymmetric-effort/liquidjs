@@ -1,0 +1,8 @@
+services:
+  ui:
+    build:
+      context: ../..
+      dockerfile: demos/nav-treenav/ui/Dockerfile
+    ports:
+      - "3002:80"
+    restart: unless-stopped

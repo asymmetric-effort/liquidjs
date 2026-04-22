@@ -1,0 +1,12 @@
+name: nav-toolbar
+description: Interactive demo of the Toolbar horizontal button group component
+features:
+  - button items with icons
+  - toggle active state
+  - separators and spacers
+  - size variants (sm, md, lg)
+  - flat and raised variants
+  - disabled buttons
+containers: 1
+ports:
+  - "3008:80"

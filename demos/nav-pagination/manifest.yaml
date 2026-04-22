@@ -1,0 +1,11 @@
+name: nav-pagination
+description: Interactive demo of the Pagination page navigation component
+features:
+  - page navigation with first/last/prev/next
+  - ellipsis for large page ranges
+  - configurable page size
+  - disabled state
+  - active page highlighting
+containers: 1
+ports:
+  - "3005:80"

@@ -1,0 +1,11 @@
+name: nav-breadcrumb
+description: Interactive demo of the Breadcrumb trail navigation component
+features:
+  - breadcrumb trail with links
+  - collapsible middle items with maxItems
+  - custom separators
+  - size variants (sm, md, lg)
+  - interactive path navigation
+containers: 1
+ports:
+  - "3004:80"

@@ -1,0 +1,8 @@
+services:
+  ui:
+    build:
+      context: ../..
+      dockerfile: demos/nav-stepper/ui/Dockerfile
+    ports:
+      - "3006:80"
+    restart: unless-stopped

@@ -1,0 +1,12 @@
+name: nav-accordion
+description: Interactive demo of the Accordion expandable section navigation component
+features:
+  - expand and collapse sections
+  - single and multiple mode
+  - disabled sections
+  - animated transitions
+  - section icons
+  - onChange callback
+containers: 1
+ports:
+  - "3003:80"

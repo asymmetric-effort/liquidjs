@@ -1,0 +1,12 @@
+name: nav-treenav
+description: Interactive demo of the TreeNav hierarchical tree navigation component
+features:
+  - hierarchical tree structure
+  - expand and collapse nodes
+  - node selection
+  - connector lines
+  - keyboard navigation
+  - node icons
+containers: 1
+ports:
+  - "3002:80"

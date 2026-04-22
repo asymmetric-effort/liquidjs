@@ -1,0 +1,8 @@
+services:
+  ui:
+    build:
+      context: ../..
+      dockerfile: demos/nav-accordion/ui/Dockerfile
+    ports:
+      - "3003:80"
+    restart: unless-stopped

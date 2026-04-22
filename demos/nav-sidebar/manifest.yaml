@@ -1,0 +1,12 @@
+name: nav-sidebar
+description: Interactive demo of the Sidebar collapsible navigation panel component
+features:
+  - vertical navigation with icons
+  - collapse to icon-only mode
+  - nested expandable sections
+  - badge indicators
+  - selected item highlighting
+  - tooltip on collapsed hover
+containers: 1
+ports:
+  - "3007:80"
