@@ -54,3 +54,30 @@ Keys enable O(n) reconciliation of reordered lists. Without keys, LiquidJS falls
 - `Update` — Existing node with changed props
 - `Deletion` — Node removed from tree
 - `Ref` — Ref needs attaching/detaching
+
+## Lane-Based Priority System
+
+Each fiber has `lanes` and `childLanes` bitmask fields for concurrent rendering:
+
+| Lane | Value | Purpose |
+|------|-------|---------|
+| `SyncLane` | 1 | `flushSync` — highest priority, synchronous |
+| `InputContinuousLane` | 2 | Drag, scroll, hover |
+| `DefaultLane` | 4 | Normal `useState`/`useReducer` updates |
+| `TransitionLane1/2` | 8/16 | `startTransition` — interruptible, lower priority |
+| `IdleLane` | 64 | Background/offscreen work |
+
+### Scheduling
+
+The work loop has two modes:
+- **`workLoopSync`** — processes the entire tree without yielding (used by `SyncLane` and `DefaultLane`)
+- **`workLoopConcurrent`** — yields to the host after each 5ms frame budget via `shouldYieldToHost()` (used by `TransitionLane` and `IdleLane`)
+
+`ensureRootIsScheduled` inspects `FiberRoot.pendingLanes` and picks the appropriate mode. Higher-priority updates can interrupt in-progress lower-priority work.
+
+### State Update Flow
+
+1. `setState()` calls `requestUpdateLane()` → returns lane based on context (transition, flushSync, or default)
+2. `markFiberWithLane()` propagates the lane up the fiber tree via `childLanes`
+3. `ensureRootIsScheduled()` schedules sync or concurrent work based on the highest-priority pending lane
+4. After commit, completed lanes are cleared from `pendingLanes`
