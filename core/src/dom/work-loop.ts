@@ -35,6 +35,13 @@ export interface FiberRoot {
   current: Fiber;
   pendingChildren: LiquidNode;
   callbackScheduled: boolean;
+
+  // Lane-based concurrent scheduling
+  pendingLanes: number;
+  suspendedLanes: number;
+  expirationTimes: number[];
+  callbackNode: unknown;
+  callbackPriority: number;
 }
 
 const fiberRoots = new Map<Element | DocumentFragment, FiberRoot>();
@@ -48,6 +55,13 @@ export function createFiberRoot(container: Element | DocumentFragment): FiberRoo
     current: rootFiber,
     pendingChildren: null,
     callbackScheduled: false,
+
+    // Lane-based concurrent scheduling (initialized to idle)
+    pendingLanes: 0,
+    suspendedLanes: 0,
+    expirationTimes: new Array(8).fill(-1),
+    callbackNode: null,
+    callbackPriority: 0,
   };
 
   return root;
