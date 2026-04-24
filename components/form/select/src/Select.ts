@@ -352,12 +352,13 @@ export function Select(props: SelectProps) {
       )
     : null;
 
-  return FormFieldWrapper({
+  return createElement(FormFieldWrapper, {
     label,
     error,
     helpText,
     disabled,
-    children: createElement(
+  },
+    createElement(
       'div',
       {
         ref: containerRef,
@@ -366,5 +367,5 @@ export function Select(props: SelectProps) {
       trigger,
       dropdown,
     ),
-  });
+  );
 }

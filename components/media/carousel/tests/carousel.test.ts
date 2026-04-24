@@ -1,5 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { Carousel } from '../src/index';
+import { installMockDispatcher, teardownMockDispatcher } from '../../../_test-helpers/mock-dispatcher';
+
+beforeEach(() => installMockDispatcher());
+afterEach(() => teardownMockDispatcher());
 
 const sampleItems = [
   { content: 'Slide 1' },
@@ -37,7 +41,7 @@ describe('Carousel — happy path', () => {
   it('renders arrows by default', () => {
     const el = Carousel({ items: sampleItems });
     // Should have prev/next arrow buttons
-    const arrowChildren = el.children.filter(
+    const arrowChildren = (Array.isArray(el.props.children) ? el.props.children : [el.props.children]).filter(
       (c: any) => c && c.type === 'button' && c.props['aria-label']?.includes('slide'),
     );
     expect(arrowChildren.length).toBe(2);
@@ -45,7 +49,7 @@ describe('Carousel — happy path', () => {
 
   it('hides arrows when showArrows is false', () => {
     const el = Carousel({ items: sampleItems, showArrows: false });
-    const arrowChildren = el.children.filter(
+    const arrowChildren = (Array.isArray(el.props.children) ? el.props.children : [el.props.children]).filter(
       (c: any) => c && c.type === 'button' && c.props['aria-label']?.includes('slide'),
     );
     expect(arrowChildren.length).toBe(0);
@@ -95,7 +99,7 @@ describe('Carousel — sad path', () => {
 describe('Carousel — navigation', () => {
   it('renders prev button with correct aria-label', () => {
     const el = Carousel({ items: sampleItems });
-    const prevBtn = el.children.find(
+    const prevBtn = (Array.isArray(el.props.children) ? el.props.children : [el.props.children]).find(
       (c: any) => c && c.props?.['aria-label'] === 'Previous slide',
     );
     expect(prevBtn).toBeDefined();
@@ -103,7 +107,7 @@ describe('Carousel — navigation', () => {
 
   it('renders next button with correct aria-label', () => {
     const el = Carousel({ items: sampleItems });
-    const nextBtn = el.children.find(
+    const nextBtn = (Array.isArray(el.props.children) ? el.props.children : [el.props.children]).find(
       (c: any) => c && c.props?.['aria-label'] === 'Next slide',
     );
     expect(nextBtn).toBeDefined();
@@ -112,8 +116,8 @@ describe('Carousel — navigation', () => {
   it('renders dot buttons for each slide', () => {
     const el = Carousel({ items: sampleItems });
     // Find the dots container
-    const dotsContainer = el.children.find(
-      (c: any) => c && c.type === 'div' && c.children?.length === sampleItems.length,
+    const dotsContainer = (Array.isArray(el.props.children) ? el.props.children : [el.props.children]).find(
+      (c: any) => c && c.type === 'div' && (Array.isArray(c.props?.children) ? c.props.children.length : 0) === sampleItems.length,
     );
     expect(dotsContainer).toBeDefined();
   });

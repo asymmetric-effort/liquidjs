@@ -243,17 +243,18 @@ export function FileUpload(props: FileUploadProps) {
       )
     : null;
 
-  return FormFieldWrapper({
+  return createElement(FormFieldWrapper, {
     label,
     helpText,
     error: error || undefined,
     disabled,
-    children: createElement(
+  },
+    createElement(
       'div',
       null,
       hiddenInput,
       dropZone,
       fileList,
     ),
-  });
+  );
 }

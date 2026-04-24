@@ -155,7 +155,7 @@ export function NumberSpinner(props: NumberSpinnerProps) {
       type: 'button',
       style: btnStyle(canDecrement),
       onClick: handleDecrement,
-      disabled: disabled || !canDecrement,
+      disabled: disabled,
       'aria-label': 'Decrement',
       tabIndex: -1,
     },
@@ -192,7 +192,7 @@ export function NumberSpinner(props: NumberSpinnerProps) {
       type: 'button',
       style: btnStyle(canIncrement),
       onClick: handleIncrement,
-      disabled: disabled || !canIncrement,
+      disabled: disabled,
       'aria-label': 'Increment',
       tabIndex: -1,
     },
@@ -205,10 +205,11 @@ export function NumberSpinner(props: NumberSpinnerProps) {
   if (suffixEl) innerChildren.push(suffixEl);
   innerChildren.push(incrementBtn);
 
-  return FormFieldWrapper({
+  return createElement(FormFieldWrapper, {
     label,
     error,
     disabled,
-    children: createElement('div', { style: containerStyle }, ...innerChildren),
-  });
+  },
+    createElement('div', { style: containerStyle }, ...innerChildren),
+  );
 }

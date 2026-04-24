@@ -1,5 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { LineGraph } from '../src/index';
+import { installMockDispatcher, teardownMockDispatcher } from '../../../_test-helpers/mock-dispatcher';
+
+beforeEach(() => installMockDispatcher());
+afterEach(() => teardownMockDispatcher());
 
 const sampleData = [
   { x: 0, y: 10 },
@@ -111,7 +115,7 @@ describe('LineGraph — sad path', () => {
 describe('LineGraph — features', () => {
   it('renders grid lines when showGrid is true', () => {
     const el = LineGraph({ data: sampleData, showGrid: true });
-    const dashed = el.children.filter(
+    const dashed = (Array.isArray(el.props.children) ? el.props.children : [el.props.children]).filter(
       (c: any) => c && c.type === 'line' && c.props['stroke-dasharray'],
     );
     expect(dashed.length).toBeGreaterThan(0);
@@ -119,19 +123,19 @@ describe('LineGraph — features', () => {
 
   it('renders data point circles when showPoints is true', () => {
     const el = LineGraph({ data: sampleData, showPoints: true });
-    const circles = el.children.filter((c: any) => c && c.type === 'circle');
+    const circles = (Array.isArray(el.props.children) ? el.props.children : [el.props.children]).filter((c: any) => c && c.type === 'circle');
     expect(circles.length).toBe(sampleData.length);
   });
 
   it('renders polyline for the line', () => {
     const el = LineGraph({ data: sampleData });
-    const polylines = el.children.filter((c: any) => c && c.type === 'polyline');
+    const polylines = (Array.isArray(el.props.children) ? el.props.children : [el.props.children]).filter((c: any) => c && c.type === 'polyline');
     expect(polylines.length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders area polygon when showArea is true', () => {
     const el = LineGraph({ data: sampleData, showArea: true });
-    const polygons = el.children.filter((c: any) => c && c.type === 'polygon');
+    const polygons = (Array.isArray(el.props.children) ? el.props.children : [el.props.children]).filter((c: any) => c && c.type === 'polygon');
     expect(polygons.length).toBe(1);
   });
 });

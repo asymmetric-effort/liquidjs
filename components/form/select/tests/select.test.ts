@@ -11,6 +11,8 @@ function render(vnode: unknown): HTMLElement {
   return container;
 }
 
+const flush = () => new Promise((r) => setTimeout(r, 10));
+
 const OPTIONS = [
   { value: 'a', label: 'Alpha' },
   { value: 'b', label: 'Beta' },
@@ -30,11 +32,12 @@ describe('Select', () => {
       expect(el.textContent).toContain('Beta');
     });
 
-    it('fires onChange on option selection', () => {
+    it('fires onChange on option selection', async () => {
       const handler = vi.fn();
       const el = render(createElement(Select, { options: OPTIONS, value: '', onChange: handler }));
       const trigger = el.querySelector('[role="combobox"]') as HTMLElement;
       trigger.click();
+      await flush();
       const option = el.querySelector('[role="option"]') as HTMLElement;
       if (option) option.click();
       expect(handler).toHaveBeenCalled();
@@ -87,29 +90,32 @@ describe('Select', () => {
   });
 
   describe('interaction', () => {
-    it('opens dropdown on click', () => {
+    it('opens dropdown on click', async () => {
       const el = render(createElement(Select, { options: OPTIONS, value: '', onChange: vi.fn() }));
       const trigger = el.querySelector('[role="combobox"]') as HTMLElement;
       trigger.click();
+      await flush();
       const listbox = el.querySelector('[role="listbox"]');
       expect(listbox).toBeTruthy();
     });
 
-    it('selects option on click', () => {
+    it('selects option on click', async () => {
       const handler = vi.fn();
       const el = render(createElement(Select, { options: OPTIONS, value: '', onChange: handler }));
       const trigger = el.querySelector('[role="combobox"]') as HTMLElement;
       trigger.click();
+      await flush();
       const options = el.querySelectorAll('[role="option"]');
       if (options.length > 1) (options[1] as HTMLElement).click();
       expect(handler).toHaveBeenCalledWith('b');
     });
 
-    it('supports multiple selection mode', () => {
+    it('supports multiple selection mode', async () => {
       const handler = vi.fn();
       const el = render(createElement(Select, { options: OPTIONS, value: ['a'], onChange: handler, multiple: true }));
       const trigger = el.querySelector('[role="combobox"]') as HTMLElement;
       trigger.click();
+      await flush();
       const options = el.querySelectorAll('[role="option"]');
       if (options.length > 1) (options[1] as HTMLElement).click();
       expect(handler).toHaveBeenCalledWith(['a', 'b']);

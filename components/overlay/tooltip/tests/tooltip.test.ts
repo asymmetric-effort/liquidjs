@@ -1,6 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createElement } from '../../../../core/src/index';
 import { Tooltip } from '../src/index';
+import { installMockDispatcher, teardownMockDispatcher } from '../../../_test-helpers/mock-dispatcher';
+
+beforeEach(() => installMockDispatcher());
+afterEach(() => teardownMockDispatcher());
 
 function renderTooltip(overrides: Record<string, unknown> = {}) {
   const defaults = {

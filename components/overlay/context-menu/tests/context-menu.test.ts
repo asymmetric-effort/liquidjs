@@ -2,6 +2,10 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createElement } from '../../../../core/src/index';
 import { ContextMenu } from '../src/index';
 import type { ContextMenuItem } from '../src/index';
+import { installMockDispatcher, teardownMockDispatcher } from '../../../_test-helpers/mock-dispatcher';
+
+beforeEach(() => installMockDispatcher());
+afterEach(() => teardownMockDispatcher());
 
 function renderContextMenu(overrides: Record<string, unknown> = {}) {
   const defaultItems: ContextMenuItem[] = [

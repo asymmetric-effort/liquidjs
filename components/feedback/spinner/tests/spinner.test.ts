@@ -1,5 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { Spinner } from '../src/index';
+import { installMockDispatcher, teardownMockDispatcher } from '../../../_test-helpers/mock-dispatcher';
+
+beforeEach(() => installMockDispatcher());
+afterEach(() => teardownMockDispatcher());
 
 // ---------------------------------------------------------------------------
 // Happy-path tests
@@ -89,7 +93,7 @@ describe('Spinner — sad path', () => {
 describe('Spinner — animation', () => {
   it('produces a style element with keyframes', () => {
     const el = Spinner({});
-    const children = el.children;
+    const children = (Array.isArray(el.props.children) ? el.props.children : [el.props.children]);
     // First child should be the style element with keyframes
     const styleChild = children.find((c: any) => c && c.type === 'style');
     expect(styleChild).toBeDefined();
@@ -97,7 +101,7 @@ describe('Spinner — animation', () => {
 
   it('contains an SVG with animation style', () => {
     const el = Spinner({});
-    const svgChild = el.children.find((c: any) => c && c.type === 'svg');
+    const svgChild = (Array.isArray(el.props.children) ? el.props.children : [el.props.children]).find((c: any) => c && c.type === 'svg');
     expect(svgChild).toBeDefined();
   });
 });

@@ -275,10 +275,11 @@ export function Slider(props: SliderProps) {
     thumbs.push(createThumb(toPercent(values[0]), 'single', values[0]));
   }
 
-  return FormFieldWrapper({
+  return createElement(FormFieldWrapper, {
     label,
     error,
-    children: createElement(
+  },
+    createElement(
       'div',
       { style: containerStyle },
       createElement(
@@ -294,5 +295,5 @@ export function Slider(props: SliderProps) {
         ...markElements,
       ),
     ),
-  });
+  );
 }

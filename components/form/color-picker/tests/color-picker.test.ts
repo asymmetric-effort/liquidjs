@@ -11,6 +11,8 @@ function render(vnode: unknown): HTMLElement {
   return container;
 }
 
+const flush = () => new Promise((r) => setTimeout(r, 10));
+
 describe('ColorPicker', () => {
   describe('happy paths', () => {
     it('renders with defaults', () => {
@@ -23,12 +25,13 @@ describe('ColorPicker', () => {
       expect(el.textContent).toContain('#3b82f6');
     });
 
-    it('fires onChange on swatch click', () => {
+    it('fires onChange on swatch click', async () => {
       const handler = vi.fn();
       const el = render(createElement(ColorPicker, { value: '#ff0000', onChange: handler }));
-      // Open the picker
-      const trigger = el.querySelector('div > div > div') as HTMLElement;
+      // Open the picker — trigger is the flex container with the swatch
+      const trigger = el.querySelector('[style*="align-items: center"][style*="gap: 8px"]') as HTMLElement;
       if (trigger) trigger.click();
+      await flush();
       // Click a swatch
       const swatches = el.querySelectorAll('[title]');
       if (swatches.length > 0) (swatches[0] as HTMLElement).click();
@@ -68,31 +71,34 @@ describe('ColorPicker', () => {
   });
 
   describe('interaction', () => {
-    it('opens color dropdown on click', () => {
+    it('opens color dropdown on click', async () => {
       const el = render(createElement(ColorPicker, { value: '#ff0000', onChange: vi.fn() }));
-      const triggerArea = el.querySelector('div > div > div') as HTMLElement;
+      const triggerArea = el.querySelector('[style*="align-items: center"][style*="gap: 8px"]') as HTMLElement;
       if (triggerArea) triggerArea.click();
+      await flush();
       // After click, should see swatches
       const swatches = el.querySelectorAll('[title]');
       expect(swatches.length).toBeGreaterThan(0);
     });
 
-    it('selecting a preset color fires onChange', () => {
+    it('selecting a preset color fires onChange', async () => {
       const handler = vi.fn();
       const el = render(createElement(ColorPicker, { value: '#ff0000', onChange: handler }));
-      const triggerArea = el.querySelector('div > div > div') as HTMLElement;
+      const triggerArea = el.querySelector('[style*="align-items: center"][style*="gap: 8px"]') as HTMLElement;
       if (triggerArea) triggerArea.click();
+      await flush();
       const swatches = el.querySelectorAll('[title]');
       if (swatches.length > 5) (swatches[5] as HTMLElement).click();
       expect(handler).toHaveBeenCalled();
     });
 
-    it('renders with custom presets', () => {
+    it('renders with custom presets', async () => {
       const presets = ['#111', '#222', '#333'];
       const el = render(createElement(ColorPicker, { value: '#111', onChange: vi.fn(), presets }));
       // Open picker
-      const triggerArea = el.querySelector('div > div > div') as HTMLElement;
+      const triggerArea = el.querySelector('[style*="align-items: center"][style*="gap: 8px"]') as HTMLElement;
       if (triggerArea) triggerArea.click();
+      await flush();
       const swatches = el.querySelectorAll('[title]');
       expect(swatches.length).toBe(3);
     });

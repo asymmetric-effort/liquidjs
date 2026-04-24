@@ -207,10 +207,11 @@ export function ColorPicker(props: ColorPickerProps) {
       )
     : null;
 
-  return FormFieldWrapper({
+  return createElement(FormFieldWrapper, {
     label,
     disabled,
-    children: createElement(
+  },
+    createElement(
       'div',
       { ref: containerRef, style: { position: 'relative' } },
       createElement(
@@ -226,5 +227,5 @@ export function ColorPicker(props: ColorPickerProps) {
       ),
       dropdown,
     ),
-  });
+  );
 }

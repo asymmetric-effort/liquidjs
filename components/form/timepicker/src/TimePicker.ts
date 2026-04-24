@@ -209,16 +209,17 @@ export function TimePicker(props: TimePickerProps) {
   const children = [hourSpinner, separator, minuteSpinner];
   if (ampmToggle) children.push(ampmToggle);
 
-  return FormFieldWrapper({
+  return createElement(FormFieldWrapper, {
     label,
     error,
     disabled,
-    children: createElement(
+  },
+    createElement(
       'div',
       {
         style: containerStyle,
       },
       ...children,
     ),
-  });
+  );
 }

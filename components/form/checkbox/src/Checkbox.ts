@@ -133,9 +133,10 @@ export function Checkbox(props: CheckboxProps) {
     ? createElement('span', { style: { fontSize: dim.fontSize, color: '#374151' } }, label)
     : null;
 
-  return FormFieldWrapper({
+  return createElement(FormFieldWrapper, {
     error,
-    children: createElement(
+  },
+    createElement(
       'div',
       {
         style: containerStyle,
@@ -150,5 +151,5 @@ export function Checkbox(props: CheckboxProps) {
       box,
       labelEl,
     ),
-  });
+  );
 }

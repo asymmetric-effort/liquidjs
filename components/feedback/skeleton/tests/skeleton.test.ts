@@ -1,5 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { Skeleton } from '../src/index';
+import { installMockDispatcher, teardownMockDispatcher } from '../../../_test-helpers/mock-dispatcher';
+
+beforeEach(() => installMockDispatcher());
+afterEach(() => teardownMockDispatcher());
 
 // ---------------------------------------------------------------------------
 // Happy-path tests
@@ -40,7 +44,7 @@ describe('Skeleton — happy path', () => {
   it('renders animated by default', () => {
     const el = Skeleton({});
     // Should contain a style element for shimmer
-    const hasStyle = el.children.some((c: any) => c && c.type === 'style');
+    const hasStyle = (Array.isArray(el.props.children) ? el.props.children : [el.props.children]).some((c: any) => c && c.type === 'style');
     expect(hasStyle).toBe(true);
   });
 

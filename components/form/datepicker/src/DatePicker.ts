@@ -260,11 +260,12 @@ export function DatePicker(props: DatePickerProps) {
       )
     : null;
 
-  return FormFieldWrapper({
+  return createElement(FormFieldWrapper, {
     label,
     error,
     disabled,
-    children: createElement(
+  },
+    createElement(
       'div',
       { ref: containerRef, style: { position: 'relative' } },
       createElement(
@@ -285,5 +286,5 @@ export function DatePicker(props: DatePickerProps) {
       ),
       calendar,
     ),
-  });
+  );
 }

@@ -140,10 +140,11 @@ export function RadioGroup(props: RadioGroupProps) {
     );
   });
 
-  return FormFieldWrapper({
+  return createElement(FormFieldWrapper, {
     label,
     error,
-    children: createElement(
+  },
+    createElement(
       'div',
       {
         style: groupStyle,
@@ -154,5 +155,5 @@ export function RadioGroup(props: RadioGroupProps) {
       },
       ...radioButtons,
     ),
-  });
+  );
 }

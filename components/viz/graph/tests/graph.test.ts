@@ -1,5 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { HypercubeGraph } from '../src/index';
+import { installMockDispatcher, teardownMockDispatcher } from '../../../_test-helpers/mock-dispatcher';
+
+beforeEach(() => installMockDispatcher());
+afterEach(() => teardownMockDispatcher());
 
 // ---------------------------------------------------------------------------
 // Happy-path tests
@@ -111,13 +115,13 @@ describe('HypercubeGraph — interaction', () => {
   it('renders correct number of edge elements for dim=2', () => {
     const el = HypercubeGraph({ dimension: 2, rotationSpeed: 0 });
     // dim=2: 4 edges, 4 vertices => 4 line elements + circle/text elements
-    const lines = el.children.filter((c: any) => c && c.type === 'line');
+    const lines = (Array.isArray(el.props.children) ? el.props.children : [el.props.children]).filter((c: any) => c && c.type === 'line');
     expect(lines.length).toBe(4);
   });
 
   it('renders correct number of vertex elements for dim=2', () => {
     const el = HypercubeGraph({ dimension: 2, rotationSpeed: 0 });
-    const circles = el.children.filter((c: any) => c && c.type === 'circle');
+    const circles = (Array.isArray(el.props.children) ? el.props.children : [el.props.children]).filter((c: any) => c && c.type === 'circle');
     expect(circles.length).toBe(4);
   });
 });

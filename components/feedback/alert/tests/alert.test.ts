@@ -1,5 +1,9 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Alert } from '../src/index';
+import { installMockDispatcher, teardownMockDispatcher } from '../../../_test-helpers/mock-dispatcher';
+
+beforeEach(() => installMockDispatcher());
+afterEach(() => teardownMockDispatcher());
 
 // ---------------------------------------------------------------------------
 // Happy-path tests
@@ -100,7 +104,8 @@ describe('Alert — interaction', () => {
     const el = Alert({ closable: true, onClose, message: 'Closable' });
     expect(el).not.toBeNull();
     // Close button should be present as last child
-    const closeBtn = el.children[el.children.length - 1];
+    const children = Array.isArray(el.props.children) ? el.props.children : [el.props.children];
+    const closeBtn = children[children.length - 1];
     expect(closeBtn).not.toBeNull();
     expect(closeBtn.props['aria-label']).toBe('Close');
   });
@@ -108,7 +113,8 @@ describe('Alert — interaction', () => {
   it('hides close button when not closable', () => {
     const el = Alert({ closable: false, message: 'Not closable' });
     // Last child should be null (no close button)
-    const lastChild = el.children[el.children.length - 1];
+    const children = Array.isArray(el.props.children) ? el.props.children : [el.props.children];
+    const lastChild = children[children.length - 1];
     expect(lastChild).toBeNull();
   });
 

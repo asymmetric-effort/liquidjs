@@ -11,6 +11,8 @@ function render(vnode: unknown): HTMLElement {
   return container;
 }
 
+const flush = () => new Promise((r) => setTimeout(r, 10));
+
 describe('DatePicker', () => {
   describe('happy paths', () => {
     it('renders with defaults', () => {
@@ -24,11 +26,12 @@ describe('DatePicker', () => {
       expect(el.textContent).toContain('2024-06-15');
     });
 
-    it('fires onChange when date selected', () => {
+    it('fires onChange when date selected', async () => {
       const handler = vi.fn();
       const el = render(createElement(DatePicker, { value: null, onChange: handler }));
       const trigger = el.querySelector('[role="button"]') as HTMLElement;
       trigger.click();
+      await flush();
       // Calendar should now be open, click a day
       const days = el.querySelectorAll('[style*="cursor: pointer"]');
       const dayEl = Array.from(days).find((d) => d.textContent && /^\d+$/.test(d.textContent.trim()));
@@ -74,18 +77,20 @@ describe('DatePicker', () => {
   });
 
   describe('interaction', () => {
-    it('opens calendar on trigger click', () => {
+    it('opens calendar on trigger click', async () => {
       const el = render(createElement(DatePicker, { value: null, onChange: vi.fn() }));
       const trigger = el.querySelector('[role="button"]') as HTMLElement;
       trigger.click();
+      await flush();
       // Should see month/year navigation
       expect(el.textContent).toMatch(/January|February|March|April|May|June|July|August|September|October|November|December/);
     });
 
-    it('navigates months via arrows', () => {
+    it('navigates months via arrows', async () => {
       const el = render(createElement(DatePicker, { value: '2024-06-15', onChange: vi.fn() }));
       const trigger = el.querySelector('[role="button"]') as HTMLElement;
       trigger.click();
+      await flush();
       const buttons = el.querySelectorAll('button[type="button"]');
       // Should have prev/next month buttons
       expect(buttons.length).toBeGreaterThanOrEqual(2);

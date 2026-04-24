@@ -700,6 +700,8 @@ export function updateDOMProperties(
         dom.removeAttribute('style');
       } else if (key === 'className') {
         dom.removeAttribute('class');
+      } else if (key === 'htmlFor') {
+        dom.removeAttribute('for');
       } else if (key === 'dangerouslySetInnerHTML') {
         dom.innerHTML = '';
       } else {
@@ -734,6 +736,8 @@ export function updateDOMProperties(
       }
     } else if (key === 'className') {
       dom.setAttribute('class', String(value));
+    } else if (key === 'htmlFor') {
+      dom.setAttribute('for', String(value));
     } else if (key === 'dangerouslySetInnerHTML') {
       const html = (value as { __html: string }).__html;
       dom.innerHTML = html;

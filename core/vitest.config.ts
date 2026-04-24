@@ -11,6 +11,11 @@ export default defineConfig({
       'liquidjs/telemetry': path.resolve(__dirname, 'src/telemetry/index.ts'),
     },
   },
+  server: {
+    fs: {
+      allow: [path.resolve(__dirname, '..')],
+    },
+  },
   test: {
     globals: true,
     environment: 'jsdom',
@@ -18,10 +23,11 @@ export default defineConfig({
       'tests/unit/**/*.test.ts',
       'tests/integration/**/*.test.ts',
       '../components/*/tests/**/*.test.ts',
+      '../components/*/*/tests/**/*.test.ts',
     ],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'text-summary', 'lcov', 'html'],
+      reporter: ['text-summary'],
       include: ['src/**/*.ts'],
       exclude: ['src/**/index.ts', 'src/**/*.d.ts'],
       thresholds: {

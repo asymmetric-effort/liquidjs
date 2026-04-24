@@ -64,7 +64,7 @@ export function gql(strings: TemplateStringsArray, ...values: unknown[]): string
       result += String(values[i]);
     }
   }
-  return result;
+  return result.replace(/\s+/g, ' ').trim();
 }
 
 // ---------------------------------------------------------------------------

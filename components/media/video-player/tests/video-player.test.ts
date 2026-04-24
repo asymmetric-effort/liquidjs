@@ -1,5 +1,9 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { VideoPlayer } from '../src/index';
+import { installMockDispatcher, teardownMockDispatcher } from '../../../_test-helpers/mock-dispatcher';
+
+beforeEach(() => installMockDispatcher());
+afterEach(() => teardownMockDispatcher());
 
 // ---------------------------------------------------------------------------
 // Happy-path tests
@@ -84,10 +88,12 @@ describe('VideoPlayer — interaction', () => {
   it('renders play/pause button in custom controls', () => {
     const el = VideoPlayer({ src: 'video.mp4' });
     // The control bar is the last child of the wrapper div
-    const controlBar = el.children[el.children.length - 1];
+    const children = Array.isArray(el.props.children) ? el.props.children : [el.props.children];
+    const controlBar = children[children.length - 1];
     expect(controlBar).not.toBeNull();
     // First button in control bar should be play/pause
-    const playBtn = controlBar.children.find(
+    const cbChildren = Array.isArray(controlBar.props.children) ? controlBar.props.children : [controlBar.props.children];
+    const playBtn = cbChildren.find(
       (c: any) => c && c.type === 'button' && (c.props['aria-label'] === 'Play' || c.props['aria-label'] === 'Pause'),
     );
     expect(playBtn).toBeDefined();
@@ -95,8 +101,10 @@ describe('VideoPlayer — interaction', () => {
 
   it('renders fullscreen button', () => {
     const el = VideoPlayer({ src: 'video.mp4' });
-    const controlBar = el.children[el.children.length - 1];
-    const fsBtn = controlBar.children.find(
+    const children = Array.isArray(el.props.children) ? el.props.children : [el.props.children];
+    const controlBar = children[children.length - 1];
+    const cbChildren = Array.isArray(controlBar.props.children) ? controlBar.props.children : [controlBar.props.children];
+    const fsBtn = cbChildren.find(
       (c: any) => c && c.type === 'button' && c.props['aria-label'] === 'Fullscreen',
     );
     expect(fsBtn).toBeDefined();
@@ -104,8 +112,10 @@ describe('VideoPlayer — interaction', () => {
 
   it('renders volume slider', () => {
     const el = VideoPlayer({ src: 'video.mp4' });
-    const controlBar = el.children[el.children.length - 1];
-    const volumeSlider = controlBar.children.find(
+    const children = Array.isArray(el.props.children) ? el.props.children : [el.props.children];
+    const controlBar = children[children.length - 1];
+    const cbChildren = Array.isArray(controlBar.props.children) ? controlBar.props.children : [controlBar.props.children];
+    const volumeSlider = cbChildren.find(
       (c: any) => c && c.type === 'input' && c.props['aria-label'] === 'Volume',
     );
     expect(volumeSlider).toBeDefined();

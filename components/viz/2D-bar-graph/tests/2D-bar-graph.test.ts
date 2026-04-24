@@ -1,5 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { BarGraph } from '../src/index';
+import { installMockDispatcher, teardownMockDispatcher } from '../../../_test-helpers/mock-dispatcher';
+
+beforeEach(() => installMockDispatcher());
+afterEach(() => teardownMockDispatcher());
 
 const sampleData = [
   { label: 'A', value: 30 },
@@ -109,19 +113,19 @@ describe('BarGraph — sad path', () => {
 describe('BarGraph — features', () => {
   it('renders rect elements for bars', () => {
     const el = BarGraph({ data: sampleData });
-    const rects = el.children.filter((c: any) => c && c.type === 'rect');
+    const rects = (Array.isArray(el.props.children) ? el.props.children : [el.props.children]).filter((c: any) => c && c.type === 'rect');
     expect(rects.length).toBeGreaterThanOrEqual(sampleData.length);
   });
 
   it('renders value labels when showValues is true', () => {
     const el = BarGraph({ data: sampleData, showValues: true });
-    const texts = el.children.filter((c: any) => c && c.type === 'text');
+    const texts = (Array.isArray(el.props.children) ? el.props.children : [el.props.children]).filter((c: any) => c && c.type === 'text');
     expect(texts.length).toBeGreaterThan(0);
   });
 
   it('renders grid lines when showGrid is true', () => {
     const el = BarGraph({ data: sampleData, showGrid: true });
-    const dashed = el.children.filter(
+    const dashed = (Array.isArray(el.props.children) ? el.props.children : [el.props.children]).filter(
       (c: any) => c && c.type === 'line' && c.props['stroke-dasharray'],
     );
     expect(dashed.length).toBeGreaterThan(0);
@@ -129,8 +133,11 @@ describe('BarGraph — features', () => {
 
   it('renders category labels', () => {
     const el = BarGraph({ data: sampleData });
-    const texts = el.children.filter(
-      (c: any) => c && c.type === 'text' && sampleData.some((d) => c.children?.includes(d.label)),
+    const texts = (Array.isArray(el.props.children) ? el.props.children : [el.props.children]).filter(
+      (c: any) => c && c.type === 'text' && sampleData.some((d) => {
+        const ch = c.props?.children;
+        return Array.isArray(ch) ? ch.includes(d.label) : ch === d.label;
+      }),
     );
     expect(texts.length).toBe(sampleData.length);
   });

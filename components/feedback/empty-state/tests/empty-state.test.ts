@@ -86,21 +86,21 @@ describe('EmptyState — interaction', () => {
     const onClick = vi.fn();
     const el = EmptyState({ action: { label: 'Add item', onClick } });
     // Find button child
-    const button = el.children.find((c: any) => c && c.type === 'button');
+    const button = (Array.isArray(el.props.children) ? el.props.children : [el.props.children]).find((c: any) => c && c.type === 'button');
     expect(button).toBeDefined();
-    expect(button.children).toContain('Add item');
+    expect(button.props.children).toContain('Add item');
   });
 
   it('renders image element when image prop provided', () => {
     const el = EmptyState({ image: 'https://example.com/img.png' });
-    const img = el.children.find((c: any) => c && c.type === 'img');
+    const img = (Array.isArray(el.props.children) ? el.props.children : [el.props.children]).find((c: any) => c && c.type === 'img');
     expect(img).toBeDefined();
     expect(img.props.src).toBe('https://example.com/img.png');
   });
 
   it('does not render image when not provided', () => {
     const el = EmptyState({ title: 'Empty' });
-    const img = el.children.find((c: any) => c && c.type === 'img');
+    const img = (Array.isArray(el.props.children) ? el.props.children : [el.props.children]).find((c: any) => c && c.type === 'img');
     expect(img).toBeFalsy();
   });
 });
