@@ -229,6 +229,16 @@ LiquidJS is designed for building **single-page web applications** that compile 
 - Event system should use delegation to reduce listener count
 - Bundle size target: < 15KB minified + gzipped for core
 
+### Definition of Done
+
+All feature work must meet the following criteria before it is considered complete:
+
+1. **Test Coverage** — >=97.9% unit/integration/e2e test coverage across statements, branches, functions, and lines. Ideally 100%.
+2. **Demo Project** — Each component must have a demo project (SPA) that demonstrates the component's entire feature set, with Playwright E2E tests to validate the demo.
+3. **Documentation** — Complete documentation covering design/architecture, implementation details, testing strategy, and usage examples.
+4. **Linters Pass** — All linting checks (TypeScript strict, ESLint, Prettier) must pass with zero errors.
+5. **All Tests Pass** — All unit, integration, and E2E tests must pass with zero failures.
+
 ### Git Workflow
 - Conventional commits (`feat:`, `fix:`, `test:`, `docs:`, `refactor:`, `perf:`, `chore:`)
 - All changes require tests
