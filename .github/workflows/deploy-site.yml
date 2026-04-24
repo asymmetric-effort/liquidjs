@@ -52,3 +52,35 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  verify:
+    name: Post-Deployment Verification
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright
+        working-directory: site
+        run: |
+          npm install
+          npx playwright install chromium --with-deps
+
+      - name: Wait for deployment to propagate
+        run: sleep 15
+
+      - name: Run post-deployment E2E tests
+        working-directory: site
+        run: npx playwright test --config=playwright.deploy.config.ts
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-verification-report
+          path: site/playwright-report/
+          retention-days: 7
