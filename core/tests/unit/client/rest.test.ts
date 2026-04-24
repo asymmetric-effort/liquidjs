@@ -612,6 +612,14 @@ describe('createRestClient', () => {
 // ===========================================================================
 
 describe('useRest', () => {
+  let activeRoot: ReturnType<typeof createRoot> | null = null;
+  afterEach(() => {
+    if (activeRoot) {
+      activeRoot.unmount();
+      activeRoot = null;
+    }
+  });
+
   function createMockClient(overrides?: Partial<RestClient>): RestClient {
     return {
       get: vi.fn().mockResolvedValue({ data: null, status: 200, headers: {}, ok: true }),
@@ -637,7 +645,7 @@ describe('useRest', () => {
       return createElement('div', null, loading ? 'loading' : 'done');
     }
 
-    const root = createRoot(container);
+    activeRoot = createRoot(container); const root = activeRoot;
     root.render(createElement(TestComp, null));
 
     expect(container.textContent).toBe('loading');
@@ -655,7 +663,7 @@ describe('useRest', () => {
       return createElement('div', null, loading ? 'loading' : 'idle');
     }
 
-    const root = createRoot(container);
+    activeRoot = createRoot(container); const root = activeRoot;
     root.render(createElement(TestComp, null));
 
     expect(container.textContent).toBe('idle');
@@ -675,7 +683,7 @@ describe('useRest', () => {
       return createElement('div', null, 'ok');
     }
 
-    const root = createRoot(container);
+    activeRoot = createRoot(container); const root = activeRoot;
     root.render(createElement(TestComp, null));
 
     expect(mockClient.post).toHaveBeenCalledWith(
@@ -695,7 +703,7 @@ describe('useRest', () => {
       return createElement('div', null, 'ok');
     }
 
-    const root = createRoot(container);
+    activeRoot = createRoot(container); const root = activeRoot;
     root.render(createElement(TestComp, null));
 
     expect(mockClient.put).toHaveBeenCalled();
@@ -711,7 +719,7 @@ describe('useRest', () => {
       return createElement('div', null, 'ok');
     }
 
-    const root = createRoot(container);
+    activeRoot = createRoot(container); const root = activeRoot;
     root.render(createElement(TestComp, null));
 
     expect(mockClient.patch).toHaveBeenCalled();
@@ -727,7 +735,7 @@ describe('useRest', () => {
       return createElement('div', null, 'ok');
     }
 
-    const root = createRoot(container);
+    activeRoot = createRoot(container); const root = activeRoot;
     root.render(createElement(TestComp, null));
 
     expect(mockClient.delete).toHaveBeenCalled();
@@ -745,7 +753,7 @@ describe('useRest', () => {
       return createElement('div', null, 'ok');
     }
 
-    const root = createRoot(container);
+    activeRoot = createRoot(container); const root = activeRoot;
     root.render(createElement(TestComp, null));
 
     expect(typeof refetchFn).toBe('function');
@@ -765,7 +773,7 @@ describe('useRest', () => {
       return createElement('div', null, 'ok');
     }
 
-    const root = createRoot(container);
+    activeRoot = createRoot(container); const root = activeRoot;
     root.render(createElement(TestComp, null));
 
     expect(capturedData).toBeNull();
@@ -782,7 +790,7 @@ describe('useRest', () => {
       return createElement('div', null, 'ok');
     }
 
-    const root = createRoot(container);
+    activeRoot = createRoot(container); const root = activeRoot;
     root.render(createElement(TestComp, null));
 
     const callArgs = (mockClient.get as ReturnType<typeof vi.fn>).mock.calls[0];
@@ -801,7 +809,7 @@ describe('useRest', () => {
       return createElement('div', null, 'ok');
     }
 
-    const root = createRoot(container);
+    activeRoot = createRoot(container); const root = activeRoot;
     root.render(createElement(TestComp, null));
 
     expect(mockClient.get).toHaveBeenCalled();

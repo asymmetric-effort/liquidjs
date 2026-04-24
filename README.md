@@ -1,6 +1,6 @@
 # LiquidJS
 
-A declarative TypeScript UI framework with 100% React.js API parity, built for performance, browser compatibility, and developer simplicity.
+A declarative TypeScript UI framework built for performance, browser compatibility, and developer simplicity.
 
 ## Monorepo Structure
 
