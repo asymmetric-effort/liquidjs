@@ -654,6 +654,14 @@ function isSvgTag(tag: string): boolean {
   return SVG_TAGS.has(tag);
 }
 
+/**
+ * Check if a DOM element is a custom element (Web Component).
+ * Custom elements must contain a hyphen in their tag name per the spec.
+ */
+function isCustomElement(dom: Element): boolean {
+  return dom.tagName.includes('-');
+}
+
 // ---------------------------------------------------------------------------
 // StrictMode double-render tracking
 // ---------------------------------------------------------------------------
@@ -1177,7 +1185,13 @@ export function updateDOMProperties(
         dom.removeAttribute(key);
       }
     } else if (value != null) {
-      dom.setAttribute(key, String(value));
+      // For custom elements (Web Components), set complex values as properties
+      // rather than attributes to support object/array/function props
+      if (isCustomElement(dom) && typeof value !== 'string' && key in dom) {
+        (dom as unknown as Record<string, unknown>)[key] = value;
+      } else {
+        dom.setAttribute(key, String(value));
+      }
     } else {
       dom.removeAttribute(key);
     }
