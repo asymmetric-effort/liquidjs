@@ -1,5 +1,6 @@
 import resolve from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
+import terser from '@rollup/plugin-terser';
 import dts from 'rollup-plugin-dts';
 
 function createConfig(input, outputName) {
@@ -24,6 +25,16 @@ function createConfig(input, outputName) {
         declaration: false,
         declarationDir: undefined,
       }),
+      terser({
+        compress: {
+          passes: 2,
+          ecma: 2020,
+        },
+        mangle: true,
+        format: {
+          comments: false,
+        },
+      }),
     ],
     external: [],
   };
@@ -40,11 +51,13 @@ const mainConfigs = [
   createConfig('src/telemetry/index.ts', 'liquidjs-telemetry'),
 ];
 
-// Declaration bundling config — uses the first build's emitted declarations
-const declarationConfig = {
-  input: 'src/index.ts',
-  output: [{ file: 'dist/liquidjs.d.ts', format: 'esm' }],
-  plugins: [dts()],
-};
+// Declaration bundling configs — one per sub-package
+const declarationConfigs = [
+  { input: 'src/index.ts', output: [{ file: 'dist/liquidjs.d.ts', format: 'esm' }] },
+  { input: 'src/dom/index.ts', output: [{ file: 'dist/liquidjs-dom.d.ts', format: 'esm' }] },
+  { input: 'src/server/index.ts', output: [{ file: 'dist/liquidjs-server.d.ts', format: 'esm' }] },
+  { input: 'src/client/index.ts', output: [{ file: 'dist/liquidjs-client.d.ts', format: 'esm' }] },
+  { input: 'src/telemetry/index.ts', output: [{ file: 'dist/liquidjs-telemetry.d.ts', format: 'esm' }] },
+].map(cfg => ({ ...cfg, plugins: [dts()] }));
 
-export default [...mainConfigs, declarationConfig];
+export default [...mainConfigs, ...declarationConfigs];
