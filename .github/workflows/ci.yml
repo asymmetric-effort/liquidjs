@@ -79,15 +79,18 @@ jobs:
         run: |
           test -f dist/liquidjs.esm.js || (echo "Missing ESM build" && exit 1)
           test -f dist/liquidjs.cjs.js || (echo "Missing CJS build" && exit 1)
+          test -f dist/liquidjs.d.ts || (echo "Missing type declarations" && exit 1)
           echo "Build artifacts verified"
           ls -lh dist/
 
-      - name: Check bundle size
+      - name: Check bundle size (< 15KB gzipped)
         run: |
-          SIZE=$(wc -c < dist/liquidjs.esm.js)
-          echo "ESM bundle size: $SIZE bytes ($(( SIZE / 1024 ))KB)"
-          if [ "$SIZE" -gt 524288 ]; then
-            echo "WARNING: Bundle exceeds 512KB"
+          gzip -k dist/liquidjs.esm.js
+          SIZE=$(wc -c < dist/liquidjs.esm.js.gz)
+          echo "ESM bundle gzipped: $SIZE bytes ($(( SIZE / 1024 ))KB)"
+          rm dist/liquidjs.esm.js.gz
+          if [ "$SIZE" -gt 15360 ]; then
+            echo "ERROR: Bundle exceeds 15KB gzipped"
             exit 1
           fi
 
@@ -102,6 +105,9 @@ jobs:
   e2e:
     name: E2E Tests
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser: [chromium, firefox, webkit]
     defaults:
       run:
         working-directory: core
@@ -116,16 +122,16 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Install Playwright browsers
-        run: bun x playwright install chromium --with-deps
+        run: bun x playwright install ${{ matrix.browser }} --with-deps
 
-      - name: Run E2E tests
-        run: bun x playwright test
+      - name: Run E2E tests (${{ matrix.browser }})
+        run: bun x playwright test --project=${{ matrix.browser }}
 
       - name: Upload E2E report
         if: always() && !env.ACT
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.browser }}
           path: core/playwright-report/
           retention-days: 7
 
