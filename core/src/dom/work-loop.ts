@@ -13,6 +13,7 @@ import {
   type ClassComponentInstance,
   FiberTag,
   EffectTag,
+  LIQUID_STRICT_MODE_TYPE,
 } from '../shared/types';
 import { createHostRootFiber, createWorkInProgress } from '../core/fiber';
 import { reconcileChildren } from '../core/reconciler';
@@ -418,6 +419,10 @@ function beginWork(fiber: Fiber): void {
       reconcileClassComponent(fiber);
       break;
     case FiberTag.Fragment:
+      // Track StrictMode depth
+      if (fiber.type === LIQUID_STRICT_MODE_TYPE) {
+        strictModeDepth++;
+      }
       reconcileFragment(fiber);
       break;
     case FiberTag.ContextProvider:
@@ -451,6 +456,15 @@ function reconcileFunctionComponent(fiber: Fiber): void {
   setCurrentFiber(fiber);
 
   const Component = fiber.type as FunctionComponent;
+
+  // StrictMode double-render: call component twice to detect side effects.
+  // The first invocation's result is discarded.
+  if (strictModeDepth > 0 && fiber.alternate === null) {
+    Component(fiber.pendingProps);
+    // Reset hook state for the real render
+    setCurrentFiber(fiber);
+  }
+
   const children = Component(fiber.pendingProps);
 
   // Store effect list on fiber
@@ -639,6 +653,12 @@ function isSvgTag(tag: string): boolean {
   return SVG_TAGS.has(tag);
 }
 
+// ---------------------------------------------------------------------------
+// StrictMode double-render tracking
+// ---------------------------------------------------------------------------
+
+let strictModeDepth = 0;
+
 // Active hydration root — set during hydration render, null otherwise
 let activeHydrationRoot: FiberRoot | null = null;
 // Hydration cursor — tracks position in existing DOM during hydration
@@ -793,6 +813,11 @@ function completeWork(fiber: Fiber): void {
     case FiberTag.FunctionComponent:
     case FiberTag.ClassComponent:
     case FiberTag.Fragment:
+      // Decrement StrictMode depth when completing a StrictMode fiber
+      if (fiber.type === LIQUID_STRICT_MODE_TYPE) {
+        strictModeDepth--;
+      }
+      // falls through
     case FiberTag.ContextProvider:
     case FiberTag.ForwardRef:
     case FiberTag.MemoComponent:
