@@ -67,3 +67,18 @@ export function createElement<P extends Props>(
     ref,
   };
 }
+
+/**
+ * Creates a factory function for producing elements of a given type.
+ * Legacy API — equivalent to React.createFactory.
+ *
+ * @deprecated Use createElement directly or JSX instead.
+ */
+export function createFactory<P extends Props>(
+  type: ComponentType<P>,
+): (
+  config?: (Omit<P, 'children'> & { key?: Key; ref?: Ref }) | null,
+  ...children: LiquidNode[]
+) => LiquidElement<P> {
+  return (config, ...children) => createElement(type, config ?? null, ...children);
+}

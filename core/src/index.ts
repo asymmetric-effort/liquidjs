@@ -2,7 +2,7 @@
 // LiquidJS — Core Public API
 // ============================================================================
 
-export { createElement, createElement as h } from './core/create-element';
+export { createElement, createElement as h, createFactory } from './core/create-element';
 export { Fragment } from './core/fragment';
 export { createContext } from './context/create-context';
 export { createRef } from './core/create-ref';

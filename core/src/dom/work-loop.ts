@@ -26,6 +26,7 @@ import {
 import { installDispatcher, uninstallDispatcher } from '../hooks/install-dispatcher';
 import { setRerenderCallback } from '../hooks/dispatcher';
 import { scheduleMicrotask } from '../core/scheduler';
+import { notifyDevToolsOfCommit } from '../devtools/index';
 import {
   NoLanes,
   SyncLane,
@@ -868,6 +869,9 @@ function commitRoot(root: FiberRoot, finishedWork: Fiber): void {
 
   // Run effects
   commitEffects(finishedWork);
+
+  // Notify DevTools
+  notifyDevToolsOfCommit(root);
 }
 
 function commitDeletions(fiber: Fiber): void {
