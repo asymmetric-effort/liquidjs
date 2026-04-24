@@ -59,6 +59,9 @@ export interface FiberRoot {
   expirationTimes: number[];
   callbackNode: unknown;
   callbackPriority: number;
+
+  // Hydration
+  isHydrating: boolean;
 }
 
 const fiberRoots = new Map<Element | DocumentFragment, FiberRoot>();
@@ -79,6 +82,9 @@ export function createFiberRoot(container: Element | DocumentFragment): FiberRoo
     expirationTimes: new Array(8).fill(-1),
     callbackNode: null,
     callbackPriority: 0,
+
+    // Hydration
+    isHydrating: false,
   };
 
   return root;
@@ -127,6 +133,12 @@ function performWork(root: FiberRoot): void {
   // Ensure re-render callback is active
   installPersistentRerenderCallback();
 
+  // Set up hydration context if this root is hydrating
+  if (root.isHydrating) {
+    activeHydrationRoot = root;
+    hydrationCursor.clear();
+  }
+
   const currentRoot = root.current;
   const wip = createWorkInProgress(currentRoot, {
     children: root.pendingChildren,
@@ -140,6 +152,13 @@ function performWork(root: FiberRoot): void {
 
   // Swap the trees
   root.current = wip;
+
+  // Clear hydration state
+  if (root.isHydrating) {
+    root.isHydrating = false;
+    activeHydrationRoot = null;
+    hydrationCursor.clear();
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -362,6 +381,26 @@ function performUnitOfWork(fiber: Fiber): Fiber | null {
 }
 
 function beginWork(fiber: Fiber): void {
+  // During hydration, claim existing DOM nodes top-down
+  if (activeHydrationRoot !== null && fiber.stateNode === null) {
+    if (fiber.tag === FiberTag.HostComponent || fiber.tag === FiberTag.HostText) {
+      const parentNode = findHostParentForHydration(fiber, activeHydrationRoot.containerNode);
+      if (parentNode) {
+        if (fiber.tag === FiberTag.HostComponent) {
+          const existing = tryHydrateInstance(fiber, parentNode);
+          if (existing) {
+            fiber.stateNode = existing;
+          }
+        } else {
+          const existing = tryHydrateText(parentNode);
+          if (existing) {
+            fiber.stateNode = existing;
+          }
+        }
+      }
+    }
+  }
+
   switch (fiber.tag) {
     case FiberTag.HostRoot:
       reconcileHostRoot(fiber);
@@ -575,6 +614,109 @@ function cloneFiberSubtree(source: Fiber | null, parent: Fiber): Fiber | null {
 }
 
 // ---------------------------------------------------------------------------
+// Hydration helpers
+// ---------------------------------------------------------------------------
+
+// Active hydration root — set during hydration render, null otherwise
+let activeHydrationRoot: FiberRoot | null = null;
+// Hydration cursor — tracks position in existing DOM during hydration
+let hydrationCursor = new Map<Node, Node | null>();
+
+/**
+ * Get the next hydratable child or sibling from a parent DOM node.
+ * Skips comment nodes and other non-hydratable nodes.
+ */
+function getNextHydratableChild(parent: Node): Node | null {
+  let child = parent.firstChild;
+  while (child !== null) {
+    if (child.nodeType === 1 /* Element */ || child.nodeType === 3 /* Text */) {
+      return child;
+    }
+    child = child.nextSibling;
+  }
+  return null;
+}
+
+function getNextHydratableSibling(node: Node): Node | null {
+  let sibling = node.nextSibling;
+  while (sibling !== null) {
+    if (sibling.nodeType === 1 || sibling.nodeType === 3) {
+      return sibling;
+    }
+    sibling = sibling.nextSibling;
+  }
+  return null;
+}
+
+/**
+ * Try to hydrate a HostComponent fiber by matching it to an existing DOM element.
+ * Returns the matched DOM element or null if no match.
+ */
+function tryHydrateInstance(
+  fiber: Fiber,
+  parentNode: Node,
+): HTMLElement | null {
+  // Get the next unmatched child from the cursor, or the first child
+  let candidate = hydrationCursor.get(parentNode) ?? getNextHydratableChild(parentNode);
+
+  if (candidate === null) return null;
+
+  // Skip text nodes when looking for elements
+  while (candidate !== null && candidate.nodeType !== 1) {
+    candidate = getNextHydratableSibling(candidate);
+  }
+
+  if (candidate === null) return null;
+
+  const element = candidate as HTMLElement;
+  if (element.tagName.toLowerCase() !== (fiber.type as string).toLowerCase()) {
+    // Tag mismatch — cannot hydrate
+    return null;
+  }
+
+  // Advance cursor past this node
+  hydrationCursor.set(parentNode, getNextHydratableSibling(element));
+  return element;
+}
+
+/**
+ * Try to hydrate a HostText fiber by matching it to an existing text node.
+ */
+function tryHydrateText(parentNode: Node): Text | null {
+  let candidate = hydrationCursor.get(parentNode) ?? getNextHydratableChild(parentNode);
+
+  if (candidate === null) return null;
+
+  // Skip elements when looking for text
+  while (candidate !== null && candidate.nodeType !== 3) {
+    candidate = getNextHydratableSibling(candidate);
+  }
+
+  if (candidate === null) return null;
+
+  const textNode = candidate as Text;
+  hydrationCursor.set(parentNode, getNextHydratableSibling(textNode));
+  return textNode;
+}
+
+/**
+ * Find the host parent DOM node for a fiber (walk up past non-host fibers).
+ */
+function findHostParentForHydration(fiber: Fiber, rootContainer: Node): Node | null {
+  let parent = fiber.return;
+  while (parent !== null) {
+    if (parent.tag === FiberTag.HostComponent && parent.stateNode) {
+      return parent.stateNode as Node;
+    }
+    if (parent.tag === FiberTag.HostRoot) {
+      return rootContainer;
+    }
+    parent = parent.return;
+  }
+  return rootContainer;
+}
+
+// ---------------------------------------------------------------------------
 // Complete phase: create/update DOM nodes bottom-up
 // ---------------------------------------------------------------------------
 
@@ -582,13 +724,19 @@ function completeWork(fiber: Fiber): void {
   switch (fiber.tag) {
     case FiberTag.HostComponent: {
       if (fiber.stateNode === null) {
-        // Create the DOM node
+        // Normal path: create new DOM node
         const domNode = document.createElement(fiber.type as string);
         updateDOMProperties(domNode, {}, fiber.pendingProps);
         fiber.stateNode = domNode;
         appendAllChildren(domNode, fiber);
+      } else if (activeHydrationRoot !== null && fiber.alternate === null) {
+        // Hydrated node: stateNode was set during beginWork
+        // Attach event listeners and update props, but don't recreate or append children
+        updateDOMProperties(fiber.stateNode as HTMLElement, {}, fiber.pendingProps);
+        // Mark as hydrated — no Placement needed, node is already in DOM
+        fiber.effectTag = EffectTag.NoEffect;
       } else {
-        // Update existing node
+        // Update existing node (normal re-render)
         const domNode = fiber.stateNode as HTMLElement;
         if (fiber.alternate) {
           updateDOMProperties(domNode, fiber.alternate.memoizedProps || {}, fiber.pendingProps);
@@ -600,7 +748,16 @@ function completeWork(fiber: Fiber): void {
     case FiberTag.HostText: {
       const text = String((fiber.pendingProps as unknown as { text: string | number }).text);
       if (fiber.stateNode === null) {
+        // Normal path: create new text node
         fiber.stateNode = document.createTextNode(text);
+      } else if (activeHydrationRoot !== null && fiber.alternate === null) {
+        // Hydrated text node: stateNode was set during beginWork
+        const existing = fiber.stateNode as Text;
+        if (existing.nodeValue !== text) {
+          existing.nodeValue = text;
+        }
+        // Mark as hydrated — no Placement needed
+        fiber.effectTag = EffectTag.NoEffect;
       } else {
         (fiber.stateNode as Text).nodeValue = text;
       }
