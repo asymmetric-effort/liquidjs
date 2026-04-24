@@ -13,6 +13,7 @@ export { isValidElement } from './core/is-valid-element';
 export { cloneElement } from './core/clone-element';
 export { Children } from './core/children';
 export { Component, PureComponent } from './components/component';
+export { ErrorBoundary } from './components/error-boundary';
 
 // Hooks
 export {
