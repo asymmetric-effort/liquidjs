@@ -617,6 +617,28 @@ function cloneFiberSubtree(source: Fiber | null, parent: Fiber): Fiber | null {
 // Hydration helpers
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// SVG namespace handling
+// ---------------------------------------------------------------------------
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const SVG_TAGS = new Set([
+  'svg', 'circle', 'clipPath', 'defs', 'ellipse', 'g', 'line',
+  'linearGradient', 'mask', 'path', 'pattern', 'polygon', 'polyline',
+  'radialGradient', 'rect', 'stop', 'text', 'tspan', 'use', 'image',
+  'symbol', 'foreignObject', 'desc', 'title', 'metadata', 'marker',
+  'filter', 'feBlend', 'feColorMatrix', 'feComponentTransfer',
+  'feComposite', 'feConvolveMatrix', 'feDiffuseLighting',
+  'feDisplacementMap', 'feFlood', 'feGaussianBlur', 'feImage',
+  'feMerge', 'feMergeNode', 'feMorphology', 'feOffset',
+  'feSpecularLighting', 'feTile', 'feTurbulence',
+  'animate', 'animateMotion', 'animateTransform', 'set',
+]);
+
+function isSvgTag(tag: string): boolean {
+  return SVG_TAGS.has(tag);
+}
+
 // Active hydration root — set during hydration render, null otherwise
 let activeHydrationRoot: FiberRoot | null = null;
 // Hydration cursor — tracks position in existing DOM during hydration
@@ -725,7 +747,10 @@ function completeWork(fiber: Fiber): void {
     case FiberTag.HostComponent: {
       if (fiber.stateNode === null) {
         // Normal path: create new DOM node
-        const domNode = document.createElement(fiber.type as string);
+        const tag = fiber.type as string;
+        const domNode = isSvgTag(tag)
+          ? document.createElementNS('http://www.w3.org/2000/svg', tag)
+          : document.createElement(tag);
         updateDOMProperties(domNode, {}, fiber.pendingProps);
         fiber.stateNode = domNode;
         appendAllChildren(domNode, fiber);
