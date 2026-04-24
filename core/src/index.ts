@@ -39,6 +39,17 @@ export { Suspense } from './components/suspense';
 export { StrictMode } from './components/strict-mode';
 export { Profiler } from './components/profiler';
 
+// Router
+export {
+  Router,
+  Route,
+  Link,
+  useRouter,
+  useParams,
+  useNavigate,
+  matchPath,
+} from './router/index';
+
 // Utilities
 export { startTransition } from './core/transitions';
 export { act } from './shared/act';
