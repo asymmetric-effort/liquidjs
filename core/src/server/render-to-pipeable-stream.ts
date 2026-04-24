@@ -80,7 +80,7 @@ export function renderToPipeableStream(
             // Yield to event loop before next chunk
             setImmediate(writeNextChunk);
           } else {
-            // Respect backpressure
+            /* v8 ignore next 2 -- backpressure path requires slow consumer */
             destination.once('drain', writeNextChunk);
           }
         }

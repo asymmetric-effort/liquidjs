@@ -31,7 +31,7 @@ function randomBytes(length: number): Uint8Array {
     // Works in browsers and Node >=15 (globalThis.crypto)
     crypto.getRandomValues(buf);
   } catch {
-    // Fallback for environments without Web Crypto
+    /* v8 ignore next 3 -- fallback for environments without Web Crypto */
     for (let i = 0; i < length; i++) {
       buf[i] = Math.floor(Math.random() * 256);
     }

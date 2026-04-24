@@ -156,6 +156,7 @@ export class SyntheticTouchEvent extends SyntheticEvent {
   readonly metaKey: boolean;
   readonly shiftKey: boolean;
 
+  /* v8 ignore next 10 -- TouchEvent is not available in jsdom */
   constructor(nativeEvent: TouchEvent) {
     super(nativeEvent);
     this.touches = nativeEvent.touches;
@@ -200,6 +201,7 @@ export function createSyntheticEvent(nativeEvent: Event): SyntheticEvent {
   if (typeof InputEvent !== 'undefined' && nativeEvent instanceof InputEvent) {
     return new SyntheticInputEvent(nativeEvent);
   }
+  /* v8 ignore next 2 -- TouchEvent is not available in jsdom */
   if (typeof TouchEvent !== 'undefined' && nativeEvent instanceof TouchEvent) {
     return new SyntheticTouchEvent(nativeEvent);
   }

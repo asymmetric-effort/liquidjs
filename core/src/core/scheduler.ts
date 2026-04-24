@@ -55,6 +55,7 @@ export function scheduleMicrotask(fn: () => void): void {
   if (typeof queueMicrotask === 'function') {
     queueMicrotask(fn);
   } else {
+    /* v8 ignore next -- Promise fallback for environments without queueMicrotask */
     Promise.resolve().then(fn);
   }
 }

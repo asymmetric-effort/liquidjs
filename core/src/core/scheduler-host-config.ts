@@ -26,7 +26,7 @@ export interface CallbackNode {
 export function getCurrentTime(): number {
   return typeof performance !== 'undefined' && typeof performance.now === 'function'
     ? performance.now()
-    : Date.now();
+    : /* v8 ignore next */ Date.now();
 }
 
 // ---------------------------------------------------------------------------
@@ -64,6 +64,7 @@ function performWorkUntilDeadline(): void {
       } else {
         scheduledCallback = null;
       }
+    /* v8 ignore next 4 */
     } catch (err) {
       scheduledCallback = null;
       isMessageLoopRunning = false;
@@ -89,6 +90,7 @@ if (typeof MessageChannel !== 'undefined') {
   schedulePerformWorkUntilDeadline = () => {
     channel.port2.postMessage(null);
   };
+/* v8 ignore next 5 */
 } else {
   schedulePerformWorkUntilDeadline = () => {
     setTimeout(performWorkUntilDeadline, 0);

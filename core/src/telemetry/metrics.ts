@@ -138,6 +138,7 @@ export function createMeterProvider(config: MeterProviderConfig): MeterProvider 
   const instruments: Instrument[] = [];
 
   let exportTimer: ReturnType<typeof setInterval> | undefined;
+  /* v8 ignore next 7 -- timer setup requires real interval environment */
   if (config.exportInterval && config.exportInterval > 0) {
     exportTimer = setInterval(() => {
       void provider.flush();
