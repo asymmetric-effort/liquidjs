@@ -332,7 +332,18 @@ describe('useDebugValue full coverage', () => {
 });
 
 describe('useDeferredValue full coverage', () => {
-  it('returns the same value (sync fallback)', () => {
+  it('returns the initial value on first render', () => {
+    function Comp(props: { query: string }) {
+      const deferred = useDeferredValue(props.query);
+      return createElement('div', null, deferred);
+    }
+
+    const root = createRoot(container);
+    root.render(createElement(Comp, { query: 'hello' }));
+    expect(container.innerHTML).toBe('<div>hello</div>');
+  });
+
+  it('defers value update to transition priority', async () => {
     function Comp(props: { query: string }) {
       const deferred = useDeferredValue(props.query);
       return createElement('div', null, deferred);
@@ -342,6 +353,9 @@ describe('useDeferredValue full coverage', () => {
     root.render(createElement(Comp, { query: 'hello' }));
     expect(container.innerHTML).toBe('<div>hello</div>');
 
+    root.render(createElement(Comp, { query: 'world' }));
+    // The deferred value eventually updates
+    await new Promise(r => setTimeout(r, 100));
     root.render(createElement(Comp, { query: 'world' }));
     expect(container.innerHTML).toBe('<div>world</div>');
   });

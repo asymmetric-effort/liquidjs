@@ -12,6 +12,8 @@ import {
   EffectHookTag,
 } from './hook-state';
 import { scheduleUpdate } from '../core/scheduler';
+import { requestUpdateLane, startTransition as startTransitionFn } from '../core/transitions';
+import { mergeLanes } from '../core/lanes';
 
 // ---------------------------------------------------------------------------
 // Fiber render trigger — set by the work loop
@@ -28,6 +30,20 @@ function getCurrentFiberForDispatch(): Fiber {
     throw new Error('Invalid hook call.');
   }
   return fiber;
+}
+
+/**
+ * Walk up from a fiber to the root, setting lane bits on each ancestor.
+ * This propagates the lane information so ensureRootIsScheduled knows
+ * what work is pending.
+ */
+function markFiberWithLane(fiber: Fiber, lane: number): void {
+  fiber.lanes = mergeLanes(fiber.lanes, lane);
+  let node: Fiber | null = fiber.return;
+  while (node !== null) {
+    node.childLanes = mergeLanes(node.childLanes, lane);
+    node = node.return;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -62,7 +78,9 @@ export function useStateImpl<T>(
   const fiber = getCurrentFiberForDispatch();
 
   const setState = (action: T | ((prev: T) => T)) => {
+    const lane = requestUpdateLane();
     queue.push({ action });
+    markFiberWithLane(fiber, lane);
     if (rerenderFiber) {
       scheduleUpdate(() => rerenderFiber!(fiber));
     }
@@ -103,7 +121,9 @@ export function useReducerImpl<S, A>(
   const fiber = getCurrentFiberForDispatch();
 
   const dispatch = (action: A) => {
+    const lane = requestUpdateLane();
     queue.push({ action });
+    markFiberWithLane(fiber, lane);
     if (rerenderFiber) {
       scheduleUpdate(() => rerenderFiber!(fiber));
     }
@@ -290,10 +310,20 @@ export function useIdImpl(): string {
 // ---------------------------------------------------------------------------
 
 export function useDeferredValueImpl<T>(value: T): T {
-  const hook = allocateHook();
-  hook.memoizedState = value;
-  // TODO: integrate with concurrent scheduler for actual deferral
-  return value;
+  const [deferredValue, setDeferredValue] = useStateImpl(value);
+
+  // When the value changes, schedule a low-priority update to sync it
+  useEffectImpl(
+    EffectHookTag.Passive,
+    () => {
+      startTransitionFn(() => {
+        setDeferredValue(value);
+      });
+    },
+    [value],
+  );
+
+  return deferredValue;
 }
 
 // ---------------------------------------------------------------------------
@@ -301,20 +331,18 @@ export function useDeferredValueImpl<T>(value: T): T {
 // ---------------------------------------------------------------------------
 
 export function useTransitionImpl(): [boolean, (callback: () => void) => void] {
-  const hook = allocateHook();
+  const [isPending, setIsPending] = useStateImpl(false);
 
-  if (hook.memoizedState === null) {
-    hook.memoizedState = false;
-  }
+  const startTransition = useCallbackImpl((callback: () => void) => {
+    // Set isPending=true at DefaultLane (high priority — shows spinner immediately)
+    setIsPending(true);
 
-  const isPending = hook.memoizedState as boolean;
-
-  const startTransition = (callback: () => void) => {
-    // TODO: integrate with concurrent scheduler
-    hook.memoizedState = true;
-    callback();
-    hook.memoizedState = false;
-  };
+    // Run the callback inside startTransition — updates get TransitionLane
+    startTransitionFn(() => {
+      setIsPending(false); // This update gets TransitionLane (deferred)
+      callback();          // User's updates also get TransitionLane
+    });
+  }, [setIsPending]);
 
   return [isPending, startTransition];
 }

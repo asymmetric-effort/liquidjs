@@ -25,6 +25,23 @@ import {
 import { installDispatcher, uninstallDispatcher } from '../hooks/install-dispatcher';
 import { setRerenderCallback } from '../hooks/dispatcher';
 import { scheduleMicrotask } from '../core/scheduler';
+import {
+  NoLanes,
+  SyncLane,
+  DefaultLane,
+  includesSomeLane,
+  getHighestPriorityLane,
+  mergeLanes,
+  removeLanes,
+  isEmpty,
+} from '../core/lanes';
+import {
+  shouldYieldToHost,
+  resetDeadline,
+  scheduleCallback,
+  cancelCallback,
+  type CallbackNode,
+} from '../core/scheduler-host-config';
 
 // ---------------------------------------------------------------------------
 // Root container state
@@ -115,18 +132,198 @@ function performWork(root: FiberRoot): void {
     children: root.pendingChildren,
   } as Props);
 
-  // Begin phase: walk the tree top-down
-  let nextWork: Fiber | null = wip;
-
-  while (nextWork !== null) {
-    nextWork = performUnitOfWork(nextWork);
-  }
+  // Begin phase: walk the tree top-down (synchronous)
+  workLoopSync(wip);
 
   // Commit phase: apply changes to DOM
   commitRoot(root, wip);
 
   // Swap the trees
   root.current = wip;
+}
+
+// ---------------------------------------------------------------------------
+// Synchronous vs. concurrent work loops
+// ---------------------------------------------------------------------------
+
+/** Synchronous work loop — processes entire tree without yielding. */
+function workLoopSync(startFiber: Fiber): void {
+  let unitOfWork: Fiber | null = startFiber;
+  while (unitOfWork !== null) {
+    unitOfWork = performUnitOfWork(unitOfWork);
+  }
+}
+
+/** Concurrent work loop — yields to the host after each frame budget. */
+function workLoopConcurrent(startFiber: Fiber): Fiber | null {
+  let unitOfWork: Fiber | null = startFiber;
+  while (unitOfWork !== null && !shouldYieldToHost()) {
+    unitOfWork = performUnitOfWork(unitOfWork);
+  }
+  return unitOfWork; // null = complete, non-null = interrupted
+}
+
+// ---------------------------------------------------------------------------
+// Concurrent rendering entry point
+// ---------------------------------------------------------------------------
+
+// Module-level state for interruptible rendering
+let wipRoot: FiberRoot | null = null;
+let wipFiber: Fiber | null = null;
+let wipRootRenderLanes: number = NoLanes;
+
+/**
+ * Mark a root as having pending work at the given lane.
+ */
+export function markRootUpdated(root: FiberRoot, lane: number): void {
+  root.pendingLanes = mergeLanes(root.pendingLanes, lane);
+}
+
+/**
+ * Get the next lanes that should be worked on for a root.
+ * Returns the highest-priority pending lane(s).
+ */
+function getNextLanes(root: FiberRoot): number {
+  const pendingLanes = root.pendingLanes;
+  if (pendingLanes === NoLanes) return NoLanes;
+  return getHighestPriorityLane(pendingLanes);
+}
+
+/**
+ * Ensure that work is scheduled for a root. This is the central coordinator
+ * that decides whether to use sync or concurrent rendering based on lanes.
+ */
+export function ensureRootIsScheduled(root: FiberRoot): void {
+  const nextLanes = getNextLanes(root);
+
+  if (nextLanes === NoLanes) {
+    // No work to do — cancel any existing callback
+    if (root.callbackNode !== null) {
+      cancelCallback(root.callbackNode as CallbackNode);
+      root.callbackNode = null;
+      root.callbackPriority = NoLanes;
+    }
+    return;
+  }
+
+  const highestPriority = getHighestPriorityLane(nextLanes);
+
+  // If there's already a callback at this priority, don't schedule another
+  if (root.callbackPriority === highestPriority && root.callbackNode !== null) {
+    return;
+  }
+
+  // Cancel any existing lower-priority callback
+  if (root.callbackNode !== null) {
+    cancelCallback(root.callbackNode as CallbackNode);
+  }
+
+  // SyncLane and DefaultLane use synchronous rendering
+  if (includesSomeLane(highestPriority, SyncLane | DefaultLane)) {
+    // Schedule via microtask for batching (existing behavior)
+    root.callbackNode = null;
+    root.callbackPriority = highestPriority;
+
+    if (!root.callbackScheduled) {
+      root.callbackScheduled = true;
+      scheduleMicrotask(() => {
+        root.callbackScheduled = false;
+        performSyncWorkOnRoot(root);
+      });
+    }
+  } else {
+    // Concurrent rendering for transition/idle lanes
+    const callbackNode = scheduleCallback(() => {
+      return performConcurrentWorkOnRoot(root);
+    });
+    root.callbackNode = callbackNode;
+    root.callbackPriority = highestPriority;
+  }
+}
+
+/**
+ * Synchronous render for SyncLane and DefaultLane work.
+ */
+function performSyncWorkOnRoot(root: FiberRoot): void {
+  const lanes = getNextLanes(root);
+  if (lanes === NoLanes) return;
+
+  installPersistentRerenderCallback();
+
+  const currentRoot = root.current;
+  const wip = createWorkInProgress(currentRoot, {
+    children: root.pendingChildren,
+  } as Props);
+
+  wipRoot = root;
+  wipFiber = wip;
+  wipRootRenderLanes = lanes;
+
+  workLoopSync(wip);
+
+  // Commit
+  commitRoot(root, wip);
+  root.current = wip;
+
+  // Clear completed lanes
+  root.pendingLanes = removeLanes(root.pendingLanes, lanes);
+  root.callbackNode = null;
+  root.callbackPriority = NoLanes;
+  wipRoot = null;
+  wipFiber = null;
+  wipRootRenderLanes = NoLanes;
+
+  // Check if there's more work at a different priority
+  ensureRootIsScheduled(root);
+}
+
+/**
+ * Concurrent render for transition/idle lanes.
+ * Returns a continuation function if work was interrupted,
+ * or null if work is complete.
+ */
+function performConcurrentWorkOnRoot(root: FiberRoot): (() => null) | null {
+  const lanes = getNextLanes(root);
+  if (lanes === NoLanes) return null;
+
+  installPersistentRerenderCallback();
+
+  // If we don't have a WIP tree for this root, create one
+  if (wipRoot !== root || wipFiber === null) {
+    const currentRoot = root.current;
+    wipFiber = createWorkInProgress(currentRoot, {
+      children: root.pendingChildren,
+    } as Props);
+    wipRoot = root;
+    wipRootRenderLanes = lanes;
+  }
+
+  resetDeadline();
+  const remaining = workLoopConcurrent(wipFiber);
+
+  if (remaining !== null) {
+    // Work was interrupted — save position and return continuation
+    wipFiber = remaining;
+    return () => performConcurrentWorkOnRoot(root);
+  }
+
+  // Work is complete — commit
+  const finishedWork = wipFiber!;
+  commitRoot(root, finishedWork);
+  root.current = finishedWork;
+
+  // Clear completed lanes
+  root.pendingLanes = removeLanes(root.pendingLanes, lanes);
+  root.callbackNode = null;
+  root.callbackPriority = NoLanes;
+  wipRoot = null;
+  wipFiber = null;
+  wipRootRenderLanes = NoLanes;
+
+  // Check for remaining work
+  ensureRootIsScheduled(root);
+
+  return null;
 }
 
 function findRootForContainer(container: unknown): FiberRoot | null {
