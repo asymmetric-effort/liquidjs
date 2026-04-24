@@ -67,7 +67,7 @@ export function matchPath(
   const matchedSegments: string[] = [];
 
   for (let i = 0; i < patternSegments.length; i++) {
-    const patternSeg = patternSegments[i];
+    const patternSeg = patternSegments[i]!;
 
     // Wildcard — consume all remaining segments
     if (patternSeg === '*') {
@@ -86,7 +86,7 @@ export function matchPath(
       return null;
     }
 
-    const pathSeg = pathSegments[i];
+    const pathSeg = pathSegments[i]!;
 
     // Named parameter
     if (patternSeg.startsWith(':')) {

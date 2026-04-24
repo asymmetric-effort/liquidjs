@@ -333,7 +333,7 @@ export function useDeferredValueImpl<T>(value: T): T {
 export function useTransitionImpl(): [boolean, (callback: () => void) => void] {
   const [isPending, setIsPending] = useStateImpl(false);
 
-  const startTransition = useCallbackImpl((callback: () => void) => {
+  const startTransition = useCallbackImpl(((callback: () => void) => {
     // Set isPending=true at DefaultLane (high priority — shows spinner immediately)
     setIsPending(true);
 
@@ -342,7 +342,7 @@ export function useTransitionImpl(): [boolean, (callback: () => void) => void] {
       setIsPending(false); // This update gets TransitionLane (deferred)
       callback();          // User's updates also get TransitionLane
     });
-  }, [setIsPending]);
+  }) as (...args: unknown[]) => unknown, [setIsPending]) as unknown as (callback: () => void) => void;
 
   return [isPending, startTransition];
 }

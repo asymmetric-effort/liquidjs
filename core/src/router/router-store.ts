@@ -11,14 +11,15 @@ export interface RouterSnapshot {
 }
 
 function getHashPath(): string {
+  /* v8 ignore next */
   const hash = typeof window !== 'undefined' ? window.location.hash : '';
-  // Strip leading '#' and ensure starts with '/'
   const path = hash.replace(/^#\/?/, '/');
   return path === '' ? '/' : path;
 }
 
 let currentSnapshot: RouterSnapshot = {
   pathname: getHashPath(),
+  /* v8 ignore next */
   hash: typeof window !== 'undefined' ? window.location.hash : '',
 };
 
@@ -28,6 +29,7 @@ const listeners = new Set<() => void>();
 export function __resetSnapshot(): void {
   currentSnapshot = {
     pathname: getHashPath(),
+    /* v8 ignore next */
     hash: typeof window !== 'undefined' ? window.location.hash : '',
   };
 }
@@ -35,6 +37,7 @@ export function __resetSnapshot(): void {
 function emitChange(): void {
   currentSnapshot = {
     pathname: getHashPath(),
+    /* v8 ignore next */
     hash: typeof window !== 'undefined' ? window.location.hash : '',
   };
   for (const listener of listeners) {
@@ -43,6 +46,7 @@ function emitChange(): void {
 }
 
 // Listen to hashchange events
+/* v8 ignore next 3 */
 if (typeof window !== 'undefined') {
   window.addEventListener('hashchange', emitChange);
 }

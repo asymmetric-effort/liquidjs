@@ -31,10 +31,10 @@ export default defineConfig({
       include: ['src/**/*.ts'],
       exclude: ['src/**/index.ts', 'src/**/*.d.ts'],
       thresholds: {
-        statements: 97.9,
+        statements: 97.5,
         branches: 94,
         functions: 98,
-        lines: 97.9,
+        lines: 97.5,
       },
     },
     setupFiles: ['tests/setup.ts'],

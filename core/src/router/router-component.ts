@@ -28,9 +28,11 @@ export function Router(props: RouterProps): LiquidNode {
   }, []);
 
   const nav = useCallback(
-    (to: string, options?: { replace?: boolean }) => navigate(to, options),
+    ((...args: unknown[]) => {
+      navigate(args[0] as string, args[1] as { replace?: boolean } | undefined);
+    }),
     [],
-  );
+  ) as unknown as (to: string, options?: { replace?: boolean }) => void;
 
   const value: RouterContextValue = useMemo(() => ({
     pathname,

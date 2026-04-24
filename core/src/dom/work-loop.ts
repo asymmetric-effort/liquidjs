@@ -35,7 +35,6 @@ import {
   getHighestPriorityLane,
   mergeLanes,
   removeLanes,
-  isEmpty,
 } from '../core/lanes';
 import {
   shouldYieldToHost,
@@ -43,6 +42,7 @@ import {
   scheduleCallback,
   cancelCallback,
   type CallbackNode,
+  type SchedulerCallback,
 } from '../core/scheduler-host-config';
 
 // ---------------------------------------------------------------------------
@@ -191,7 +191,6 @@ function workLoopConcurrent(startFiber: Fiber): Fiber | null {
 // Module-level state for interruptible rendering
 let wipRoot: FiberRoot | null = null;
 let wipFiber: Fiber | null = null;
-let wipRootRenderLanes: number = NoLanes;
 
 /**
  * Mark a root as having pending work at the given lane.
@@ -278,7 +277,6 @@ function performSyncWorkOnRoot(root: FiberRoot): void {
 
   wipRoot = root;
   wipFiber = wip;
-  wipRootRenderLanes = lanes;
 
   workLoopSync(wip);
 
@@ -292,7 +290,6 @@ function performSyncWorkOnRoot(root: FiberRoot): void {
   root.callbackPriority = NoLanes;
   wipRoot = null;
   wipFiber = null;
-  wipRootRenderLanes = NoLanes;
 
   // Check if there's more work at a different priority
   ensureRootIsScheduled(root);
@@ -303,7 +300,7 @@ function performSyncWorkOnRoot(root: FiberRoot): void {
  * Returns a continuation function if work was interrupted,
  * or null if work is complete.
  */
-function performConcurrentWorkOnRoot(root: FiberRoot): (() => null) | null {
+function performConcurrentWorkOnRoot(root: FiberRoot): SchedulerCallback | null {
   const lanes = getNextLanes(root);
   if (lanes === NoLanes) return null;
 
@@ -316,8 +313,7 @@ function performConcurrentWorkOnRoot(root: FiberRoot): (() => null) | null {
       children: root.pendingChildren,
     } as Props);
     wipRoot = root;
-    wipRootRenderLanes = lanes;
-  }
+    }
 
   resetDeadline();
   const remaining = workLoopConcurrent(wipFiber);
@@ -339,7 +335,6 @@ function performConcurrentWorkOnRoot(root: FiberRoot): (() => null) | null {
   root.callbackPriority = NoLanes;
   wipRoot = null;
   wipFiber = null;
-  wipRootRenderLanes = NoLanes;
 
   // Check for remaining work
   ensureRootIsScheduled(root);
@@ -636,7 +631,6 @@ function cloneFiberSubtree(source: Fiber | null, parent: Fiber): Fiber | null {
 // SVG namespace handling
 // ---------------------------------------------------------------------------
 
-const SVG_NS = 'http://www.w3.org/2000/svg';
 const SVG_TAGS = new Set([
   'svg', 'circle', 'clipPath', 'defs', 'ellipse', 'g', 'line',
   'linearGradient', 'mask', 'path', 'pattern', 'polygon', 'polyline',
@@ -780,9 +774,9 @@ function completeWork(fiber: Fiber): void {
         const domNode = isSvgTag(tag)
           ? document.createElementNS('http://www.w3.org/2000/svg', tag)
           : document.createElement(tag);
-        updateDOMProperties(domNode, {}, fiber.pendingProps);
+        updateDOMProperties(domNode as HTMLElement, {}, fiber.pendingProps);
         fiber.stateNode = domNode;
-        appendAllChildren(domNode, fiber);
+        appendAllChildren(domNode as HTMLElement, fiber);
       } else if (activeHydrationRoot !== null && fiber.alternate === null) {
         // Hydrated node: stateNode was set during beginWork
         // Attach event listeners and update props, but don't recreate or append children
@@ -822,14 +816,13 @@ function completeWork(fiber: Fiber): void {
     case FiberTag.FunctionComponent:
     case FiberTag.ClassComponent:
     case FiberTag.Fragment:
+    case FiberTag.ContextProvider:
+    case FiberTag.ForwardRef:
+    case FiberTag.MemoComponent:
       // Decrement StrictMode depth when completing a StrictMode fiber
       if (fiber.type === LIQUID_STRICT_MODE_TYPE) {
         strictModeDepth--;
       }
-      // falls through
-    case FiberTag.ContextProvider:
-    case FiberTag.ForwardRef:
-    case FiberTag.MemoComponent:
       fiber.memoizedProps = fiber.pendingProps;
       break;
   }

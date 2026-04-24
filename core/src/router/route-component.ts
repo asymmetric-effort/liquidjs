@@ -37,7 +37,7 @@ export function Route(props: RouteProps): LiquidNode {
   // Merge parent params
   for (const key of Object.keys(router.params)) {
     if (!(key in nestedValue.params)) {
-      nestedValue.params[key] = router.params[key];
+      nestedValue.params[key] = router.params[key]!;
     }
   }
 

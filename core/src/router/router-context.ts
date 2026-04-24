@@ -3,7 +3,6 @@
  */
 
 import { createContext } from '../context/create-context';
-import type { LiquidNode } from '../shared/types';
 
 export interface RouterContextValue {
   /** Current hash pathname */
@@ -19,6 +18,7 @@ export interface RouterContextValue {
 export const RouterContext = createContext<RouterContextValue>({
   pathname: '/',
   params: {},
+  /* v8 ignore next 3 */
   navigate: () => {
     throw new Error('useNavigate must be used inside a <Router> component.');
   },

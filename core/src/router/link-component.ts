@@ -29,10 +29,11 @@ export function Link(props: LinkProps): LiquidNode {
 
   const isActive = matchPath(to, router.pathname, { exact: exact ?? false }) !== null;
 
-  const handleClick = useCallback((e: Event) => {
+  const handleClick = useCallback(((...args: unknown[]) => {
+    const e = args[0] as Event;
     e.preventDefault();
     router.navigate(to);
-  }, [to, router.navigate]);
+  }) as (...args: unknown[]) => unknown, [to, router.navigate]);
 
   const cls = [className, isActive ? activeClassName : null]
     .filter(Boolean)
