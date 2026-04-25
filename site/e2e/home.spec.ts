@@ -22,8 +22,9 @@ test.describe('Home Screen', () => {
     await expect(cards.first()).toContainText('Concurrent Rendering');
   });
 
-  test('displays getting started code', async ({ page }) => {
-    await expect(page.locator('.code-block')).toBeVisible();
-    await expect(page.locator('.code-block')).toContainText('createElement');
+  test('feature card opens article dialog', async ({ page }) => {
+    await page.locator('.feature-card').first().click();
+    await expect(page.locator('.dialog-title')).toBeVisible();
+    await expect(page.locator('.article-section')).toBeVisible();
   });
 });

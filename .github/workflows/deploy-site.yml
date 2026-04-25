@@ -84,7 +84,7 @@ jobs:
           npx playwright install chromium --with-deps
 
       - name: Wait for deployment to propagate
-        run: sleep 15
+        run: sleep 30
 
       - name: Run post-deployment E2E tests
         id: e2e
