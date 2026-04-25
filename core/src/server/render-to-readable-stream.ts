@@ -14,10 +14,10 @@ export interface RenderToReadableStreamOptions {
 
 /**
  * Renders a LiquidJS tree to a web ReadableStream.
- * Equivalent to ReactDOMServer.renderToReadableStream.
- *
- * Renders the full HTML, then enqueues it in chunks so the stream
- * can be consumed progressively by the client.
+ * **Build-time pre-rendering only.** Intended for build scripts that
+ * generate static HTML files, not for runtime server request handlers.
+ * Renders the full HTML, then enqueues it in chunks for efficient
+ * file I/O during static site generation.
  */
 export async function renderToReadableStream(
   element: LiquidNode,

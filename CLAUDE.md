@@ -69,9 +69,8 @@ LiquidJS is a declarative, component-based UI framework that mirrors the full Re
 - Concurrent rendering support (React 18+ parity)
 - `startTransition`, `useDeferredValue`
 - Automatic batching
-- Server-side rendering (SSR) support
-- Hydration (`hydrateRoot`)
-- Streaming SSR
+- Static pre-rendering (build-time HTML generation, NOT runtime SSR)
+- Hydration (`hydrateRoot`) for pre-rendered static HTML
 
 ### DOM Interaction
 - Synthetic event system with cross-browser normalization
@@ -88,11 +87,15 @@ LiquidJS is a declarative, component-based UI framework that mirrors the full Re
 - `flushSync`
 - `unmountComponentAtNode`
 
-### Server APIs
-- `renderToString`
-- `renderToStaticMarkup`
-- `renderToPipeableStream`
-- `renderToReadableStream`
+### Static Pre-rendering APIs (Build-time Only — NOT SSR)
+- `renderToString` — generates HTML string during build
+- `renderToStaticMarkup` — generates HTML without hydration markers
+- `renderToPipeableStream` — chunked HTML output to Node.js writable stream
+- `renderToReadableStream` — chunked HTML output to Web ReadableStream
+
+> **These APIs must only be used in build scripts and static site generation.**
+> They must NOT be used in server request handlers. LiquidJS is a browser-side
+> framework — dynamic content is fetched via HTTPS from API endpoints.
 
 ### Utilities
 - `Children` utilities (`map`, `forEach`, `count`, `only`, `toArray`)
@@ -120,7 +123,7 @@ liquidjs/
     components/     # Built-in component types (Fragment, Suspense, etc.)
     hooks/          # All hook implementations
     dom/            # DOM renderer, event system, synthetic events
-    server/         # SSR renderers
+    server/         # Static pre-rendering (build-time HTML generation)
     context/        # Context API implementation
     shared/         # Shared utilities, types, constants
     devtools/       # DevTools integration

@@ -43,9 +43,11 @@ LiquidJS is designed with React API parity. Most React code works with minimal c
 | `React.lazy` | `lazy` | Identical |
 | `React.createContext` | `createContext` | Identical |
 | `React.createFactory` | `createFactory` | Deprecated, supported |
-| `renderToString` | `renderToString` | from `liquidjs/server` |
-| `renderToPipeableStream` | `renderToPipeableStream` | from `liquidjs/server` |
-| `renderToReadableStream` | `renderToReadableStream` | from `liquidjs/server` |
+| `renderToString` | `renderToString` | from `liquidjs/server` (build-time only) |
+| `renderToPipeableStream` | `renderToPipeableStream` | from `liquidjs/server` (build-time only) |
+| `renderToReadableStream` | `renderToReadableStream` | from `liquidjs/server` (build-time only) |
+
+> **Note:** Unlike React, LiquidJS does NOT support server-side rendering at request time. The `liquidjs/server` module is for **static pre-rendering during builds** only. Dynamic content should be fetched client-side via HTTPS.
 
 ## Legacy API Support
 

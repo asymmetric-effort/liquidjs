@@ -22,12 +22,15 @@ export interface RenderToPipeableStreamOptions {
 }
 
 /**
- * Renders a LiquidJS tree to a Node.js pipeable stream.
- * Equivalent to ReactDOMServer.renderToPipeableStream.
+ * Renders a LiquidJS component tree to a Node.js pipeable stream.
  *
- * Renders the full HTML string first, then writes it in chunks to the
- * writable stream. Each chunk yields to the event loop, allowing other
- * I/O operations to interleave with the response body.
+ * **Build-time pre-rendering only.** Intended for build scripts that
+ * generate static HTML files, not for runtime server request handlers.
+ * Renders the full HTML string, then writes it in chunks to the writable
+ * stream for efficient file I/O during static site generation.
+ *
+ * For dynamic content, use LiquidJS's client-side rendering with data
+ * fetched via HTTPS from API endpoints.
  */
 export function renderToPipeableStream(
   element: LiquidNode,
