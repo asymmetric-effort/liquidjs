@@ -78,7 +78,7 @@ export function EconomicDashboard() {
         ...presData.map(p => {
           const maxReturn = 130;
           const absReturn = Math.abs(p.sp500Return);
-          const heightPct = Math.min((absReturn / maxReturn) * 100, 100);
+          const barHeight = Math.max(4, Math.round((absReturn / maxReturn) * 150));
           const color = p.party === 'Democratic' ? 'var(--color-dem)' : 'var(--color-rep)';
           const isNeg = p.sp500Return < 0;
 
@@ -86,14 +86,16 @@ export function EconomicDashboard() {
             createElement('div', { className: 'bar-chart-value', style: { color: isNeg ? '#ef4444' : '#16a34a' } },
               `${isNeg ? '' : '+'}${p.sp500Return}%`,
             ),
-            createElement('div', {
-              className: 'bar-chart-bar',
-              style: {
-                height: `${heightPct}%`,
-                backgroundColor: color,
-                opacity: isNeg ? '0.5' : '1',
-              },
-            }),
+            createElement('div', { className: 'bar-chart-bar-wrap' },
+              createElement('div', {
+                className: 'bar-chart-bar',
+                style: {
+                  height: `${barHeight}px`,
+                  backgroundColor: color,
+                  opacity: isNeg ? '0.5' : '1',
+                },
+              }),
+            ),
             createElement('div', { className: 'bar-chart-label' }, p.name),
           );
         }),

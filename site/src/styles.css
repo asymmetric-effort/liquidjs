@@ -132,8 +132,16 @@ body {
 .stat-card-sub { font-size: 12px; color: var(--color-text-muted); margin-top: 4px; }
 
 /* Bar Chart */
-.bar-chart { display: flex; align-items: flex-end; gap: 12px; height: 200px; padding-top: 16px; }
+.bar-chart { display: flex; align-items: stretch; gap: 12px; padding-top: 16px; }
 .bar-chart-col { display: flex; flex-direction: column; align-items: center; flex: 1; }
+.bar-chart-value { font-size: 12px; font-weight: 600; margin-bottom: 4px; flex-shrink: 0; }
+.bar-chart-bar-wrap {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 160px;
+}
 .bar-chart-bar {
   width: 100%;
   max-width: 60px;
@@ -141,8 +149,7 @@ body {
   transition: height 0.3s;
   min-height: 2px;
 }
-.bar-chart-label { font-size: 11px; color: var(--color-text-muted); margin-top: 6px; text-align: center; }
-.bar-chart-value { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+.bar-chart-label { font-size: 11px; color: var(--color-text-muted); margin-top: 6px; text-align: center; flex-shrink: 0; }
 
 /* Component Preview */
 .preview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
