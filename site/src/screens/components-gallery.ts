@@ -24,7 +24,7 @@ export function ComponentsGallery() {
   return createElement(
     'div',
     { className: 'accordion' },
-    accordionSection('Form Components', '7 components', openSection, toggle, [
+    accordionSection('Form Components', '13 components', openSection, toggle, [
       preview('Toggle', ToggleDemo),
       preview('Text Input', TextInputDemo),
       preview('Checkbox', CheckboxDemo),
@@ -32,27 +32,47 @@ export function ComponentsGallery() {
       preview('Select', SelectDemo),
       preview('Slider', SliderDemo),
       preview('Number Spinner', NumberSpinnerDemo),
+      preview('Color Picker', ColorPickerDemo),
+      preview('Date Picker', DatePickerDemo),
+      preview('Time Picker', TimePickerDemo),
+      preview('File Upload', FileUploadDemo),
+      preview('Multiline', MultilineDemo),
+      preview('Text Editor', TextEditorDemo),
     ]),
-    accordionSection('Data Display', '4 components', openSection, toggle, [
+    accordionSection('Data Display', '6 components', openSection, toggle, [
       preview('Badge', BadgeDemo),
       preview('Tag', TagDemo),
       preview('Data Table', DataTableDemo),
       preview('Avatar', AvatarDemo),
+      preview('List View', ListViewDemo),
+      preview('Virtual Scroll', VirtualScrollDemo),
     ]),
     accordionSection('Feedback', '3 components', openSection, toggle, [
       preview('Alert', AlertDemo),
       preview('Progress Bar', ProgressBarDemo),
       preview('Spinner', SpinnerDemo),
     ]),
-    accordionSection('Navigation', '3 components', openSection, toggle, [
+    accordionSection('Navigation', '9 components', openSection, toggle, [
       preview('Tabs', TabsDemo),
       preview('Breadcrumb', BreadcrumbDemo),
       preview('Pagination', PaginationDemo),
+      preview('Dropdown Menu', DropdownMenuDemo),
+      preview('Menu Bar', MenuBarDemo),
+      preview('Sidebar', SidebarDemo),
+      preview('Stepper', StepperDemo),
+      preview('Toolbar', ToolbarDemo),
+      preview('Tree Nav', TreeNavDemo),
     ]),
-    accordionSection('Layout', '3 components', openSection, toggle, [
+    accordionSection('Layout', '9 components', openSection, toggle, [
       preview('Card', CardDemo),
       preview('Counter', CounterDemo),
       preview('List with Filter', FilterListDemo),
+      preview('Flex Container', FlexContainerDemo),
+      preview('Grid', GridDemo),
+      preview('Panel', PanelDemo),
+      preview('Scroll Container', ScrollContainerDemo),
+      preview('Splitter', SplitterDemo),
+      preview('Tabs Layout', TabsLayoutDemo),
     ]),
     accordionSection('Visualization', '6 components', openSection, toggle, [
       preview('Bar Graph', BarGraphDemo),
@@ -556,5 +576,391 @@ function ScatterPlotDemo() {
         onMouseLeave: () => setHovered(-1),
       }),
     ),
+  );
+}
+
+// ─── Form (additional) ──────────────────────────────────────────────
+
+function ColorPickerDemo() {
+  const presets = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+  const [color, setColor] = useState(presets[0]!);
+  return createElement('div', null,
+    createElement('div', { style: { width: '64px', height: '64px', borderRadius: '8px', backgroundColor: color, border: '1px solid #e2e8f0', marginBottom: '8px' } }),
+    createElement('p', { style: { fontSize: '13px', color: '#64748b', marginBottom: '8px' } }, color),
+    createElement('div', { style: { display: 'flex', gap: '6px', flexWrap: 'wrap' } },
+      ...presets.map(c =>
+        createElement('button', {
+          key: c,
+          onClick: () => setColor(c),
+          style: {
+            width: '28px', height: '28px', borderRadius: '4px', backgroundColor: c, border: color === c ? '2px solid #0f172a' : '2px solid transparent', cursor: 'pointer', padding: '0',
+          },
+        }),
+      ),
+    ),
+  );
+}
+
+function DatePickerDemo() {
+  const [value, setValue] = useState('2026-04-24');
+  return createElement('div', null,
+    createElement('input', {
+      type: 'date', value,
+      onInput: (e: Event) => setValue((e.target as HTMLInputElement).value),
+      style: { padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '14px', width: '100%' },
+    }),
+    value ? createElement('p', { style: { fontSize: '13px', color: '#64748b', marginTop: '8px' } }, `Selected: ${value}`) : null,
+  );
+}
+
+function TimePickerDemo() {
+  const [hour, setHour] = useState(9);
+  const [minute, setMinute] = useState(30);
+  const [ampm, setAmpm] = useState<'AM' | 'PM'>('AM');
+  const sel = { padding: '6px 8px', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '14px', background: '#f8fafc' };
+  const toggleStyle = (active: boolean) => ({ padding: '6px 10px', border: '1px solid #d1d5db', borderRadius: '4px', cursor: 'pointer', fontSize: '13px', background: active ? '#3b82f6' : '#f8fafc', color: active ? 'white' : '#0f172a' });
+  return createElement('div', null,
+    createElement('div', { style: { display: 'flex', gap: '6px', alignItems: 'center', marginBottom: '8px' } },
+      createElement('select', { value: String(hour), onChange: (e: Event) => setHour(Number((e.target as HTMLSelectElement).value)), style: sel },
+        ...Array.from({ length: 12 }, (_, i) => createElement('option', { key: String(i + 1), value: String(i + 1) }, String(i + 1).padStart(2, '0'))),
+      ),
+      createElement('span', { style: { fontWeight: '600' } }, ':'),
+      createElement('select', { value: String(minute), onChange: (e: Event) => setMinute(Number((e.target as HTMLSelectElement).value)), style: sel },
+        ...Array.from({ length: 60 }, (_, i) => createElement('option', { key: String(i), value: String(i) }, String(i).padStart(2, '0'))),
+      ),
+      createElement('button', { onClick: () => setAmpm('AM'), style: toggleStyle(ampm === 'AM') }, 'AM'),
+      createElement('button', { onClick: () => setAmpm('PM'), style: toggleStyle(ampm === 'PM') }, 'PM'),
+    ),
+    createElement('p', { style: { fontSize: '13px', color: '#64748b' } }, `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')} ${ampm}`),
+  );
+}
+
+function FileUploadDemo() {
+  const [files, setFiles] = useState<string[]>(['document.pdf', 'photo.png']);
+  const mockNames = ['report.xlsx', 'notes.txt', 'image.jpg', 'data.csv'];
+  const [idx, setIdx] = useState(0);
+  const addFile = () => {
+    setFiles((prev: string[]) => [...prev, mockNames[idx % mockNames.length]!]);
+    setIdx((i: number) => i + 1);
+  };
+  return createElement('div', null,
+    createElement('div', {
+      onClick: addFile,
+      style: { border: '2px dashed #d1d5db', borderRadius: '8px', padding: '24px', textAlign: 'center', cursor: 'pointer', color: '#64748b', fontSize: '14px', background: '#f8fafc' },
+    }, 'Click to upload'),
+    files.length > 0
+      ? createElement('ul', { style: { listStyle: 'none', padding: '0', marginTop: '8px', fontSize: '13px' } },
+          ...files.map((f, i) =>
+            createElement('li', { key: `${f}-${i}`, style: { padding: '4px 0', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
+              createElement('span', null, f),
+              createElement('span', {
+                onClick: () => setFiles((prev: string[]) => prev.filter((_, j) => j !== i)),
+                style: { cursor: 'pointer', color: '#ef4444', fontSize: '14px' },
+              }, '\u00d7'),
+            ),
+          ),
+        )
+      : null,
+  );
+}
+
+function MultilineDemo() {
+  const [text, setText] = useState('');
+  const maxLen = 200;
+  return createElement('div', null,
+    createElement('textarea', {
+      value: text,
+      onInput: (e: Event) => setText((e.target as HTMLTextAreaElement).value),
+      placeholder: 'Type your message...',
+      style: { width: '100%', minHeight: '80px', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '14px', resize: 'vertical' },
+    }),
+    createElement('p', { style: { fontSize: '12px', color: text.length > maxLen ? '#ef4444' : '#64748b', marginTop: '4px', textAlign: 'right' } }, `${text.length} / ${maxLen}`),
+  );
+}
+
+function TextEditorDemo() {
+  const [text, setText] = useState('');
+  const [bold, setBold] = useState(false);
+  const [italic, setItalic] = useState(false);
+  const [underline, setUnderline] = useState(false);
+  const tbtn = (label: string, active: boolean, toggle: () => void) =>
+    createElement('button', {
+      onClick: toggle,
+      style: { padding: '4px 10px', border: '1px solid #d1d5db', borderRadius: '4px', cursor: 'pointer', fontSize: '13px', fontWeight: label === 'B' ? '700' : '400', fontStyle: label === 'I' ? 'italic' : 'normal', textDecoration: label === 'U' ? 'underline' : 'none', background: active ? '#3b82f6' : '#f8fafc', color: active ? 'white' : '#0f172a' },
+    }, label);
+  return createElement('div', null,
+    createElement('div', { style: { display: 'flex', gap: '4px', marginBottom: '6px', padding: '4px', background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' } },
+      tbtn('B', bold, () => setBold(!bold)),
+      tbtn('I', italic, () => setItalic(!italic)),
+      tbtn('U', underline, () => setUnderline(!underline)),
+    ),
+    createElement('textarea', {
+      value: text,
+      onInput: (e: Event) => setText((e.target as HTMLTextAreaElement).value),
+      placeholder: 'Start typing...',
+      style: { width: '100%', minHeight: '64px', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '14px', fontWeight: bold ? '700' : '400', fontStyle: italic ? 'italic' : 'normal', textDecoration: underline ? 'underline' : 'none', resize: 'vertical' },
+    }),
+  );
+}
+
+// ─── Navigation (additional) ────────────────────────────────────────
+
+function DropdownMenuDemo() {
+  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState<string | null>(null);
+  const items = ['Profile', 'Settings', 'Help', 'Log out'];
+  return createElement('div', { style: { position: 'relative' } },
+    createElement('button', {
+      onClick: () => setOpen(!open),
+      style: { padding: '8px 16px', border: '1px solid #d1d5db', borderRadius: '6px', cursor: 'pointer', fontSize: '14px', background: '#f8fafc', display: 'flex', alignItems: 'center', gap: '6px' },
+    }, selected || 'Menu', createElement('span', null, open ? '\u25b2' : '\u25bc')),
+    open ? createElement('div', { style: { position: 'absolute', top: '100%', left: '0', marginTop: '4px', minWidth: '140px', border: '1px solid #e2e8f0', borderRadius: '6px', background: 'white', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', zIndex: '10', overflow: 'hidden' } },
+      ...items.map(item =>
+        createElement('div', {
+          key: item,
+          onClick: () => { setSelected(item); setOpen(false); },
+          style: { padding: '8px 14px', cursor: 'pointer', fontSize: '14px', borderBottom: '1px solid #f1f5f9' },
+        }, item),
+      ),
+    ) : null,
+  );
+}
+
+function MenuBarDemo() {
+  const [active, setActive] = useState<string | null>(null);
+  const menus = ['File', 'Edit', 'View', 'Help'];
+  return createElement('div', { style: { display: 'flex', gap: '0', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', overflow: 'hidden' } },
+    ...menus.map(m =>
+      createElement('button', {
+        key: m,
+        onClick: () => setActive(active === m ? null : m),
+        style: { padding: '8px 16px', border: 'none', borderRight: '1px solid #e2e8f0', cursor: 'pointer', fontSize: '14px', background: active === m ? '#3b82f6' : 'transparent', color: active === m ? 'white' : '#0f172a', fontWeight: active === m ? '600' : '400' },
+      }, m),
+    ),
+  );
+}
+
+function SidebarDemo() {
+  const items = ['Dashboard', 'Projects', 'Messages', 'Settings'];
+  const [active, setActive] = useState('Dashboard');
+  return createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '2px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', padding: '6px', minWidth: '140px' } },
+    ...items.map(item =>
+      createElement('button', {
+        key: item,
+        onClick: () => setActive(item),
+        style: { padding: '8px 12px', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', textAlign: 'left', background: active === item ? '#3b82f6' : 'transparent', color: active === item ? 'white' : '#0f172a', fontWeight: active === item ? '600' : '400', borderLeft: active === item ? '3px solid #1d4ed8' : '3px solid transparent' },
+      }, item),
+    ),
+  );
+}
+
+function StepperDemo() {
+  const steps = ['Details', 'Address', 'Payment', 'Confirm'];
+  const [current, setCurrent] = useState(0);
+  return createElement('div', null,
+    createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '0', marginBottom: '12px' } },
+      ...steps.map((step, i) =>
+        createElement('div', { key: step, style: { display: 'flex', alignItems: 'center' } },
+          createElement('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'center' } },
+            createElement('div', { style: { width: '28px', height: '28px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: '700', background: i <= current ? '#3b82f6' : '#e2e8f0', color: i <= current ? 'white' : '#64748b' } }, String(i + 1)),
+            createElement('span', { style: { fontSize: '11px', color: i <= current ? '#3b82f6' : '#64748b', marginTop: '4px', whiteSpace: 'nowrap' } }, step),
+          ),
+          i < steps.length - 1
+            ? createElement('div', { style: { width: '24px', height: '2px', background: i < current ? '#3b82f6' : '#e2e8f0', margin: '0 4px', marginBottom: '18px' } })
+            : null,
+        ),
+      ),
+    ),
+    createElement('div', { style: { display: 'flex', gap: '8px' } },
+      createElement('button', {
+        onClick: () => setCurrent(Math.max(0, current - 1)),
+        disabled: current === 0,
+        style: { padding: '6px 14px', border: '1px solid #d1d5db', borderRadius: '6px', cursor: current === 0 ? 'default' : 'pointer', fontSize: '13px', background: '#f8fafc', opacity: current === 0 ? '0.5' : '1' },
+      }, 'Back'),
+      createElement('button', {
+        onClick: () => setCurrent(Math.min(steps.length - 1, current + 1)),
+        disabled: current === steps.length - 1,
+        style: { padding: '6px 14px', border: 'none', borderRadius: '6px', cursor: current === steps.length - 1 ? 'default' : 'pointer', fontSize: '13px', background: '#3b82f6', color: 'white', opacity: current === steps.length - 1 ? '0.5' : '1' },
+      }, 'Next'),
+    ),
+  );
+}
+
+function ToolbarDemo() {
+  const [active, setActive] = useState<string[]>([]);
+  const toggle = (id: string) => setActive((prev: string[]) => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  const items = [
+    { id: 'bold', label: 'B', fontWeight: '700' },
+    { id: 'italic', label: 'I', fontStyle: 'italic' },
+    { id: 'underline', label: 'U', textDecoration: 'underline' },
+  ];
+  return createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '2px', padding: '4px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px' } },
+    ...items.map(item =>
+      createElement('button', {
+        key: item.id,
+        onClick: () => toggle(item.id),
+        style: { padding: '6px 10px', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontWeight: item.fontWeight || '400', fontStyle: item.fontStyle || 'normal', textDecoration: item.textDecoration || 'none', background: active.includes(item.id) ? '#3b82f6' : 'transparent', color: active.includes(item.id) ? 'white' : '#0f172a' },
+      }, item.label),
+    ),
+    createElement('div', { style: { width: '1px', height: '20px', background: '#e2e8f0', margin: '0 4px' } }),
+    createElement('button', { style: { padding: '6px 10px', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', background: 'transparent', color: '#3b82f6', textDecoration: 'underline' } }, 'Link'),
+  );
+}
+
+function TreeNavDemo() {
+  const [expanded, setExpanded] = useState<string[]>(['src']);
+  const toggle = (id: string) => setExpanded((prev: string[]) => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+
+  const treeItem = (id: string, label: string, depth: number, children?: ReturnType<typeof createElement>[]) => {
+    const hasChildren = children && children.length > 0;
+    const isOpen = expanded.includes(id);
+    return createElement('div', { key: id },
+      createElement('div', {
+        onClick: hasChildren ? () => toggle(id) : undefined,
+        style: { display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 8px', paddingLeft: `${8 + depth * 16}px`, cursor: hasChildren ? 'pointer' : 'default', fontSize: '14px', borderRadius: '4px' },
+      },
+        hasChildren
+          ? createElement('span', { style: { fontSize: '10px', color: '#64748b', width: '12px' } }, isOpen ? '\u25bc' : '\u25b6')
+          : createElement('span', { style: { width: '12px' } }),
+        createElement('span', { style: { color: hasChildren ? '#0f172a' : '#64748b' } }, label),
+      ),
+      hasChildren && isOpen
+        ? createElement('div', null, ...children!)
+        : null,
+    );
+  };
+
+  return createElement('div', { style: { background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', padding: '6px 0' } },
+    treeItem('src', 'src', 0, [
+      treeItem('components', 'components', 1, [
+        treeItem('button', 'Button.ts', 2),
+        treeItem('input', 'Input.ts', 2),
+      ]),
+      treeItem('hooks', 'hooks', 1, [
+        treeItem('useState', 'useState.ts', 2),
+        treeItem('useEffect', 'useEffect.ts', 2),
+      ]),
+      treeItem('index', 'index.ts', 1),
+    ]),
+    treeItem('tests', 'tests', 0, [
+      treeItem('unit', 'unit', 1, [
+        treeItem('test1', 'Button.test.ts', 2),
+      ]),
+    ]),
+  );
+}
+
+// ─── Data Display (additional) ────────────────────────────────────────
+function ListViewDemo() {
+  const items = ['Design System', 'Component Library', 'API Reference', 'Testing Guide', 'Deployment'];
+  const [selected, setSelected] = useState(0);
+  return createElement('div', { style: { border: '1px solid #e2e8f0', borderRadius: '6px', overflow: 'hidden' } },
+    ...items.map((item, i) =>
+      createElement('div', {
+        key: item,
+        onClick: () => setSelected(i),
+        style: {
+          padding: '10px 14px', fontSize: '14px', cursor: 'pointer',
+          backgroundColor: i === selected ? '#eff6ff' : 'transparent',
+          borderLeft: i === selected ? '3px solid #3b82f6' : '3px solid transparent',
+          borderBottom: i < items.length - 1 ? '1px solid #f1f5f9' : 'none',
+        },
+      }, item),
+    ),
+  );
+}
+
+function VirtualScrollDemo() {
+  const [scrollTop, setScrollTop] = useState(0);
+  const itemHeight = 28;
+  const containerHeight = 120;
+  const totalItems = 1000;
+  const startIdx = Math.floor(scrollTop / itemHeight);
+  const visibleCount = Math.ceil(containerHeight / itemHeight) + 1;
+
+  return createElement('div', null,
+    createElement('div', {
+      style: { height: `${containerHeight}px`, overflow: 'auto', border: '1px solid #e2e8f0', borderRadius: '6px', position: 'relative' },
+      onScroll: (e: Event) => setScrollTop((e.target as HTMLElement).scrollTop),
+    },
+      createElement('div', { style: { height: `${totalItems * itemHeight}px`, position: 'relative' } },
+        ...Array.from({ length: Math.min(visibleCount, totalItems - startIdx) }, (_, i) => {
+          const idx = startIdx + i;
+          return createElement('div', {
+            key: String(idx),
+            style: { position: 'absolute', top: `${idx * itemHeight}px`, left: '0', right: '0', height: `${itemHeight}px`, padding: '4px 12px', fontSize: '13px', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center' },
+          }, `Row ${idx + 1} of ${totalItems}`);
+        }),
+      ),
+    ),
+    createElement('p', { style: { fontSize: '11px', color: '#94a3b8', marginTop: '4px' } }, `Rendering ${visibleCount} of ${totalItems} items`),
+  );
+}
+
+// ─── Layout (additional) ──────────────────────────────────────────────
+function FlexContainerDemo() {
+  const [direction, setDirection] = useState<'row' | 'column'>('row');
+  const box = (color: string, label: string) =>
+    createElement('div', { key: label, style: { width: '50px', height: '40px', backgroundColor: color, borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '11px', fontWeight: '600' } }, label);
+  return createElement('div', null,
+    createElement('div', { style: { display: 'flex', gap: '6px', marginBottom: '8px' } },
+      createElement('button', { onClick: () => setDirection('row'), style: { padding: '3px 10px', border: '1px solid #d1d5db', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', background: direction === 'row' ? '#3b82f6' : '#f8fafc', color: direction === 'row' ? 'white' : '#0f172a' } }, 'Row'),
+      createElement('button', { onClick: () => setDirection('column'), style: { padding: '3px 10px', border: '1px solid #d1d5db', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', background: direction === 'column' ? '#3b82f6' : '#f8fafc', color: direction === 'column' ? 'white' : '#0f172a' } }, 'Column'),
+    ),
+    createElement('div', { style: { display: 'flex', flexDirection: direction, gap: '8px', padding: '12px', background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' } },
+      box('#3b82f6', 'A'), box('#10b981', 'B'), box('#f59e0b', 'C'),
+    ),
+  );
+}
+
+function GridDemo() {
+  return createElement('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' } },
+    ...Array.from({ length: 6 }, (_, i) =>
+      createElement('div', { key: String(i), style: { padding: '16px', textAlign: 'center', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', fontWeight: '600', color: '#64748b' } }, `Cell ${i + 1}`),
+    ),
+  );
+}
+
+function PanelDemo() {
+  const [collapsed, setCollapsed] = useState(false);
+  return createElement('div', { style: { border: '1px solid #e2e8f0', borderRadius: '6px', overflow: 'hidden' } },
+    createElement('div', {
+      onClick: () => setCollapsed(!collapsed),
+      style: { padding: '10px 14px', background: '#f8fafc', borderBottom: collapsed ? 'none' : '1px solid #e2e8f0', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '14px', fontWeight: '600' },
+    }, 'Panel Header', createElement('span', { style: { fontSize: '10px', color: '#94a3b8' } }, collapsed ? '\u25b6' : '\u25bc')),
+    collapsed ? null : createElement('div', { style: { padding: '14px', fontSize: '13px', color: '#64748b' } }, 'Panel content area. Click the header to collapse.'),
+  );
+}
+
+function ScrollContainerDemo() {
+  return createElement('div', { style: { height: '100px', overflow: 'auto', border: '1px solid #e2e8f0', borderRadius: '6px', padding: '8px 12px', fontSize: '13px', lineHeight: '1.8' } },
+    ...Array.from({ length: 12 }, (_, i) =>
+      createElement('div', { key: String(i) }, `Scrollable item ${i + 1}`),
+    ),
+  );
+}
+
+function SplitterDemo() {
+  const [leftWidth, setLeftWidth] = useState(50);
+  return createElement('div', null,
+    createElement('div', { style: { display: 'flex', height: '80px', border: '1px solid #e2e8f0', borderRadius: '6px', overflow: 'hidden' } },
+      createElement('div', { style: { width: `${leftWidth}%`, background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', color: '#3b82f6', fontWeight: '600' } }, `Left (${leftWidth}%)`),
+      createElement('div', { style: { width: '4px', background: '#d1d5db', cursor: 'col-resize', flexShrink: '0' } }),
+      createElement('div', { style: { flex: '1', background: '#f0fdf4', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', color: '#16a34a', fontWeight: '600' } }, `Right (${100 - leftWidth}%)`),
+    ),
+    createElement('input', { type: 'range', min: '20', max: '80', value: String(leftWidth), onInput: (e: Event) => setLeftWidth(Number((e.target as HTMLInputElement).value)), style: { width: '100%', marginTop: '8px' } }),
+  );
+}
+
+function TabsLayoutDemo() {
+  const [active, setActive] = useState(0);
+  const tabs = ['Content', 'Sidebar', 'Footer'];
+  return createElement('div', { style: { border: '1px solid #e2e8f0', borderRadius: '6px', overflow: 'hidden' } },
+    createElement('div', { style: { display: 'flex', background: '#f8fafc', borderBottom: '1px solid #e2e8f0' } },
+      ...tabs.map((t, i) =>
+        createElement('button', { key: t, onClick: () => setActive(i), style: { padding: '8px 16px', border: 'none', background: i === active ? 'white' : 'transparent', borderBottom: i === active ? '2px solid #3b82f6' : '2px solid transparent', cursor: 'pointer', fontSize: '13px', fontWeight: i === active ? '600' : '400', color: i === active ? '#3b82f6' : '#64748b' } }, t),
+      ),
+    ),
+    createElement('div', { style: { padding: '14px', fontSize: '13px', color: '#64748b', minHeight: '40px' } }, `Layout region: ${tabs[active]}`),
   );
 }
