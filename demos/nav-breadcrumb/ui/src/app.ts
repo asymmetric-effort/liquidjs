@@ -1,6 +1,6 @@
-import { createElement } from 'liquidjs';
-import { useState, useCallback } from 'liquidjs/hooks';
-import { createRoot } from 'liquidjs/dom';
+import { createElement } from 'specifyjs';
+import { useState, useCallback } from 'specifyjs/hooks';
+import { createRoot } from 'specifyjs/dom';
 import { Breadcrumb } from '../../../../components/nav/breadcrumb/src/index';
 import type { BreadcrumbItem, BreadcrumbSize } from '../../../../components/nav/breadcrumb/src/index';
 

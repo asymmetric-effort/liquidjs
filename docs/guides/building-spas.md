@@ -1,10 +1,10 @@
 # Building Single-Page Applications
 
-LiquidJS is designed for building SPAs that compile to minified JavaScript for high-performance browser execution.
+SpecifyJS is designed for building SPAs that compile to minified JavaScript for high-performance browser execution.
 
 ## Application Structure
 
-A typical LiquidJS SPA:
+A typical SpecifyJS SPA:
 
 ```
 my-app/
@@ -21,8 +21,8 @@ my-app/
 
 ```typescript
 // src/app.ts
-import { createElement } from 'liquidjs';
-import { createRoot } from 'liquidjs/dom';
+import { createElement } from 'specifyjs';
+import { createRoot } from 'specifyjs/dom';
 
 function App() {
   return createElement('div', { id: 'app' },
@@ -66,7 +66,7 @@ const AppContext = createContext(defaultState);
 
 ## Production Build
 
-LiquidJS apps compile to minified, tree-shaken bundles via Vite/Rollup:
+SpecifyJS apps compile to minified, tree-shaken bundles via Vite/Rollup:
 
 ```bash
 npx vite build

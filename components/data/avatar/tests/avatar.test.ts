@@ -138,7 +138,7 @@ describe('Avatar — interaction', () => {
     expect(img).toBeTruthy();
 
     // Trigger image error — the onError handler calls setImgError(true)
-    const errorHandler = (img as any).__liquidjs_events?.error ?? null;
+    const errorHandler = (img as any).__specifyjs_events?.error ?? null;
     if (errorHandler) {
       errorHandler(new Event('error'));
     } else {

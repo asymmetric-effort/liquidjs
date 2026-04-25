@@ -1,6 +1,6 @@
-import { createElement, Fragment, createContext, memo } from 'liquidjs';
-import { useState, useEffect, useCallback, useMemo, useReducer, useContext, useRef } from 'liquidjs/hooks';
-import { createRoot } from 'liquidjs/dom';
+import { createElement, Fragment, createContext, memo } from 'specifyjs';
+import { useState, useEffect, useCallback, useMemo, useReducer, useContext, useRef } from 'specifyjs/hooks';
+import { createRoot } from 'specifyjs/dom';
 
 // ---------------------------------------------------------------------------
 // Theme Context (light / dark)
@@ -306,7 +306,7 @@ function Sidebar(props: { active: View; onNavigate: (v: View) => void }) {
   return createElement(
     'nav',
     { className: 'sidebar' },
-    createElement('div', { className: 'sidebar-brand' }, 'LiquidJS Dashboard'),
+    createElement('div', { className: 'sidebar-brand' }, 'SpecifyJS Dashboard'),
     createElement(
       'ul',
       { className: 'nav-list' },

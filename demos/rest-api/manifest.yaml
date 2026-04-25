@@ -1,5 +1,5 @@
 name: rest-api
-description: Bookmarks CRUD app — LiquidJS UI + Go REST API
+description: Bookmarks CRUD app — SpecifyJS UI + Go REST API
 features:
   - fetch API
   - async state management

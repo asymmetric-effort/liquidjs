@@ -26,7 +26,7 @@ import type { DatePickerProps } from '@aspect/form/datepicker';
 ## Usage
 
 ```ts
-import { createElement } from 'liquidjs';
+import { createElement } from 'specifyjs';
 import { DatePicker } from '@aspect/form/datepicker';
 
 // Basic date picker

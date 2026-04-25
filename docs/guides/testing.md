@@ -1,6 +1,6 @@
 # Testing
 
-LiquidJS applications use three levels of testing.
+SpecifyJS applications use three levels of testing.
 
 ## Unit Tests (Vitest + jsdom)
 
@@ -8,9 +8,9 @@ Test individual components and hooks in isolation:
 
 ```typescript
 import { describe, it, expect } from 'vitest';
-import { createElement } from 'liquidjs';
-import { useState } from 'liquidjs/hooks';
-import { createRoot } from 'liquidjs/dom';
+import { createElement } from 'specifyjs';
+import { useState } from 'specifyjs/hooks';
+import { createRoot } from 'specifyjs/dom';
 
 describe('Counter', () => {
   it('renders initial count', () => {

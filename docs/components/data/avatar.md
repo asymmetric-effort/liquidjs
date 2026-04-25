@@ -5,7 +5,7 @@ User avatar with image, initials fallback, colored circle, and optional status i
 ## Import
 
 ```typescript
-import { Avatar } from '@liquidjs/avatar';
+import { Avatar } from '@specifyjs/avatar';
 ```
 
 ## Props
@@ -24,8 +24,8 @@ import { Avatar } from '@liquidjs/avatar';
 ## Usage
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { Avatar } from '@liquidjs/avatar';
+import { createElement } from 'specifyjs';
+import { Avatar } from '@specifyjs/avatar';
 
 function App() {
   return createElement('div', { style: { display: 'flex', gap: '12px' } },

@@ -5,7 +5,7 @@ Tabbed content container with configurable position, visual variant, keyboard na
 ## Import
 
 ```ts
-import { Tabs } from 'liquidjs/components/layout/tabs';
+import { Tabs } from 'specifyjs/components/layout/tabs';
 ```
 
 ## Props
@@ -35,8 +35,8 @@ import { Tabs } from 'liquidjs/components/layout/tabs';
 ## Usage
 
 ```ts
-import { createElement } from 'liquidjs/core';
-import { Tabs } from 'liquidjs/components/layout/tabs';
+import { createElement } from 'specifyjs/core';
+import { Tabs } from 'specifyjs/components/layout/tabs';
 
 const tabView = createElement(Tabs, {
   tabs: [

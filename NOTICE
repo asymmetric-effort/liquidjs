@@ -1,4 +1,4 @@
-LiquidJS
+SpecifyJS
 (c) 2025-2026 Asymmetric Effort, LLC
 SPDX-License-Identifier: MIT
 
@@ -28,4 +28,4 @@ Development Dependencies (not shipped to consumers)
 
 Runtime Dependencies
 --------------------
-None. LiquidJS has zero runtime dependencies.
+None. SpecifyJS has zero runtime dependencies.

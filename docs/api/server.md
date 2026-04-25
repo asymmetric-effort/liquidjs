@@ -1,10 +1,10 @@
 # Static Pre-rendering API
 
-Import from `liquidjs/server`.
+Import from `specifyjs/server`.
 
 > **Important:** These APIs are for **build-time static HTML generation only** — use them in build scripts to produce static HTML files served as-is by a web server or CDN. They must NOT be used in server request handlers, middleware, or any runtime code that responds to HTTP requests.
 >
-> LiquidJS is a **browser-side SPA framework**. For dynamic content, use client-side rendering with data fetched via HTTPS from API endpoints.
+> SpecifyJS is a **browser-side SPA framework**. For dynamic content, use client-side rendering with data fetched via HTTPS from API endpoints.
 
 ## When to Use Static Pre-rendering
 
@@ -26,7 +26,7 @@ Renders a component tree to an HTML string during the build process:
 
 ```typescript
 // build-script.ts — run with: LIQUIDJS_ALLOW_PRERENDER=true node build-script.ts
-import { renderToString } from 'liquidjs/server';
+import { renderToString } from 'specifyjs/server';
 
 const html = renderToString(createElement(App, null));
 fs.writeFileSync('dist/index.html', wrapInShell(html));
@@ -48,7 +48,7 @@ fs.writeFileSync('dist/about.html', html);
 Writes pre-rendered HTML to a Node.js writable stream in chunks. Useful for generating large static pages during build:
 
 ```typescript
-import { renderToPipeableStream } from 'liquidjs/server';
+import { renderToPipeableStream } from 'specifyjs/server';
 import { createWriteStream } from 'fs';
 
 const stream = renderToPipeableStream(createElement(App, null), {
@@ -62,7 +62,7 @@ stream.pipe(createWriteStream('dist/index.html'));
 Returns a Web ReadableStream of pre-rendered HTML. Useful in build tools that work with Web Streams:
 
 ```typescript
-import { renderToReadableStream } from 'liquidjs/server';
+import { renderToReadableStream } from 'specifyjs/server';
 
 const stream = await renderToReadableStream(createElement(App, null));
 // Write stream to file during build

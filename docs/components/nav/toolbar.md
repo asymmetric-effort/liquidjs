@@ -5,8 +5,8 @@ Horizontal toolbar with button groups. Renders a row of buttons, separators (ver
 ## Import
 
 ```ts
-import { Toolbar } from '@liquidjs/components/nav/toolbar';
-import type { ToolbarProps, ToolbarItem, ToolbarSize, ToolbarVariant } from '@liquidjs/components/nav/toolbar';
+import { Toolbar } from '@specifyjs/components/nav/toolbar';
+import type { ToolbarProps, ToolbarItem, ToolbarSize, ToolbarVariant } from '@specifyjs/components/nav/toolbar';
 ```
 
 ## Props
@@ -42,8 +42,8 @@ import type { ToolbarProps, ToolbarItem, ToolbarSize, ToolbarVariant } from '@li
 ## Usage
 
 ```ts
-import { createElement } from '@liquidjs/core';
-import { Toolbar } from '@liquidjs/components/nav/toolbar';
+import { createElement } from '@specifyjs/core';
+import { Toolbar } from '@specifyjs/components/nav/toolbar';
 
 const toolbar = createElement(Toolbar, {
   size: 'md',

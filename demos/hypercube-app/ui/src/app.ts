@@ -1,6 +1,6 @@
-import { createElement, Fragment } from 'liquidjs';
-import { useState, useMemo } from 'liquidjs/hooks';
-import { createRoot } from 'liquidjs/dom';
+import { createElement, Fragment } from 'specifyjs';
+import { useState, useMemo } from 'specifyjs/hooks';
+import { createRoot } from 'specifyjs/dom';
 import { HypercubeGraph } from '../../../../components/viz/graph/src/HypercubeGraph';
 import { VizWrapper } from '../../../../components/viz/wrapper/src/VizWrapper';
 import { generatePalette } from '../../../../components/viz/graph/src/hypercube';

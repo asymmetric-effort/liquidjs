@@ -33,7 +33,7 @@ import type { ToggleProps } from '@aspect/form/toggle';
 ## Usage
 
 ```ts
-import { createElement } from 'liquidjs';
+import { createElement } from 'specifyjs';
 import { Toggle } from '@aspect/form/toggle';
 
 // Basic toggle

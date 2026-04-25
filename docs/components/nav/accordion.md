@@ -5,13 +5,13 @@ Expandable/collapsible section navigation component. Provides accessible accordi
 ## Import
 
 ```ts
-import { Accordion } from '@liquidjs/components/nav/accordion';
+import { Accordion } from '@specifyjs/components/nav/accordion';
 import type {
   AccordionProps,
   AccordionSection,
   AccordionHeaderStyle,
   AccordionContentStyle,
-} from '@liquidjs/components/nav/accordion';
+} from '@specifyjs/components/nav/accordion';
 ```
 
 ## Props
@@ -65,8 +65,8 @@ import type {
 ## Usage
 
 ```ts
-import { createElement } from '@liquidjs/core';
-import { Accordion } from '@liquidjs/components/nav/accordion';
+import { createElement } from '@specifyjs/core';
+import { Accordion } from '@specifyjs/components/nav/accordion';
 
 const accordion = createElement(Accordion, {
   sections: [

@@ -1,8 +1,8 @@
 {
-  "name": "@liquidjs/form-multiline",
+  "name": "@specifyjs/form-multiline",
   "version": "0.0.1",
-  "description": "Multi-line textarea component for LiquidJS",
+  "description": "Multi-line textarea component for SpecifyJS",
   "type": "module",
   "main": "src/index.ts",
-  "peerDependencies": { "liquidjs": "*" }
+  "peerDependencies": { "specifyjs": "*" }
 }

@@ -27,7 +27,7 @@ import type { NumberSpinnerProps } from '@aspect/form/number-spinner';
 ## Usage
 
 ```ts
-import { createElement } from 'liquidjs';
+import { createElement } from 'specifyjs';
 import { NumberSpinner } from '@aspect/form/number-spinner';
 
 // Basic number spinner

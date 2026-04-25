@@ -34,9 +34,9 @@ jobs:
 
       - name: Verify build
         run: |
-          test -f dist/liquidjs.esm.js
-          test -f dist/liquidjs.cjs.js
-          test -f dist/liquidjs.d.ts
+          test -f dist/specifyjs.esm.js
+          test -f dist/specifyjs.cjs.js
+          test -f dist/specifyjs.d.ts
           echo "Build verified"
           ls -lh dist/
 
@@ -57,5 +57,5 @@ jobs:
         run: |
           gh release create "${{ github.ref_name }}" \
             --generate-notes \
-            core/dist/liquidjs.esm.js \
-            core/dist/liquidjs.cjs.js
+            core/dist/specifyjs.esm.js \
+            core/dist/specifyjs.cjs.js

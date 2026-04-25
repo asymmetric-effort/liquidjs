@@ -1,9 +1,9 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import { createElement } from 'liquidjs';
-import { useState, useCallback } from 'liquidjs/hooks';
-import { useHead } from 'liquidjs/hooks';
+import { createElement } from 'specifyjs';
+import { useState, useCallback } from 'specifyjs/hooks';
+import { useHead } from 'specifyjs/hooks';
 
 // ─── Feature article content ──────────────────────────────────────────
 
@@ -21,7 +21,7 @@ const FEATURES: FeatureArticle[] = [
     sections: [
       {
         heading: 'How It Works',
-        body: 'LiquidJS implements a lane-based priority system inspired by React 18. Each state update is assigned a priority lane — SyncLane for flushSync, DefaultLane for normal updates, and TransitionLane for deferred work. The scheduler processes higher-priority lanes first, interrupting lower-priority renders when urgent updates arrive.',
+        body: 'SpecifyJS implements a lane-based priority system inspired by React 18. Each state update is assigned a priority lane — SyncLane for flushSync, DefaultLane for normal updates, and TransitionLane for deferred work. The scheduler processes higher-priority lanes first, interrupting lower-priority renders when urgent updates arrive.',
       },
       {
         heading: 'Time-Slicing',
@@ -63,7 +63,7 @@ const FEATURES: FeatureArticle[] = [
   {
     title: 'Build-Time Pre-rendering',
     summary:
-      'Generate static HTML during builds with renderToString. LiquidJS is a browser-side SPA framework — dynamic content is fetched client-side via HTTPS.',
+      'Generate static HTML during builds with renderToString. SpecifyJS is a browser-side SPA framework — dynamic content is fetched client-side via HTTPS.',
     sections: [
       {
         heading: 'How It Works',
@@ -71,11 +71,11 @@ const FEATURES: FeatureArticle[] = [
       },
       {
         heading: 'Not Server-Side Rendering',
-        body: 'LiquidJS deliberately does NOT support runtime SSR. Server-side code execution creates security risks: code injection, denial of service, and data leakage. By limiting the server to serving static assets and data APIs, the attack surface is minimal and well-understood.',
+        body: 'SpecifyJS deliberately does NOT support runtime SSR. Server-side code execution creates security risks: code injection, denial of service, and data leakage. By limiting the server to serving static assets and data APIs, the attack surface is minimal and well-understood.',
       },
       {
         heading: 'Hydration',
-        body: 'hydrateRoot reuses existing pre-rendered DOM nodes instead of re-creating them. Event listeners and component state are attached to the existing HTML structure, avoiding a flash of re-rendered content. If the DOM doesn\'t match, LiquidJS falls back gracefully to creating new nodes.',
+        body: 'hydrateRoot reuses existing pre-rendered DOM nodes instead of re-creating them. Event listeners and component state are attached to the existing HTML structure, avoiding a flash of re-rendered content. If the DOM doesn\'t match, SpecifyJS falls back gracefully to creating new nodes.',
       },
       {
         heading: 'Why It Matters',
@@ -121,7 +121,7 @@ const FEATURES: FeatureArticle[] = [
       },
       {
         heading: 'Mismatch Handling',
-        body: 'If the DOM structure doesn\'t match (wrong tag, missing node), LiquidJS falls back to creating a new node. This ensures the app always renders correctly, even if the pre-rendered HTML is stale or incomplete.',
+        body: 'If the DOM structure doesn\'t match (wrong tag, missing node), SpecifyJS falls back to creating a new node. This ensures the app always renders correctly, even if the pre-rendered HTML is stale or incomplete.',
       },
       {
         heading: 'Why It Matters',
@@ -136,7 +136,7 @@ const FEATURES: FeatureArticle[] = [
     sections: [
       {
         heading: 'How It Works',
-        body: 'Every algorithm in LiquidJS — virtual DOM diffing, fiber reconciliation, hook state management, event normalization, concurrent scheduling, path matching — is implemented from scratch in TypeScript. The published package has zero entries in the "dependencies" field of package.json.',
+        body: 'Every algorithm in SpecifyJS — virtual DOM diffing, fiber reconciliation, hook state management, event normalization, concurrent scheduling, path matching — is implemented from scratch in TypeScript. The published package has zero entries in the "dependencies" field of package.json.',
       },
       {
         heading: 'Bundle Size',
@@ -148,7 +148,7 @@ const FEATURES: FeatureArticle[] = [
       },
       {
         heading: 'Why It Matters',
-        body: 'Supply chain attacks are the dominant threat to JavaScript applications. By eliminating all runtime dependencies, LiquidJS removes this entire attack vector. You audit one codebase, not hundreds of packages.',
+        body: 'Supply chain attacks are the dominant threat to JavaScript applications. By eliminating all runtime dependencies, SpecifyJS removes this entire attack vector. You audit one codebase, not hundreds of packages.',
       },
     ],
   },
@@ -159,7 +159,7 @@ const FEATURES: FeatureArticle[] = [
     sections: [
       {
         heading: 'Supply Chain Integrity',
-        body: 'LiquidJS has zero runtime dependencies. Every algorithm is implemented from scratch — diffing, scheduling, event handling, path matching, HTML escaping. No transitive dependencies means no supply chain attack surface. One codebase to audit, not hundreds of packages. CI/CD pipelines pin every GitHub Action to a full commit SHA — no floating tags, no upstream tampering. We avoid third-party NPM packages entirely and remain committed to never pulling a left-pad.',
+        body: 'SpecifyJS has zero runtime dependencies. Every algorithm is implemented from scratch — diffing, scheduling, event handling, path matching, HTML escaping. No transitive dependencies means no supply chain attack surface. One codebase to audit, not hundreds of packages. CI/CD pipelines pin every GitHub Action to a full commit SHA — no floating tags, no upstream tampering. We avoid third-party NPM packages entirely and remain committed to never pulling a left-pad.',
       },
       {
         heading: 'No Server-Side Execution',
@@ -175,7 +175,7 @@ const FEATURES: FeatureArticle[] = [
       },
       {
         heading: 'Why It Matters',
-        body: 'Security is not a feature you add later — it\'s an architectural decision. By choosing zero dependencies, browser-only execution, and automatic escaping, LiquidJS eliminates entire categories of vulnerabilities at the design level rather than patching them after the fact.',
+        body: 'Security is not a feature you add later — it\'s an architectural decision. By choosing zero dependencies, browser-only execution, and automatic escaping, SpecifyJS eliminates entire categories of vulnerabilities at the design level rather than patching them after the fact.',
       },
     ],
   },
@@ -210,18 +210,18 @@ export function HomeScreen() {
   const [openArticle, setOpenArticle] = useState<number | null>(null);
 
   useHead({
-    title: 'LiquidJS — Declarative TypeScript UI Framework',
+    title: 'SpecifyJS — Declarative TypeScript UI Framework',
     description:
       'A declarative TypeScript UI framework built for performance, browser compatibility, and developer simplicity. Zero dependencies, 4KB gzipped.',
     keywords:
-      'liquidjs, typescript, ui framework, spa, single page application, declarative, components',
+      'specifyjs, typescript, ui framework, spa, single page application, declarative, components',
     author: 'Asymmetric Effort, LLC',
     og: {
-      title: 'LiquidJS',
+      title: 'SpecifyJS',
       description:
         'A declarative TypeScript UI framework built for performance.',
       type: 'website',
-      url: 'https://liquidjs.asymmetric-effort.com',
+      url: 'https://specifyjs.asymmetric-effort.com',
     },
     httpEquiv: {
       csp: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'self'",

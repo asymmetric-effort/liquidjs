@@ -63,7 +63,7 @@ const RESERVED_PROPS = new Set(['children', 'key', 'ref', 'dangerouslySetInnerHT
 const EVENT_RE = /^on[A-Z]/;
 
 /**
- * Renders a LiquidJS component tree to an HTML string.
+ * Renders a SpecifyJS component tree to an HTML string.
  *
  * **Build-time pre-rendering only.** This function is designed for use
  * during the build process (e.g., static site generation, build scripts)
@@ -71,7 +71,7 @@ const EVENT_RE = /^on[A-Z]/;
  * in server request handlers, middleware, or any runtime code path that
  * responds to HTTP requests.
  *
- * For dynamic content, use LiquidJS's client-side rendering with data
+ * For dynamic content, use SpecifyJS's client-side rendering with data
  * fetched via HTTPS from API endpoints.
  *
  * @throws {Error} If called in a detected server request context
@@ -82,7 +82,7 @@ export function renderToString(element: LiquidNode): string {
 }
 
 /**
- * Renders a LiquidJS component tree to static HTML (no hydration markers).
+ * Renders a SpecifyJS component tree to static HTML (no hydration markers).
  *
  * **Build-time pre-rendering only.** Use in build scripts to generate
  * static HTML pages. Do NOT use in server request handlers.
@@ -116,10 +116,10 @@ function assertNotInRequestContext(fnName: string): void {
   ) {
     if (!process.env.LIQUIDJS_ALLOW_PRERENDER) {
       console.warn(
-        `[LiquidJS] ${fnName}() is intended for build-time pre-rendering only, ` +
+        `[SpecifyJS] ${fnName}() is intended for build-time pre-rendering only, ` +
           `not runtime server-side rendering. Set LIQUIDJS_ALLOW_PRERENDER=true ` +
           `if you are using this in a build script. See: ` +
-          `https://github.com/asymmetric-effort/liquidjs/blob/main/docs/api/static-prerendering.md`,
+          `https://github.com/asymmetric-effort/specifyjs/blob/main/docs/api/static-prerendering.md`,
       );
     }
   }

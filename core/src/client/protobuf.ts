@@ -1,5 +1,5 @@
 // ============================================================================
-// LiquidJS Protobuf / gRPC-Web Client
+// SpecifyJS Protobuf / gRPC-Web Client
 // Zero third-party dependencies — wire format implemented from scratch.
 // ============================================================================
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE

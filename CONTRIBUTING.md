@@ -1,11 +1,11 @@
-# Contributing to LiquidJS
+# Contributing to SpecifyJS
 
-Thank you for your interest in contributing to LiquidJS.
+Thank you for your interest in contributing to SpecifyJS.
 
 ## Getting Started
 
 1. Fork the repository
-2. Clone your fork: `git clone git@github.com:YOUR_USERNAME/liquidjs.git`
+2. Clone your fork: `git clone git@github.com:YOUR_USERNAME/specifyjs.git`
 3. Install dependencies: `cd core && bun install`
 4. Set up git hooks: `ln -sf ../git-hooks .git/hooks`
 5. Generate dev certs (optional): `./scripts/setup-dev-certs.sh`

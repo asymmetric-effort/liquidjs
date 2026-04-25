@@ -23,10 +23,10 @@ test.describe('Todo App', () => {
   });
 
   test('adds todo with Enter key', async ({ page }) => {
-    await page.getByTestId('todo-input').fill('Learn LiquidJS');
+    await page.getByTestId('todo-input').fill('Learn SpecifyJS');
     await page.getByTestId('todo-input').press('Enter');
 
-    await expect(page.locator('.todo-text')).toHaveText('Learn LiquidJS');
+    await expect(page.locator('.todo-text')).toHaveText('Learn SpecifyJS');
   });
 
   test('adds multiple todos', async ({ page }) => {

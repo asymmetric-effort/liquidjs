@@ -5,7 +5,7 @@ Progress indicator with bar and circular variants, supporting determinate and in
 ## Import
 
 ```typescript
-import { ProgressBar } from '@liquidjs/progress-bar';
+import { ProgressBar } from '@specifyjs/progress-bar';
 ```
 
 ## Props
@@ -26,8 +26,8 @@ import { ProgressBar } from '@liquidjs/progress-bar';
 ## Usage
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { ProgressBar } from '@liquidjs/progress-bar';
+import { createElement } from 'specifyjs';
+import { ProgressBar } from '@specifyjs/progress-bar';
 
 function App() {
   return createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '16px' } },

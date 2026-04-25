@@ -1,14 +1,14 @@
-# LiquidJS
+# SpecifyJS
 
 A declarative TypeScript UI framework built for performance, browser compatibility, and developer simplicity.
 
 ## Monorepo Layout
 
-- `core/` — LiquidJS framework (TypeScript: src, tests, examples, build configs)
+- `core/` — SpecifyJS framework (TypeScript: src, tests, examples, build configs)
 - `components/` — Community-contributed reusable components
 - `demos/` — Demo applications with TypeScript API servers
 - `docs/` — Full documentation tree (see [docs/README.md](docs/README.md))
-- `skills/` — Claude skills for LiquidJS developers
+- `skills/` — Claude skills for SpecifyJS developers
 - `.github/workflows/` — CI/CD (4 jobs: lint, test, build, e2e)
 - `scripts/` — Repository-wide automation (act-run.sh)
 
@@ -16,7 +16,7 @@ A declarative TypeScript UI framework built for performance, browser compatibili
 
 ## Project Vision
 
-LiquidJS is a declarative, component-based UI framework prioritizing:
+SpecifyJS is a declarative, component-based UI framework prioritizing:
 
 - **Performance** — Minimal overhead, efficient diffing, fast rendering
 - **Browser & device compatibility** — Broad support across modern and legacy browsers
@@ -94,7 +94,7 @@ LiquidJS is a declarative, component-based UI framework prioritizing:
 - `renderToReadableStream` — chunked HTML output to Web ReadableStream
 
 > **These APIs must only be used in build scripts and static site generation.**
-> They must NOT be used in server request handlers. LiquidJS is a browser-side
+> They must NOT be used in server request handlers. SpecifyJS is a browser-side
 > framework — dynamic content is fetched via HTTPS from API endpoints.
 
 ### Utilities
@@ -117,7 +117,7 @@ LiquidJS is a declarative, component-based UI framework prioritizing:
 ### Module Structure
 
 ```
-liquidjs/
+specifyjs/
   src/
     core/           # Virtual DOM, reconciler, scheduler
     components/     # Built-in component types (Fragment, Suspense, etc.)
@@ -169,7 +169,7 @@ liquidjs/
 ## SPA Build & Deployment
 
 ### Primary Use Case
-LiquidJS is designed for building **single-page web applications** that compile to minified/obfuscated JavaScript for high-performance browser execution.
+SpecifyJS is designed for building **single-page web applications** that compile to minified/obfuscated JavaScript for high-performance browser execution.
 
 ### Build Pipeline
 - **Development**: Vite dev server with HMR for instant feedback
@@ -215,7 +215,7 @@ LiquidJS is designed for building **single-page web applications** that compile 
 
 ### API Design
 - Use clear, intuitive API naming and signatures
-- Add LiquidJS-specific extensions as separate named exports
+- Add SpecifyJS-specific extensions as separate named exports
 - Deprecation warnings before removing any API
 - JSDoc comments on all public APIs
 

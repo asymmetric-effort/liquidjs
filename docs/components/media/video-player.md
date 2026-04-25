@@ -5,7 +5,7 @@ Video player wrapper with optional custom controls overlay.
 ## Import
 
 ```typescript
-import { VideoPlayer } from '@liquidjs/video-player';
+import { VideoPlayer } from '@specifyjs/video-player';
 ```
 
 ## Props
@@ -28,8 +28,8 @@ import { VideoPlayer } from '@liquidjs/video-player';
 ## Usage
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { VideoPlayer } from '@liquidjs/video-player';
+import { createElement } from 'specifyjs';
+import { VideoPlayer } from '@specifyjs/video-player';
 
 function App() {
   return createElement(VideoPlayer, {

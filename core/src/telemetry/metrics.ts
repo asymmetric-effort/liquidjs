@@ -1,5 +1,5 @@
 // ============================================================================
-// LiquidJS Telemetry — Metrics (OpenTelemetry-compatible)
+// SpecifyJS Telemetry — Metrics (OpenTelemetry-compatible)
 // Zero third-party dependencies — OTEL protocols implemented from scratch.
 // ============================================================================
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
@@ -251,7 +251,7 @@ export function formatOtlpMetrics(
         },
         scopeMetrics: [
           {
-            scope: { name: 'liquidjs-telemetry', version: '1.0.0' },
+            scope: { name: 'specifyjs-telemetry', version: '1.0.0' },
             metrics,
           },
         ],
@@ -317,7 +317,7 @@ export function formatOtlpTraces(
         },
         scopeSpans: [
           {
-            scope: { name: 'liquidjs-telemetry', version: '1.0.0' },
+            scope: { name: 'specifyjs-telemetry', version: '1.0.0' },
             spans: otlpSpans,
           },
         ],

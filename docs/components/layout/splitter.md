@@ -5,7 +5,7 @@ Resizable split pane that renders exactly two child panes separated by a draggab
 ## Import
 
 ```ts
-import { Splitter } from 'liquidjs/components/layout/splitter';
+import { Splitter } from 'specifyjs/components/layout/splitter';
 ```
 
 ## Props
@@ -24,8 +24,8 @@ import { Splitter } from 'liquidjs/components/layout/splitter';
 ## Usage
 
 ```ts
-import { createElement } from 'liquidjs/core';
-import { Splitter } from 'liquidjs/components/layout/splitter';
+import { createElement } from 'specifyjs/core';
+import { Splitter } from 'specifyjs/components/layout/splitter';
 
 const splitView = createElement(
   Splitter,

@@ -1,6 +1,6 @@
 # Migrating from React
 
-LiquidJS is designed with React API parity. Most React code works with minimal changes.
+SpecifyJS is designed with React API parity. Most React code works with minimal changes.
 
 ## Quick Start
 
@@ -9,8 +9,8 @@ LiquidJS is designed with React API parity. Most React code works with minimal c
 ```diff
 - import React from 'react';
 - import ReactDOM from 'react-dom/client';
-+ import { createElement, useState, useEffect } from 'liquidjs';
-+ import { createRoot } from 'liquidjs/dom';
++ import { createElement, useState, useEffect } from 'specifyjs';
++ import { createRoot } from 'specifyjs/dom';
 ```
 
 2. Replace JSX pragma (if not using automatic runtime):
@@ -20,41 +20,41 @@ LiquidJS is designed with React API parity. Most React code works with minimal c
 {
   "compilerOptions": {
     "jsx": "react-jsx",
-    "jsxImportSource": "liquidjs"
+    "jsxImportSource": "specifyjs"
   }
 }
 ```
 
 ## API Mapping
 
-| React | LiquidJS | Notes |
+| React | SpecifyJS | Notes |
 |-------|----------|-------|
 | `React.createElement` | `createElement` | Identical API |
-| `ReactDOM.createRoot` | `createRoot` | from `liquidjs/dom` |
-| `ReactDOM.hydrateRoot` | `hydrateRoot` | from `liquidjs/dom` |
+| `ReactDOM.createRoot` | `createRoot` | from `specifyjs/dom` |
+| `ReactDOM.hydrateRoot` | `hydrateRoot` | from `specifyjs/dom` |
 | `React.useState` | `useState` | Identical |
 | `React.useEffect` | `useEffect` | Identical |
 | `React.useTransition` | `useTransition` | Lane-based concurrent |
 | `React.useDeferredValue` | `useDeferredValue` | Lane-based concurrent |
 | `React.startTransition` | `startTransition` | Identical |
-| `ReactDOM.flushSync` | `flushSync` | from `liquidjs/dom` |
+| `ReactDOM.flushSync` | `flushSync` | from `specifyjs/dom` |
 | `React.memo` | `memo` | Identical |
 | `React.forwardRef` | `forwardRef` | Identical |
 | `React.lazy` | `lazy` | Identical |
 | `React.createContext` | `createContext` | Identical |
 | `React.createFactory` | `createFactory` | Deprecated, supported |
-| `renderToString` | `renderToString` | from `liquidjs/server` (build-time only) |
-| `renderToPipeableStream` | `renderToPipeableStream` | from `liquidjs/server` (build-time only) |
-| `renderToReadableStream` | `renderToReadableStream` | from `liquidjs/server` (build-time only) |
+| `renderToString` | `renderToString` | from `specifyjs/server` (build-time only) |
+| `renderToPipeableStream` | `renderToPipeableStream` | from `specifyjs/server` (build-time only) |
+| `renderToReadableStream` | `renderToReadableStream` | from `specifyjs/server` (build-time only) |
 
-> **Note:** Unlike React, LiquidJS does NOT support server-side rendering at request time. The `liquidjs/server` module is for **static pre-rendering during builds** only. Dynamic content should be fetched client-side via HTTPS.
+> **Note:** Unlike React, SpecifyJS does NOT support server-side rendering at request time. The `specifyjs/server` module is for **static pre-rendering during builds** only. Dynamic content should be fetched client-side via HTTPS.
 
 ## Legacy API Support
 
-LiquidJS supports React's legacy rendering API for incremental migration:
+SpecifyJS supports React's legacy rendering API for incremental migration:
 
 ```typescript
-import { render, hydrate, unmountComponentAtNode } from 'liquidjs/dom';
+import { render, hydrate, unmountComponentAtNode } from 'specifyjs/dom';
 
 // Legacy render (React 17 style)
 render(element, container);
@@ -69,16 +69,16 @@ unmountComponentAtNode(container);
 ## Key Differences
 
 ### No Default Export
-LiquidJS uses named exports exclusively. There is no default `React` object.
+SpecifyJS uses named exports exclusively. There is no default `React` object.
 
 ### Zero Runtime Dependencies
-LiquidJS has no dependencies. All algorithms (diffing, scheduling, event normalization) are implemented from scratch.
+SpecifyJS has no dependencies. All algorithms (diffing, scheduling, event normalization) are implemented from scratch.
 
 ### TypeScript-First
 All APIs have full TypeScript type definitions. No `@types/` package needed.
 
 ### Concurrent Rendering
-LiquidJS implements lane-based concurrent rendering with the same priority levels as React 18:
+SpecifyJS implements lane-based concurrent rendering with the same priority levels as React 18:
 - `SyncLane` for `flushSync`
 - `DefaultLane` for normal updates
 - `TransitionLane` for `startTransition`/`useTransition`

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * HypercubeGraph — A LiquidJS component that renders an N-dimensional
+ * HypercubeGraph — A SpecifyJS component that renders an N-dimensional
  * hypercube as an SVG with colored vertex balls and heavy black edges.
  *
  * Supports:

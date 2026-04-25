@@ -75,7 +75,7 @@ function countChildren(children: LiquidNode): number {
 
 function onlyChild(children: LiquidNode): LiquidElement {
   if (!isValidElement(children)) {
-    throw new Error('Children.only: expected a single LiquidJS element child');
+    throw new Error('Children.only: expected a single SpecifyJS element child');
   }
   return children as LiquidElement;
 }

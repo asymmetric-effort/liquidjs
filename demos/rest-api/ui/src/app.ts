@@ -1,6 +1,6 @@
-import { createElement, Fragment } from 'liquidjs';
-import { useState, useEffect, useCallback } from 'liquidjs/hooks';
-import { createRoot } from 'liquidjs/dom';
+import { createElement, Fragment } from 'specifyjs';
+import { useState, useEffect, useCallback } from 'specifyjs/hooks';
+import { createRoot } from 'specifyjs/dom';
 
 const API = '/api';
 
@@ -120,7 +120,7 @@ function App() {
   return createElement(
     'div', { className: 'app' },
     createElement('h1', null, 'REST API Bookmarks'),
-    createElement('p', { className: 'subtitle' }, 'LiquidJS UI \u2194 Go REST API'),
+    createElement('p', { className: 'subtitle' }, 'SpecifyJS UI \u2194 Go REST API'),
     error ? createElement('div', { className: 'error' }, `Error: ${error}`) : null,
     createElement(AddForm, { onAdd: addBookmark }),
     loading

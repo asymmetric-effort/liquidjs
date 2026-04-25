@@ -1,5 +1,5 @@
 name: graphql-app
-description: Contact directory — LiquidJS UI + Go GraphQL API
+description: Contact directory — SpecifyJS UI + Go GraphQL API
 features:
   - GraphQL queries
   - GraphQL mutations

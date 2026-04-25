@@ -5,7 +5,7 @@ Renders only visible items from a large list plus an overscan buffer for perform
 ## Import
 
 ```typescript
-import { VirtualScroll } from '@liquidjs/virtual-scroll';
+import { VirtualScroll } from '@specifyjs/virtual-scroll';
 ```
 
 ## Props
@@ -21,8 +21,8 @@ import { VirtualScroll } from '@liquidjs/virtual-scroll';
 ## Usage
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { VirtualScroll } from '@liquidjs/virtual-scroll';
+import { createElement } from 'specifyjs';
+import { VirtualScroll } from '@specifyjs/virtual-scroll';
 
 function App() {
   const items = Array.from({ length: 10000 }, (_, i) => `Item ${i + 1}`);

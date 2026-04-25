@@ -1,5 +1,5 @@
 // ============================================================================
-// @liquidjs/2d-cartesian-raw — Barrel Export
+// @specifyjs/2d-cartesian-raw — Barrel Export
 // ============================================================================
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT

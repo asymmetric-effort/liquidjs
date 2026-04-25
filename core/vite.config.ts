@@ -4,8 +4,8 @@ import path from 'path';
 export default defineConfig({
   resolve: {
     alias: {
-      'liquidjs': path.resolve(__dirname, 'src/index.ts'),
-      'liquidjs/dom': path.resolve(__dirname, 'src/dom/index.ts'),
+      'specifyjs': path.resolve(__dirname, 'src/index.ts'),
+      'specifyjs/dom': path.resolve(__dirname, 'src/dom/index.ts'),
     },
   },
   server: {

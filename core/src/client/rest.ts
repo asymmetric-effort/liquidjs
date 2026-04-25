@@ -1,5 +1,5 @@
 // ============================================================================
-// LiquidJS REST Client
+// SpecifyJS REST Client
 // Zero-dependency REST client built on the browser Fetch API
 // ============================================================================
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE

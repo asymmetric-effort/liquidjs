@@ -5,7 +5,7 @@ Container component for visualization components with configurable title, legend
 ## Import
 
 ```typescript
-import { VizWrapper } from '@liquidjs/viz-wrapper';
+import { VizWrapper } from '@specifyjs/viz-wrapper';
 ```
 
 ## Props
@@ -49,9 +49,9 @@ import { VizWrapper } from '@liquidjs/viz-wrapper';
 ## Usage
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { VizWrapper } from '@liquidjs/viz-wrapper';
-import { LineGraph } from '@liquidjs/2D-line-graph';
+import { createElement } from 'specifyjs';
+import { VizWrapper } from '@specifyjs/viz-wrapper';
+import { LineGraph } from '@specifyjs/2D-line-graph';
 
 function App() {
   return createElement(VizWrapper, {

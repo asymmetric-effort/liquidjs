@@ -1,7 +1,7 @@
 // ============================================================================
-// LiquidJS Static Pre-rendering — Build-time HTML Generation
+// SpecifyJS Static Pre-rendering — Build-time HTML Generation
 //
-// These APIs render LiquidJS component trees to HTML strings or streams
+// These APIs render SpecifyJS component trees to HTML strings or streams
 // for use in BUILD SCRIPTS and STATIC SITE GENERATION only.
 // They must NOT be used for server-side rendering in request handlers.
 //

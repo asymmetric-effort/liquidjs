@@ -1,8 +1,8 @@
 {
-  "name": "@liquidjs/nav-toolbar",
+  "name": "@specifyjs/nav-toolbar",
   "version": "0.0.1",
-  "description": "Horizontal toolbar with button groups for LiquidJS",
+  "description": "Horizontal toolbar with button groups for SpecifyJS",
   "type": "module",
   "main": "src/index.ts",
-  "peerDependencies": { "liquidjs": "*" }
+  "peerDependencies": { "specifyjs": "*" }
 }

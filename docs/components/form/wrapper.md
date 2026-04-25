@@ -63,7 +63,7 @@ Shared input styling interface used by `buildInputStyle` for TextField, Multilin
 ## Usage
 
 ```ts
-import { createElement } from 'liquidjs';
+import { createElement } from 'specifyjs';
 import { FormFieldWrapper } from '@aspect/form/wrapper';
 
 const element = createElement(

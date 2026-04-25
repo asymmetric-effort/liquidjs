@@ -1,6 +1,6 @@
-import { createElement, Fragment } from 'liquidjs';
-import { useState, useRef, useEffect, useCallback, useMemo } from 'liquidjs/hooks';
-import { createRoot } from 'liquidjs/dom';
+import { createElement, Fragment } from 'specifyjs';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'specifyjs/hooks';
+import { createRoot } from 'specifyjs/dom';
 
 interface Todo {
   id: number;
@@ -50,7 +50,7 @@ function TodoApp() {
   const nextId = useRef(1);
 
   useEffect(() => {
-    const saved = localStorage.getItem('liquidjs-todos');
+    const saved = localStorage.getItem('specifyjs-todos');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -63,8 +63,8 @@ function TodoApp() {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('liquidjs-todos', JSON.stringify(todos));
-    document.title = `LiquidJS Todo (${todos.filter((t) => !t.completed).length} active)`;
+    localStorage.setItem('specifyjs-todos', JSON.stringify(todos));
+    document.title = `SpecifyJS Todo (${todos.filter((t) => !t.completed).length} active)`;
   }, [todos]);
 
   const addTodo = useCallback(() => {
@@ -115,7 +115,7 @@ function TodoApp() {
     createElement(
       'header',
       null,
-      createElement('h1', null, 'LiquidJS Todo'),
+      createElement('h1', null, 'SpecifyJS Todo'),
       createElement(
         'button',
         { className: 'theme-btn', onClick: () => setDarkMode((d: boolean) => !d) },

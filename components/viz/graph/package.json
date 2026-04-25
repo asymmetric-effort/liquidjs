@@ -1,11 +1,11 @@
 {
-  "name": "@liquidjs/graph",
+  "name": "@specifyjs/graph",
   "version": "0.0.1",
-  "description": "Hypercube graph visualization component for LiquidJS",
+  "description": "Hypercube graph visualization component for SpecifyJS",
   "type": "module",
   "main": "src/index.ts",
   "peerDependencies": {
-    "liquidjs": "*"
+    "specifyjs": "*"
   },
-  "keywords": ["liquidjs", "component", "graph", "hypercube", "visualization", "svg"]
+  "keywords": ["specifyjs", "component", "graph", "hypercube", "visualization", "svg"]
 }

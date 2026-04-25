@@ -1,8 +1,8 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import { createElement } from 'liquidjs';
-import { useState, useHead } from 'liquidjs/hooks';
+import { createElement } from 'specifyjs';
+import { useState, useHead } from 'specifyjs/hooks';
 
 interface ComponentInfo {
   name: string;
@@ -55,9 +55,9 @@ const COMPONENTS: ComponentInfo[] = [
 
 export function ComponentReference() {
   useHead({
-    title: 'Component Reference — LiquidJS',
-    description: 'Complete API reference for LiquidJS: 30+ APIs across Core, Hooks, Router, DOM, and Pre-rendering.',
-    keywords: 'liquidjs, api reference, components, hooks, router, documentation',
+    title: 'Component Reference — SpecifyJS',
+    description: 'Complete API reference for SpecifyJS: 30+ APIs across Core, Hooks, Router, DOM, and Pre-rendering.',
+    keywords: 'specifyjs, api reference, components, hooks, router, documentation',
     author: 'Asymmetric Effort, LLC',
   });
 

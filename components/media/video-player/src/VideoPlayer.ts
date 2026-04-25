@@ -5,7 +5,7 @@
  * VideoPlayer -- Simple video player wrapper with optional custom controls.
  *
  * When controls=true (default), renders custom play/pause, seekable progress bar,
- * time display, volume slider, and fullscreen button as LiquidJS elements
+ * time display, volume slider, and fullscreen button as SpecifyJS elements
  * overlaid on the native video element.
  */
 

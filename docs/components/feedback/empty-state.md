@@ -5,7 +5,7 @@ Empty content placeholder with icon, title, description, and call-to-action.
 ## Import
 
 ```typescript
-import { EmptyState } from '@liquidjs/empty-state';
+import { EmptyState } from '@specifyjs/empty-state';
 ```
 
 ## Props
@@ -21,8 +21,8 @@ import { EmptyState } from '@liquidjs/empty-state';
 ## Usage
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { EmptyState } from '@liquidjs/empty-state';
+import { createElement } from 'specifyjs';
+import { EmptyState } from '@specifyjs/empty-state';
 
 function App() {
   return createElement(EmptyState, {

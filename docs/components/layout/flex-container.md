@@ -5,7 +5,7 @@ Declarative flexbox layout container with direction, wrap, gap, and alignment pr
 ## Import
 
 ```ts
-import { FlexContainer, FlexItem } from 'liquidjs/components/layout/flex-container';
+import { FlexContainer, FlexItem } from 'specifyjs/components/layout/flex-container';
 ```
 
 ## Props
@@ -41,8 +41,8 @@ import { FlexContainer, FlexItem } from 'liquidjs/components/layout/flex-contain
 ## Usage
 
 ```ts
-import { createElement } from 'liquidjs/core';
-import { FlexContainer, FlexItem } from 'liquidjs/components/layout/flex-container';
+import { createElement } from 'specifyjs/core';
+import { FlexContainer, FlexItem } from 'specifyjs/components/layout/flex-container';
 
 const toolbar = createElement(
   FlexContainer,

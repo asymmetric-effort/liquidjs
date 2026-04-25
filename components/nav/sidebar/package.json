@@ -1,8 +1,8 @@
 {
-  "name": "@liquidjs/nav-sidebar",
+  "name": "@specifyjs/nav-sidebar",
   "version": "0.0.1",
-  "description": "Collapsible sidebar navigation component for LiquidJS",
+  "description": "Collapsible sidebar navigation component for SpecifyJS",
   "type": "module",
   "main": "src/index.ts",
-  "peerDependencies": { "liquidjs": "*" }
+  "peerDependencies": { "specifyjs": "*" }
 }

@@ -1,8 +1,8 @@
 {
-  "name": "@liquidjs/layout-splitter",
+  "name": "@specifyjs/layout-splitter",
   "version": "0.0.1",
-  "description": "Resizable split pane for LiquidJS",
+  "description": "Resizable split pane for SpecifyJS",
   "type": "module",
   "main": "src/index.ts",
-  "peerDependencies": { "liquidjs": "*" }
+  "peerDependencies": { "specifyjs": "*" }
 }

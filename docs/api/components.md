@@ -111,5 +111,5 @@ cloneElement(element, { newProp: 'value' }, newChild)
 ### isValidElement
 
 ```typescript
-isValidElement(value) // true if LiquidJS element
+isValidElement(value) // true if SpecifyJS element
 ```

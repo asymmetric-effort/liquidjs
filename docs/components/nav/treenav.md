@@ -5,8 +5,8 @@ Accessible tree navigation component. Renders a hierarchical tree with expand/co
 ## Import
 
 ```ts
-import { TreeNav, TreeNode } from '@liquidjs/components/nav/treenav';
-import type { TreeNavProps, TreeNodeData } from '@liquidjs/components/nav/treenav';
+import { TreeNav, TreeNode } from '@specifyjs/components/nav/treenav';
+import type { TreeNavProps, TreeNodeData } from '@specifyjs/components/nav/treenav';
 ```
 
 ## Props
@@ -44,8 +44,8 @@ import type { TreeNavProps, TreeNodeData } from '@liquidjs/components/nav/treena
 ## Usage
 
 ```ts
-import { createElement } from '@liquidjs/core';
-import { TreeNav } from '@liquidjs/components/nav/treenav';
+import { createElement } from '@specifyjs/core';
+import { TreeNav } from '@specifyjs/components/nav/treenav';
 
 const tree = createElement(TreeNav, {
   root: {

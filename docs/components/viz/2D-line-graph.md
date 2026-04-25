@@ -5,7 +5,7 @@
 ## Import
 
 ```typescript
-import { LineGraph, useLineGraphScales } from '@liquidjs/2D-line-graph';
+import { LineGraph, useLineGraphScales } from '@specifyjs/2D-line-graph';
 ```
 
 ## Props
@@ -48,8 +48,8 @@ import { LineGraph, useLineGraphScales } from '@liquidjs/2D-line-graph';
 ## Usage
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { LineGraph } from '@liquidjs/2D-line-graph';
+import { createElement } from 'specifyjs';
+import { LineGraph } from '@specifyjs/2D-line-graph';
 
 function App() {
   const data = [
@@ -90,7 +90,7 @@ createElement(LineGraph, {
 ## Hook
 
 ```typescript
-import { useLineGraphScales } from '@liquidjs/2D-line-graph';
+import { useLineGraphScales } from '@specifyjs/2D-line-graph';
 
 const scales = useLineGraphScales(data, 600, 400, 50);
 // scales.xScale(value), scales.yScale(value), scales.xTicks, scales.yTicks
@@ -107,4 +107,4 @@ const scales = useLineGraphScales(data, 600, 400, 50);
 - Data points with optional fade-in animation
 - Axis labels and chart title
 - Data is auto-sorted by X value before rendering
-- Zero dependencies (pure LiquidJS + SVG)
+- Zero dependencies (pure SpecifyJS + SVG)

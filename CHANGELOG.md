@@ -37,7 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `createFactory` legacy API
 
 #### Showcase Site
-- 7-screen SPA at liquidjs.asymmetric-effort.com
+- 7-screen SPA at specifyjs.asymmetric-effort.com
 - Getting Started dialog with code examples
 - Feature article dialogs with detailed explanations
 - Economic Dashboard with SVG bar chart, line graph, box plot
@@ -47,7 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Post-deployment Playwright verification
 
 #### Tooling
-- `liquidjs-cert` Go tool for self-signed certificate generation
+- `specifyjs-cert` Go tool for self-signed certificate generation
 - Local HTTPS dev via auto-loaded certs in Vite config
 - Pre-commit hook (typecheck + format)
 - Pre-push hook (typecheck + format + tests + coverage + security review)

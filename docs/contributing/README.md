@@ -11,7 +11,7 @@
 
 ```bash
 git clone <repo-url>
-cd liquidjs
+cd specifyjs
 
 # Core framework
 cd core
@@ -39,7 +39,7 @@ cd core && bun run test:e2e
 
 | Directory | Purpose | Language |
 |-----------|---------|----------|
-| `core/` | LiquidJS framework | TypeScript |
+| `core/` | SpecifyJS framework | TypeScript |
 | `components/` | Reusable components | TypeScript |
 | `docs/` | Documentation | Markdown |
 | `skills/` | Claude AI skills | YAML/Markdown |

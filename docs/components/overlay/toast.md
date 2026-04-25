@@ -5,7 +5,7 @@ Notification system with toaster factory, container, and hook.
 ## Import
 
 ```typescript
-import { createToaster, ToastContainer, useToast } from '@liquidjs/toast';
+import { createToaster, ToastContainer, useToast } from '@specifyjs/toast';
 ```
 
 ## Props
@@ -37,8 +37,8 @@ import { createToaster, ToastContainer, useToast } from '@liquidjs/toast';
 ### Using the `useToast` hook
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { useToast } from '@liquidjs/toast';
+import { createElement } from 'specifyjs';
+import { useToast } from '@specifyjs/toast';
 
 function App() {
   const { toast, ToastContainer } = useToast({ position: 'top-right' });
@@ -55,8 +55,8 @@ function App() {
 ### Using the `createToaster` factory
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { createToaster, ToastContainer } from '@liquidjs/toast';
+import { createElement } from 'specifyjs';
+import { createToaster, ToastContainer } from '@specifyjs/toast';
 
 const toaster = createToaster({ position: 'bottom-center', maxToasts: 3 });
 

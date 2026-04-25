@@ -25,7 +25,7 @@ interface Fiber {
 
 ## Double Buffering
 
-LiquidJS maintains two fiber trees:
+SpecifyJS maintains two fiber trees:
 - **Current** — represents what's on screen
 - **Work-in-progress (WIP)** — being built during render
 
@@ -46,7 +46,7 @@ Build a Map of remaining old children by key. For each remaining new child, look
 
 ### Keyed Diffing
 
-Keys enable O(n) reconciliation of reordered lists. Without keys, LiquidJS falls back to index-based matching (O(n) but may cause unnecessary DOM mutations).
+Keys enable O(n) reconciliation of reordered lists. Without keys, SpecifyJS falls back to index-based matching (O(n) but may cause unnecessary DOM mutations).
 
 ## Effect Tags
 

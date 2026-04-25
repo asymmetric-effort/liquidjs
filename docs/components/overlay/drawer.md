@@ -5,7 +5,7 @@ Slide-in panel from any edge with optional overlay backdrop.
 ## Import
 
 ```typescript
-import { Drawer } from '@liquidjs/drawer';
+import { Drawer } from '@specifyjs/drawer';
 ```
 
 ## Props
@@ -25,8 +25,8 @@ import { Drawer } from '@liquidjs/drawer';
 ## Usage
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { Drawer } from '@liquidjs/drawer';
+import { createElement } from 'specifyjs';
+import { Drawer } from '@specifyjs/drawer';
 
 function App() {
   const [open, setOpen] = useState(false);

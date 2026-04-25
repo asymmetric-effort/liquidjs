@@ -1,11 +1,11 @@
 # GraphQL Contact Directory Demo
 
-Two-container demo: Go GraphQL API + LiquidJS UI.
+Two-container demo: Go GraphQL API + SpecifyJS UI.
 
 ## Architecture
 
 ```
-Browser -> nginx (port 3001) -> LiquidJS SPA
+Browser -> nginx (port 3001) -> SpecifyJS SPA
                               -> /graphql proxy -> Go GraphQL API (port 8080)
                               -> /health proxy  -> Go GraphQL API (port 8080)
 ```

@@ -1,6 +1,6 @@
-import { createElement } from 'liquidjs';
-import { useState } from 'liquidjs/hooks';
-import { createRoot } from 'liquidjs/dom';
+import { createElement } from 'specifyjs';
+import { useState } from 'specifyjs/hooks';
+import { createRoot } from 'specifyjs/dom';
 import { EmptyState } from '../../../../components/feedback/empty-state/src/index';
 
 function Demo() {

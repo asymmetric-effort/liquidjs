@@ -37,7 +37,7 @@ import type { SelectProps, SelectOption } from '@aspect/form/select';
 ## Usage
 
 ```ts
-import { createElement } from 'liquidjs';
+import { createElement } from 'specifyjs';
 import { Select } from '@aspect/form/select';
 
 // Basic single select

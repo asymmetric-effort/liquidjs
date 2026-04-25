@@ -1,6 +1,6 @@
 # Hypercube Demo
 
-Interactive N-dimensional hypercube visualization built with LiquidJS.
+Interactive N-dimensional hypercube visualization built with SpecifyJS.
 
 ## Features
 

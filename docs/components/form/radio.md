@@ -35,7 +35,7 @@ import type { RadioGroupProps, RadioOption } from '@aspect/form/radio';
 ## Usage
 
 ```ts
-import { createElement } from 'liquidjs';
+import { createElement } from 'specifyjs';
 import { RadioGroup } from '@aspect/form/radio';
 
 // Vertical radio group

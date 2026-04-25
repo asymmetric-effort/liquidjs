@@ -1,11 +1,11 @@
 # HypercubeGraph
 
-Hypercube graph visualization component for LiquidJS. Renders an N-dimensional hypercube as an SVG with colored vertex balls and heavy black edges.
+Hypercube graph visualization component for SpecifyJS. Renders an N-dimensional hypercube as an SVG with colored vertex balls and heavy black edges.
 
 ## Import
 
 ```typescript
-import { HypercubeGraph } from '@liquidjs/graph';
+import { HypercubeGraph } from '@specifyjs/graph';
 ```
 
 ## Props
@@ -28,8 +28,8 @@ import { HypercubeGraph } from '@liquidjs/graph';
 ## Usage
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { HypercubeGraph } from '@liquidjs/graph';
+import { createElement } from 'specifyjs';
+import { HypercubeGraph } from '@specifyjs/graph';
 
 function App() {
   return createElement(HypercubeGraph, {
@@ -50,7 +50,7 @@ function App() {
 ## Hook
 
 ```typescript
-import { useHypercube } from '@liquidjs/graph';
+import { useHypercube } from '@specifyjs/graph';
 
 const { data, angles, setAngles } = useHypercube({
   dimension: 4,
@@ -69,4 +69,4 @@ const { data, angles, setAngles } = useHypercube({
 - Depth-based opacity and vertex scaling for 3D effect
 - Custom vertex colors or auto-generated palette
 - Optional binary vertex labels
-- Zero dependencies (pure LiquidJS + SVG)
+- Zero dependencies (pure SpecifyJS + SVG)

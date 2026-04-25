@@ -1,5 +1,5 @@
 // ============================================================================
-// LiquidJS Telemetry — Distributed Tracing (OpenTelemetry-compatible)
+// SpecifyJS Telemetry — Distributed Tracing (OpenTelemetry-compatible)
 // Zero third-party dependencies — OTEL protocols implemented from scratch.
 // ============================================================================
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE

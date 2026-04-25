@@ -1,8 +1,8 @@
 {
-  "name": "@liquidjs/nav-breadcrumb",
+  "name": "@specifyjs/nav-breadcrumb",
   "version": "0.0.1",
-  "description": "Breadcrumb trail navigation component for LiquidJS",
+  "description": "Breadcrumb trail navigation component for SpecifyJS",
   "type": "module",
   "main": "src/index.ts",
-  "peerDependencies": { "liquidjs": "*" }
+  "peerDependencies": { "specifyjs": "*" }
 }

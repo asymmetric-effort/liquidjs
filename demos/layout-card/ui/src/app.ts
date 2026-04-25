@@ -1,6 +1,6 @@
-import { createElement } from 'liquidjs';
-import { useState } from 'liquidjs/hooks';
-import { createRoot } from 'liquidjs/dom';
+import { createElement } from 'specifyjs';
+import { useState } from 'specifyjs/hooks';
+import { createRoot } from 'specifyjs/dom';
 import { Card } from '../../../../components/layout/card/src/index';
 
 function CardDemo() {
@@ -54,7 +54,7 @@ function CardDemo() {
     createElement('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px', marginTop: '20px' } },
       createElement(Card, {
         title: 'Getting Started',
-        subtitle: 'Learn the basics of LiquidJS',
+        subtitle: 'Learn the basics of SpecifyJS',
         hoverable,
         bordered,
         shadow,
@@ -67,7 +67,7 @@ function CardDemo() {
           createElement('span', null, 'Updated 2 hours ago'),
           createElement('span', null, '5 min read'),
         ) : undefined,
-      }, createElement('p', null, 'LiquidJS provides a familiar component model with hooks, context, and a virtual DOM reconciler.')),
+      }, createElement('p', null, 'SpecifyJS provides a familiar component model with hooks, context, and a virtual DOM reconciler.')),
 
       createElement(Card, {
         title: 'Advanced Patterns',

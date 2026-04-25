@@ -1,11 +1,11 @@
 # REST API Demo
 
-Two-container demo: Go REST API + LiquidJS UI.
+Two-container demo: Go REST API + SpecifyJS UI.
 
 ## Architecture
 
 ```
-Browser -> nginx (port 3000) -> LiquidJS SPA
+Browser -> nginx (port 3000) -> SpecifyJS SPA
                               -> /api/* proxy -> Go API (port 8080)
 ```
 

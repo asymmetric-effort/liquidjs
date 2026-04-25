@@ -21,7 +21,7 @@ interface Bookmark {
 
 let nextId = 4;
 const bookmarks: Map<number, Bookmark> = new Map([
-  [1, { id: 1, title: 'LiquidJS Docs', url: 'https://liquidjs.asymmetric-effort.com', tags: ['docs', 'framework'] }],
+  [1, { id: 1, title: 'SpecifyJS Docs', url: 'https://specifyjs.asymmetric-effort.com', tags: ['docs', 'framework'] }],
   [2, { id: 2, title: 'TypeScript Handbook', url: 'https://www.typescriptlang.org/docs/', tags: ['typescript', 'docs'] }],
   [3, { id: 3, title: 'MDN Web Docs', url: 'https://developer.mozilla.org', tags: ['reference', 'web'] }],
 ]);

@@ -4,7 +4,7 @@
 /**
  * Secure fetch wrapper — enforces HTTPS-only policy.
  *
- * LiquidJS prohibits HTTP connections. All network requests must use
+ * SpecifyJS prohibits HTTP connections. All network requests must use
  * HTTPS or be relative URLs. This prevents data from being transmitted
  * in plaintext, protecting against eavesdropping and MITM attacks.
  *
@@ -49,8 +49,8 @@ export function assertSecureUrl(url: string): void {
 
   // Reject HTTP and other insecure protocols
   throw new Error(
-    `[LiquidJS] Insecure URL rejected: "${url}". ` +
-      `LiquidJS enforces HTTPS-only for all network requests. ` +
+    `[SpecifyJS] Insecure URL rejected: "${url}". ` +
+      `SpecifyJS enforces HTTPS-only for all network requests. ` +
       `Use https:// or a relative URL. ` +
       `Localhost URLs are allowed for development.`,
   );

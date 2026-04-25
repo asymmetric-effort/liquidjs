@@ -3,7 +3,7 @@
 
 /**
  * DevTools integration hooks.
- * Allows browser extensions to inspect the LiquidJS component tree.
+ * Allows browser extensions to inspect the SpecifyJS component tree.
  */
 
 import type { Fiber } from '../shared/types';

@@ -1,10 +1,10 @@
 // ============================================================================
-// LiquidJS Core Types
+// SpecifyJS Core Types
 // ============================================================================
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-/** Unique symbol to identify LiquidJS elements */
+/** Unique symbol to identify SpecifyJS elements */
 export const LIQUID_ELEMENT_TYPE = Symbol.for('liquid.element');
 export const LIQUID_FRAGMENT_TYPE = Symbol.for('liquid.fragment');
 export const LIQUID_PORTAL_TYPE = Symbol.for('liquid.portal');
@@ -34,7 +34,7 @@ export type Props = Record<string, unknown> & {
   ref?: Ref;
 };
 
-/** Valid child types in a LiquidJS tree */
+/** Valid child types in a SpecifyJS tree */
 export type LiquidChild = LiquidElement | string | number | boolean | null | undefined;
 export type LiquidNode = LiquidChild | LiquidNode[];
 

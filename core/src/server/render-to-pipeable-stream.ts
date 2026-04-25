@@ -25,14 +25,14 @@ export interface RenderToPipeableStreamOptions {
 }
 
 /**
- * Renders a LiquidJS component tree to a Node.js pipeable stream.
+ * Renders a SpecifyJS component tree to a Node.js pipeable stream.
  *
  * **Build-time pre-rendering only.** Intended for build scripts that
  * generate static HTML files, not for runtime server request handlers.
  * Renders the full HTML string, then writes it in chunks to the writable
  * stream for efficient file I/O during static site generation.
  *
- * For dynamic content, use LiquidJS's client-side rendering with data
+ * For dynamic content, use SpecifyJS's client-side rendering with data
  * fetched via HTTPS from API endpoints.
  */
 export function renderToPipeableStream(

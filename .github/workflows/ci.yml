@@ -77,18 +77,18 @@ jobs:
 
       - name: Verify build output exists
         run: |
-          test -f dist/liquidjs.esm.js || (echo "Missing ESM build" && exit 1)
-          test -f dist/liquidjs.cjs.js || (echo "Missing CJS build" && exit 1)
-          test -f dist/liquidjs.d.ts || (echo "Missing type declarations" && exit 1)
+          test -f dist/specifyjs.esm.js || (echo "Missing ESM build" && exit 1)
+          test -f dist/specifyjs.cjs.js || (echo "Missing CJS build" && exit 1)
+          test -f dist/specifyjs.d.ts || (echo "Missing type declarations" && exit 1)
           echo "Build artifacts verified"
           ls -lh dist/
 
       - name: Check bundle size (< 15KB gzipped)
         run: |
-          gzip -k dist/liquidjs.esm.js
-          SIZE=$(wc -c < dist/liquidjs.esm.js.gz)
+          gzip -k dist/specifyjs.esm.js
+          SIZE=$(wc -c < dist/specifyjs.esm.js.gz)
           echo "ESM bundle gzipped: $SIZE bytes ($(( SIZE / 1024 ))KB)"
-          rm dist/liquidjs.esm.js.gz
+          rm dist/specifyjs.esm.js.gz
           if [ "$SIZE" -gt 15360 ]; then
             echo "ERROR: Bundle exceeds 15KB gzipped"
             exit 1

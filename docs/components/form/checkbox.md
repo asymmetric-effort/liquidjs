@@ -32,7 +32,7 @@ import type { CheckboxProps } from '@aspect/form/checkbox';
 ## Usage
 
 ```ts
-import { createElement } from 'liquidjs';
+import { createElement } from 'specifyjs';
 import { Checkbox } from '@aspect/form/checkbox';
 
 // Basic checkbox

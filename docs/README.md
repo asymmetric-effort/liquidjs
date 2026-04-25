@@ -1,4 +1,4 @@
-# LiquidJS Documentation
+# SpecifyJS Documentation
 
 ## Quick Reference
 

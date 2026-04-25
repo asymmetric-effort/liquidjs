@@ -1,6 +1,6 @@
-import { createElement } from 'liquidjs';
-import { useState } from 'liquidjs/hooks';
-import { createRoot } from 'liquidjs/dom';
+import { createElement } from 'specifyjs';
+import { useState } from 'specifyjs/hooks';
+import { createRoot } from 'specifyjs/dom';
 import { PieGraph } from '../../../../components/viz/2D-pie-graph/src/index';
 
 const sampleData = [
@@ -91,7 +91,7 @@ function Demo() {
             { label: 'Vue', value: 25 },
             { label: 'Angular', value: 20 },
             { label: 'Svelte', value: 10 },
-            { label: 'LiquidJS', value: 5 },
+            { label: 'SpecifyJS', value: 5 },
           ],
           colors: ['#61dafb', '#42b883', '#dd1b16', '#ff3e00', '#3b82f6'],
           width: 450,

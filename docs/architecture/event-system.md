@@ -2,7 +2,7 @@
 
 ## Synthetic Events
 
-LiquidJS wraps native browser events in synthetic event objects for cross-browser consistency:
+SpecifyJS wraps native browser events in synthetic event objects for cross-browser consistency:
 
 | Class | Native Event | Properties |
 |-------|-------------|------------|
@@ -42,4 +42,4 @@ if (EVENT_RE.test(key)) {
 
 ## No Event Pooling
 
-Unlike React 16 and earlier, LiquidJS does not pool synthetic events. The `persist()` method is a no-op for API compatibility.
+Unlike React 16 and earlier, SpecifyJS does not pool synthetic events. The `persist()` method is a no-op for API compatibility.

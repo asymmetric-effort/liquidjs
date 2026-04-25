@@ -5,7 +5,7 @@ Rounded pill/chip element with optional remove button, icon, and click interacti
 ## Import
 
 ```typescript
-import { Tag } from '@liquidjs/tag';
+import { Tag } from '@specifyjs/tag';
 ```
 
 ## Props
@@ -25,8 +25,8 @@ import { Tag } from '@liquidjs/tag';
 ## Usage
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { Tag } from '@liquidjs/tag';
+import { createElement } from 'specifyjs';
+import { Tag } from '@specifyjs/tag';
 
 function App() {
   return createElement('div', { style: { display: 'flex', gap: '8px' } },

@@ -5,7 +5,7 @@ Content placeholder with shimmer animation for loading states.
 ## Import
 
 ```typescript
-import { Skeleton } from '@liquidjs/skeleton';
+import { Skeleton } from '@specifyjs/skeleton';
 ```
 
 ## Props
@@ -22,8 +22,8 @@ import { Skeleton } from '@liquidjs/skeleton';
 ## Usage
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { Skeleton } from '@liquidjs/skeleton';
+import { createElement } from 'specifyjs';
+import { Skeleton } from '@specifyjs/skeleton';
 
 function App() {
   return createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '16px' } },

@@ -4,21 +4,21 @@
 
 | Export | Module | Description |
 |--------|--------|-------------|
-| `createElement` | `liquidjs` | Create a virtual DOM element |
-| `h` | `liquidjs` | Alias for createElement |
-| `Fragment` | `liquidjs` | Group children without a wrapper node |
-| `createContext` | `liquidjs` | Create a context for shared state |
-| `createRef` | `liquidjs` | Create a mutable ref object |
-| `forwardRef` | `liquidjs` | Forward refs through components |
-| `memo` | `liquidjs` | Memoize a component |
-| `lazy` | `liquidjs` | Lazy-load a component (use with Suspense) |
-| `isValidElement` | `liquidjs` | Check if a value is a LiquidJS element |
-| `cloneElement` | `liquidjs` | Clone an element with merged props |
-| `Children` | `liquidjs` | Utilities for the children prop |
-| `Component` | `liquidjs` | Base class for class components |
-| `PureComponent` | `liquidjs` | Component with shallow prop comparison |
-| `startTransition` | `liquidjs` | Mark state updates as non-urgent |
-| `act` | `liquidjs` | Testing utility for flushing updates |
+| `createElement` | `specifyjs` | Create a virtual DOM element |
+| `h` | `specifyjs` | Alias for createElement |
+| `Fragment` | `specifyjs` | Group children without a wrapper node |
+| `createContext` | `specifyjs` | Create a context for shared state |
+| `createRef` | `specifyjs` | Create a mutable ref object |
+| `forwardRef` | `specifyjs` | Forward refs through components |
+| `memo` | `specifyjs` | Memoize a component |
+| `lazy` | `specifyjs` | Lazy-load a component (use with Suspense) |
+| `isValidElement` | `specifyjs` | Check if a value is a SpecifyJS element |
+| `cloneElement` | `specifyjs` | Clone an element with merged props |
+| `Children` | `specifyjs` | Utilities for the children prop |
+| `Component` | `specifyjs` | Base class for class components |
+| `PureComponent` | `specifyjs` | Component with shallow prop comparison |
+| `startTransition` | `specifyjs` | Mark state updates as non-urgent |
+| `act` | `specifyjs` | Testing utility for flushing updates |
 
 ## Detailed References
 

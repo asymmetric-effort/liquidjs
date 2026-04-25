@@ -42,22 +42,22 @@ function createConfig(input, outputName) {
 
 // Generate declaration files in a separate pass
 const mainConfigs = [
-  createConfig('src/index.ts', 'liquidjs'),
-  createConfig('src/dom/index.ts', 'liquidjs-dom'),
-  createConfig('src/server/index.ts', 'liquidjs-server'),
-  createConfig('src/jsx-runtime.ts', 'liquidjs-jsx-runtime'),
-  createConfig('src/jsx-dev-runtime.ts', 'liquidjs-jsx-dev-runtime'),
-  createConfig('src/client/index.ts', 'liquidjs-client'),
-  createConfig('src/telemetry/index.ts', 'liquidjs-telemetry'),
+  createConfig('src/index.ts', 'specifyjs'),
+  createConfig('src/dom/index.ts', 'specifyjs-dom'),
+  createConfig('src/server/index.ts', 'specifyjs-server'),
+  createConfig('src/jsx-runtime.ts', 'specifyjs-jsx-runtime'),
+  createConfig('src/jsx-dev-runtime.ts', 'specifyjs-jsx-dev-runtime'),
+  createConfig('src/client/index.ts', 'specifyjs-client'),
+  createConfig('src/telemetry/index.ts', 'specifyjs-telemetry'),
 ];
 
 // Declaration bundling configs — one per sub-package
 const declarationConfigs = [
-  { input: 'src/index.ts', output: [{ file: 'dist/liquidjs.d.ts', format: 'esm' }] },
-  { input: 'src/dom/index.ts', output: [{ file: 'dist/liquidjs-dom.d.ts', format: 'esm' }] },
-  { input: 'src/server/index.ts', output: [{ file: 'dist/liquidjs-server.d.ts', format: 'esm' }] },
-  { input: 'src/client/index.ts', output: [{ file: 'dist/liquidjs-client.d.ts', format: 'esm' }] },
-  { input: 'src/telemetry/index.ts', output: [{ file: 'dist/liquidjs-telemetry.d.ts', format: 'esm' }] },
+  { input: 'src/index.ts', output: [{ file: 'dist/specifyjs.d.ts', format: 'esm' }] },
+  { input: 'src/dom/index.ts', output: [{ file: 'dist/specifyjs-dom.d.ts', format: 'esm' }] },
+  { input: 'src/server/index.ts', output: [{ file: 'dist/specifyjs-server.d.ts', format: 'esm' }] },
+  { input: 'src/client/index.ts', output: [{ file: 'dist/specifyjs-client.d.ts', format: 'esm' }] },
+  { input: 'src/telemetry/index.ts', output: [{ file: 'dist/specifyjs-telemetry.d.ts', format: 'esm' }] },
 ].map(cfg => ({ ...cfg, plugins: [dts()] }));
 
 export default [...mainConfigs, ...declarationConfigs];

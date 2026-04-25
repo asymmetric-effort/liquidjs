@@ -39,7 +39,7 @@ import type { MultilineFieldProps } from '@aspect/form/multiline';
 ## Usage
 
 ```ts
-import { createElement } from 'liquidjs';
+import { createElement } from 'specifyjs';
 import { MultilineField } from '@aspect/form/multiline';
 
 // Basic textarea

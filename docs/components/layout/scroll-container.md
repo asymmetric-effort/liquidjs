@@ -5,7 +5,7 @@ Scrollable container with configurable direction, scrollbar visibility, optional
 ## Import
 
 ```ts
-import { ScrollContainer } from 'liquidjs/components/layout/scroll-container';
+import { ScrollContainer } from 'specifyjs/components/layout/scroll-container';
 ```
 
 ## Props
@@ -25,8 +25,8 @@ import { ScrollContainer } from 'liquidjs/components/layout/scroll-container';
 ## Usage
 
 ```ts
-import { createElement } from 'liquidjs/core';
-import { ScrollContainer } from 'liquidjs/components/layout/scroll-container';
+import { createElement } from 'specifyjs/core';
+import { ScrollContainer } from 'specifyjs/components/layout/scroll-container';
 
 const scrollable = createElement(
   ScrollContainer,

@@ -183,7 +183,7 @@ function ToastItemView(props: { item: ToastItem; onDismiss: (id: string) => void
     pointerEvents: 'auto',
     minWidth: '280px',
     maxWidth: '420px',
-    animation: 'liquidjs-toast-slide-in 0.3s ease forwards',
+    animation: 'specifyjs-toast-slide-in 0.3s ease forwards',
   };
 
   const messageStyle: Record<string, string> = {
@@ -267,12 +267,12 @@ export function ToastContainer(props: { toaster: Toaster }) {
 
   // Inject keyframes style element
   useEffect(() => {
-    const styleId = 'liquidjs-toast-keyframes';
+    const styleId = 'specifyjs-toast-keyframes';
     if (document.getElementById(styleId)) return;
     const style = document.createElement('style');
     style.id = styleId;
     style.textContent = `
-      @keyframes liquidjs-toast-slide-in {
+      @keyframes specifyjs-toast-slide-in {
         from { opacity: 0; transform: translateY(-12px); }
         to { opacity: 1; transform: translateY(0); }
       }

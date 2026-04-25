@@ -1,46 +1,46 @@
 {
-  "name": "liquidjs-framework",
-  "version": "0.2.2",
+  "name": "specifyjs-framework",
+  "version": "0.0.1",
   "description": "A declarative TypeScript UI framework built for performance and simplicity",
   "type": "module",
-  "main": "dist/liquidjs.cjs.js",
-  "module": "dist/liquidjs.esm.js",
+  "main": "dist/specifyjs.cjs.js",
+  "module": "dist/specifyjs.esm.js",
   "types": "dist/types/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
-      "import": "./dist/liquidjs.esm.js",
-      "require": "./dist/liquidjs.cjs.js"
+      "import": "./dist/specifyjs.esm.js",
+      "require": "./dist/specifyjs.cjs.js"
     },
     "./dom": {
       "types": "./dist/types/dom/index.d.ts",
-      "import": "./dist/liquidjs-dom.esm.js",
-      "require": "./dist/liquidjs-dom.cjs.js"
+      "import": "./dist/specifyjs-dom.esm.js",
+      "require": "./dist/specifyjs-dom.cjs.js"
     },
     "./server": {
       "types": "./dist/types/server/index.d.ts",
-      "import": "./dist/liquidjs-server.esm.js",
-      "require": "./dist/liquidjs-server.cjs.js"
+      "import": "./dist/specifyjs-server.esm.js",
+      "require": "./dist/specifyjs-server.cjs.js"
     },
     "./jsx-runtime": {
       "types": "./dist/types/jsx-runtime.d.ts",
-      "import": "./dist/liquidjs-jsx-runtime.esm.js",
-      "require": "./dist/liquidjs-jsx-runtime.cjs.js"
+      "import": "./dist/specifyjs-jsx-runtime.esm.js",
+      "require": "./dist/specifyjs-jsx-runtime.cjs.js"
     },
     "./jsx-dev-runtime": {
       "types": "./dist/types/jsx-dev-runtime.d.ts",
-      "import": "./dist/liquidjs-jsx-dev-runtime.esm.js",
-      "require": "./dist/liquidjs-jsx-dev-runtime.cjs.js"
+      "import": "./dist/specifyjs-jsx-dev-runtime.esm.js",
+      "require": "./dist/specifyjs-jsx-dev-runtime.cjs.js"
     },
     "./client": {
       "types": "./dist/types/client/index.d.ts",
-      "import": "./dist/liquidjs-client.esm.js",
-      "require": "./dist/liquidjs-client.cjs.js"
+      "import": "./dist/specifyjs-client.esm.js",
+      "require": "./dist/specifyjs-client.cjs.js"
     },
     "./telemetry": {
       "types": "./dist/types/telemetry/index.d.ts",
-      "import": "./dist/liquidjs-telemetry.esm.js",
-      "require": "./dist/liquidjs-telemetry.cjs.js"
+      "import": "./dist/specifyjs-telemetry.esm.js",
+      "require": "./dist/specifyjs-telemetry.cjs.js"
     }
   },
   "files": [

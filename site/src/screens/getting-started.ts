@@ -1,14 +1,14 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import { createElement } from 'liquidjs';
-import { useHead } from 'liquidjs/hooks';
+import { createElement } from 'specifyjs';
+import { useHead } from 'specifyjs/hooks';
 
 export function GettingStarted() {
   useHead({
-    title: 'Getting Started — LiquidJS',
-    description: 'Get up and running with LiquidJS in minutes. Install, Hello World, routing, data fetching, meta tags, and production builds.',
-    keywords: 'liquidjs, getting started, tutorial, install, hello world, routing',
+    title: 'Getting Started — SpecifyJS',
+    description: 'Get up and running with SpecifyJS in minutes. Install, Hello World, routing, data fetching, meta tags, and production builds.',
+    keywords: 'specifyjs, getting started, tutorial, install, hello world, routing',
     author: 'Asymmetric Effort, LLC',
   });
 
@@ -18,18 +18,18 @@ export function GettingStarted() {
     createElement(
       'p',
       { style: { fontSize: '16px', color: '#64748b', marginBottom: '24px', lineHeight: '1.7' } },
-      'Get up and running with LiquidJS in minutes. No build tools required for basic usage — just import and render.',
+      'Get up and running with SpecifyJS in minutes. No build tools required for basic usage — just import and render.',
     ),
 
-    section('Install', createElement('pre', { className: 'code-block' }, 'npm install liquidjs-framework')),
+    section('Install', createElement('pre', { className: 'code-block' }, 'npm install specifyjs-framework')),
 
     section(
       'Hello World',
       createElement(
         'pre',
         { className: 'code-block' },
-        `import { createElement, useState } from 'liquidjs';
-import { createRoot } from 'liquidjs/dom';
+        `import { createElement, useState } from 'specifyjs';
+import { createRoot } from 'specifyjs/dom';
 
 function Counter() {
   const [count, setCount] = useState(0);
@@ -49,7 +49,7 @@ createRoot(document.getElementById('root'))
       createElement(
         'pre',
         { className: 'code-block' },
-        `import { Router, Route, Link } from 'liquidjs';
+        `import { Router, Route, Link } from 'specifyjs';
 
 function App() {
   return createElement(Router, null,
@@ -69,8 +69,8 @@ function App() {
       createElement(
         'pre',
         { className: 'code-block' },
-        `import { useState, useEffect } from 'liquidjs';
-import { secureFetch } from 'liquidjs';
+        `import { useState, useEffect } from 'specifyjs';
+import { secureFetch } from 'specifyjs';
 
 function UserList() {
   const [users, setUsers] = useState([]);
@@ -95,13 +95,13 @@ function UserList() {
       createElement(
         'pre',
         { className: 'code-block' },
-        `import { useHead } from 'liquidjs';
+        `import { useHead } from 'specifyjs';
 
 function MyPage() {
   useHead({
     title: 'My Page',
     description: 'Page description for SEO',
-    keywords: 'liquidjs, spa',
+    keywords: 'specifyjs, spa',
     author: 'Your Name',
     httpEquiv: {
       csp: "default-src 'self'; script-src 'self'",

@@ -1,8 +1,8 @@
 {
-  "name": "@liquidjs/avatar",
+  "name": "@specifyjs/avatar",
   "version": "0.0.1",
-  "description": "User avatar circle component for LiquidJS",
+  "description": "User avatar circle component for SpecifyJS",
   "type": "module",
   "main": "src/index.ts",
-  "peerDependencies": { "liquidjs": "*" }
+  "peerDependencies": { "specifyjs": "*" }
 }

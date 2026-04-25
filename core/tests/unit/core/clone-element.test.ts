@@ -56,7 +56,7 @@ describe('cloneElement', () => {
   it('throws when given a non-element', () => {
     expect(() => {
       cloneElement('not an element' as unknown as ReturnType<typeof createElement>, null);
-    }).toThrow('cloneElement: argument must be a valid LiquidJS element');
+    }).toThrow('cloneElement: argument must be a valid SpecifyJS element');
   });
 
   it('throws when given null', () => {

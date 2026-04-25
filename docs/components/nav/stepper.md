@@ -5,8 +5,8 @@ Step wizard indicator component. Renders a sequence of step circles or dots conn
 ## Import
 
 ```ts
-import { Stepper } from '@liquidjs/components/nav/stepper';
-import type { StepperProps, StepItem, StepperOrientation, StepperVariant } from '@liquidjs/components/nav/stepper';
+import { Stepper } from '@specifyjs/components/nav/stepper';
+import type { StepperProps, StepItem, StepperOrientation, StepperVariant } from '@specifyjs/components/nav/stepper';
 ```
 
 ## Props
@@ -33,8 +33,8 @@ import type { StepperProps, StepItem, StepperOrientation, StepperVariant } from 
 ## Usage
 
 ```ts
-import { createElement } from '@liquidjs/core';
-import { Stepper } from '@liquidjs/components/nav/stepper';
+import { createElement } from '@specifyjs/core';
+import { Stepper } from '@specifyjs/components/nav/stepper';
 
 const stepper = createElement(Stepper, {
   steps: [

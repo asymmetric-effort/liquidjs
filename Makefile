@@ -37,7 +37,7 @@ e2e:
 	@echo "E2E tests passed"
 
 # ============================================================================
-# Build — build the LiquidJS library
+# Build — build the SpecifyJS library
 # ============================================================================
 build:
 	cd core && bun run build
@@ -59,14 +59,14 @@ demos:
 # Help
 # ============================================================================
 help:
-	@echo "LiquidJS Monorepo Makefile"
+	@echo "SpecifyJS Monorepo Makefile"
 	@echo ""
 	@echo "Targets:"
-	@echo "  all (default)  Build the LiquidJS library"
+	@echo "  all (default)  Build the SpecifyJS library"
 	@echo "  clean          Delete bin/"
 	@echo "  lint           Run linters (TypeScript)"
 	@echo "  test           Run all tests (Vitest)"
 	@echo "  e2e            Run Playwright E2E tests"
-	@echo "  build          Build the LiquidJS library"
+	@echo "  build          Build the SpecifyJS library"
 	@echo "  demos          Build all demo Docker containers"
 	@echo "  help           Show this help"

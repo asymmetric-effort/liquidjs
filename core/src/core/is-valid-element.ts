@@ -4,7 +4,7 @@
 import { LIQUID_ELEMENT_TYPE, type LiquidElement } from '../shared/types';
 
 /**
- * Checks if a value is a valid LiquidJS element.
+ * Checks if a value is a valid SpecifyJS element.
  * Equivalent to React.isValidElement.
  */
 export function isValidElement(object: unknown): object is LiquidElement {

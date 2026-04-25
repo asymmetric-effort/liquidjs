@@ -15,11 +15,11 @@
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "liquidjs": ["./src/index.ts"],
-      "liquidjs/*": ["./src/*"]
+      "specifyjs": ["./src/index.ts"],
+      "specifyjs/*": ["./src/*"]
     },
     "jsx": "react-jsx",
-    "jsxImportSource": "liquidjs",
+    "jsxImportSource": "specifyjs",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,

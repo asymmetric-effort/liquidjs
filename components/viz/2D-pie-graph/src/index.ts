@@ -1,5 +1,5 @@
 // ============================================================================
-// LiquidJS — 2D Pie/Donut Chart — Barrel Export
+// SpecifyJS — 2D Pie/Donut Chart — Barrel Export
 // ============================================================================
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT

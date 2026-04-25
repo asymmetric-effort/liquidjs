@@ -5,7 +5,7 @@ Positioned popover attached to a trigger element.
 ## Import
 
 ```typescript
-import { Popover } from '@liquidjs/popover';
+import { Popover } from '@specifyjs/popover';
 ```
 
 ## Props
@@ -24,8 +24,8 @@ import { Popover } from '@liquidjs/popover';
 ## Usage
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { Popover } from '@liquidjs/popover';
+import { createElement } from 'specifyjs';
+import { Popover } from '@specifyjs/popover';
 
 function App() {
   return createElement(Popover, {

@@ -1,6 +1,6 @@
 # Todo App Demo
 
-A standalone LiquidJS SPA demonstrating core framework features.
+A standalone SpecifyJS SPA demonstrating core framework features.
 
 ## Features Demonstrated
 

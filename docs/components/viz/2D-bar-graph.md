@@ -5,7 +5,7 @@
 ## Import
 
 ```typescript
-import { BarGraph, useBarGraphScales } from '@liquidjs/2D-bar-graph';
+import { BarGraph, useBarGraphScales } from '@specifyjs/2D-bar-graph';
 ```
 
 ## Props
@@ -48,8 +48,8 @@ import { BarGraph, useBarGraphScales } from '@liquidjs/2D-bar-graph';
 ### Simple bars
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { BarGraph } from '@liquidjs/2D-bar-graph';
+import { createElement } from 'specifyjs';
+import { BarGraph } from '@specifyjs/2D-bar-graph';
 
 function App() {
   const data = [
@@ -101,7 +101,7 @@ createElement(BarGraph, {
 ## Hook
 
 ```typescript
-import { useBarGraphScales } from '@liquidjs/2D-bar-graph';
+import { useBarGraphScales } from '@specifyjs/2D-bar-graph';
 
 const scales = useBarGraphScales(itemCount, maxValue, axisLength, categoryAxisLength, barGap);
 // scales.valueScale(v), scales.categoryScale(i), scales.barThickness
@@ -119,4 +119,4 @@ const scales = useBarGraphScales(itemCount, maxValue, axisLength, categoryAxisLe
 - CSS keyframe animation for bar grow effect with staggered delay
 - Auto-computed scales from data
 - 10-color default palette for stacked/grouped segments
-- Zero dependencies (pure LiquidJS + SVG)
+- Zero dependencies (pure SpecifyJS + SVG)

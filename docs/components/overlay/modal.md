@@ -5,7 +5,7 @@ Dialog overlay with backdrop, focus trap, and scroll lock.
 ## Import
 
 ```typescript
-import { Modal } from '@liquidjs/modal';
+import { Modal } from '@specifyjs/modal';
 ```
 
 ## Props
@@ -25,8 +25,8 @@ import { Modal } from '@liquidjs/modal';
 ## Usage
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { Modal } from '@liquidjs/modal';
+import { createElement } from 'specifyjs';
+import { Modal } from '@specifyjs/modal';
 
 function App() {
   const [open, setOpen] = useState(false);

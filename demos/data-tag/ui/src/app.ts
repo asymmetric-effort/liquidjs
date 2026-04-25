@@ -1,6 +1,6 @@
-import { createElement } from 'liquidjs';
-import { useState, useCallback } from 'liquidjs/hooks';
-import { createRoot } from 'liquidjs/dom';
+import { createElement } from 'specifyjs';
+import { useState, useCallback } from 'specifyjs/hooks';
+import { createRoot } from 'specifyjs/dom';
 import { Tag } from '../../../../components/data/tag/src/index';
 
 // ── Demo App ───────────────────────────────────────────────────────────
@@ -15,7 +15,7 @@ const initialTags: TagItem[] = [
   { id: '1', label: 'JavaScript', color: '#f59e0b' },
   { id: '2', label: 'TypeScript', color: '#3b82f6' },
   { id: '3', label: 'React', color: '#06b6d4' },
-  { id: '4', label: 'LiquidJS', color: '#8b5cf6' },
+  { id: '4', label: 'SpecifyJS', color: '#8b5cf6' },
   { id: '5', label: 'Node.js', color: '#22c55e' },
   { id: '6', label: 'Python', color: '#3b82f6' },
   { id: '7', label: 'Go', color: '#06b6d4' },

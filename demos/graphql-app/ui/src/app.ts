@@ -1,6 +1,6 @@
-import { createElement, Fragment } from 'liquidjs';
-import { useState, useEffect, useCallback, useMemo } from 'liquidjs/hooks';
-import { createRoot } from 'liquidjs/dom';
+import { createElement, Fragment } from 'specifyjs';
+import { useState, useEffect, useCallback, useMemo } from 'specifyjs/hooks';
+import { createRoot } from 'specifyjs/dom';
 
 interface Contact {
   id: number;
@@ -231,7 +231,7 @@ function App() {
   return createElement(
     'div', { className: 'app' },
     createElement('h1', null, 'Contact Directory'),
-    createElement('p', { className: 'subtitle' }, 'LiquidJS UI \u2194 Go GraphQL API'),
+    createElement('p', { className: 'subtitle' }, 'SpecifyJS UI \u2194 Go GraphQL API'),
     error ? createElement('div', { className: 'error' }, `Error: ${error}`) : null,
     createElement(QueryInspector, { query: lastQuery }),
     createElement(SearchBar, { value: search, onInput: setSearch }),

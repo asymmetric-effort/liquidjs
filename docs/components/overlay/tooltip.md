@@ -5,7 +5,7 @@ Lightweight hover tooltip with configurable placement and delay.
 ## Import
 
 ```typescript
-import { Tooltip } from '@liquidjs/tooltip';
+import { Tooltip } from '@specifyjs/tooltip';
 ```
 
 ## Props
@@ -21,8 +21,8 @@ import { Tooltip } from '@liquidjs/tooltip';
 ## Usage
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { Tooltip } from '@liquidjs/tooltip';
+import { createElement } from 'specifyjs';
+import { Tooltip } from '@specifyjs/tooltip';
 
 function App() {
   return createElement(Tooltip, {

@@ -1,10 +1,10 @@
 FROM oven/bun:alpine AS build
 WORKDIR /app
-COPY core/src/ /liquidjs-core/src/
+COPY core/src/ /specifyjs-core/src/
 COPY demos/rest-api/ui/package.json ./
 RUN bun install
 COPY demos/rest-api/ui/ ./
-RUN echo 'import { defineConfig } from "vite"; export default defineConfig({ resolve: { alias: { "liquidjs/hooks": "/liquidjs-core/src/hooks/index.ts", "liquidjs/dom": "/liquidjs-core/src/dom/index.ts", "liquidjs": "/liquidjs-core/src/index.ts" } }, build: { outDir: "dist", minify: "esbuild" } });' > vite.config.js && rm -f vite.config.ts
+RUN echo 'import { defineConfig } from "vite"; export default defineConfig({ resolve: { alias: { "specifyjs/hooks": "/specifyjs-core/src/hooks/index.ts", "specifyjs/dom": "/specifyjs-core/src/dom/index.ts", "specifyjs": "/specifyjs-core/src/index.ts" } }, build: { outDir: "dist", minify: "esbuild" } });' > vite.config.js && rm -f vite.config.ts
 RUN bun run build
 
 FROM nginx:alpine

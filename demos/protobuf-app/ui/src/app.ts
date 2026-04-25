@@ -1,6 +1,6 @@
-import { createElement, Fragment } from 'liquidjs';
-import { useState, useEffect, useCallback } from 'liquidjs/hooks';
-import { createRoot } from 'liquidjs/dom';
+import { createElement, Fragment } from 'specifyjs';
+import { useState, useEffect, useCallback } from 'specifyjs/hooks';
+import { createRoot } from 'specifyjs/dom';
 
 // ─── Binary Protocol Codec ────────────────────────────────────────────────────
 // Wire format per task:
@@ -298,7 +298,7 @@ function App() {
   return createElement(
     'div', { className: 'app' },
     createElement('h1', null, 'Task Tracker'),
-    createElement('p', { className: 'subtitle' }, 'LiquidJS UI with Protobuf-like binary protocol over HTTP'),
+    createElement('p', { className: 'subtitle' }, 'SpecifyJS UI with Protobuf-like binary protocol over HTTP'),
     error ? createElement('div', { className: 'error' }, `Error: ${error}`) : null,
     createElement(AddTaskForm, { onAdd: addTask }),
     createElement(BytesPanel, { rawBytes: lastRawBytes, byteCount: lastByteCount, taskCount: tasks.length }),

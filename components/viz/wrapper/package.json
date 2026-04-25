@@ -1,11 +1,11 @@
 {
-  "name": "@liquidjs/viz-wrapper",
+  "name": "@specifyjs/viz-wrapper",
   "version": "0.0.1",
-  "description": "Configurable container for LiquidJS visualization components with title, legend, and isolated content",
+  "description": "Configurable container for SpecifyJS visualization components with title, legend, and isolated content",
   "type": "module",
   "main": "src/index.ts",
   "peerDependencies": {
-    "liquidjs": "*"
+    "specifyjs": "*"
   },
-  "keywords": ["liquidjs", "component", "visualization", "wrapper", "container", "chart"]
+  "keywords": ["specifyjs", "component", "visualization", "wrapper", "container", "chart"]
 }

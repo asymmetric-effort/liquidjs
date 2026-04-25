@@ -1,8 +1,8 @@
 {
-  "name": "@liquidjs/tag",
+  "name": "@specifyjs/tag",
   "version": "0.0.1",
-  "description": "Tag/chip element component for LiquidJS",
+  "description": "Tag/chip element component for SpecifyJS",
   "type": "module",
   "main": "src/index.ts",
-  "peerDependencies": { "liquidjs": "*" }
+  "peerDependencies": { "specifyjs": "*" }
 }

@@ -1,8 +1,8 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import { createElement } from 'liquidjs';
-import { Router, useRouter, FeatureFlagProvider, useFeatureFlags } from 'liquidjs';
+import { createElement } from 'specifyjs';
+import { Router, useRouter, FeatureFlagProvider, useFeatureFlags } from 'specifyjs';
 import { NavBar } from './components/nav-bar';
 import { Footer } from './components/footer';
 import { HomeScreen } from './screens/home';

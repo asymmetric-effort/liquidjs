@@ -5,8 +5,8 @@ Base container for all navigation components. Provides consistent layout, orient
 ## Import
 
 ```ts
-import { NavWrapper, buildNavItemStyle, useHover } from '@liquidjs/components/nav/wrapper';
-import type { NavWrapperProps, NavWrapperStyle, NavOrientation, NavItemStyle } from '@liquidjs/components/nav/wrapper';
+import { NavWrapper, buildNavItemStyle, useHover } from '@specifyjs/components/nav/wrapper';
+import type { NavWrapperProps, NavWrapperStyle, NavOrientation, NavItemStyle } from '@specifyjs/components/nav/wrapper';
 ```
 
 ## Props
@@ -56,8 +56,8 @@ Shared style configuration used by nav item helpers across all components.
 ## Usage
 
 ```ts
-import { createElement } from '@liquidjs/core';
-import { NavWrapper } from '@liquidjs/components/nav/wrapper';
+import { createElement } from '@specifyjs/core';
+import { NavWrapper } from '@specifyjs/components/nav/wrapper';
 
 const nav = createElement(
   NavWrapper,

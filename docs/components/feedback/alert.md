@@ -5,7 +5,7 @@ Alert/banner message component with icon, title, message, and optional close and
 ## Import
 
 ```typescript
-import { Alert } from '@liquidjs/alert';
+import { Alert } from '@specifyjs/alert';
 ```
 
 ## Props
@@ -25,8 +25,8 @@ import { Alert } from '@liquidjs/alert';
 ## Usage
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { Alert } from '@liquidjs/alert';
+import { createElement } from 'specifyjs';
+import { Alert } from '@specifyjs/alert';
 
 function App() {
   return createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '12px' } },

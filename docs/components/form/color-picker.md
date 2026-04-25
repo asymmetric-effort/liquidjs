@@ -24,7 +24,7 @@ import type { ColorPickerProps } from '@aspect/form/color-picker';
 ## Usage
 
 ```ts
-import { createElement } from 'liquidjs';
+import { createElement } from 'specifyjs';
 import { ColorPicker } from '@aspect/form/color-picker';
 
 // Basic color picker

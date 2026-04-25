@@ -1,6 +1,6 @@
-import { createElement } from 'liquidjs';
-import { useState, useCallback } from 'liquidjs/hooks';
-import { createRoot } from 'liquidjs/dom';
+import { createElement } from 'specifyjs';
+import { useState, useCallback } from 'specifyjs/hooks';
+import { createRoot } from 'specifyjs/dom';
 import { VirtualScroll } from '../../../../components/data/virtual-scroll/src/index';
 
 // ── Generate Large Dataset ─────────────────────────────────────────────

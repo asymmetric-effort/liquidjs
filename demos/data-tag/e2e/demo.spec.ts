@@ -16,7 +16,7 @@ test.describe('Tag Demo', () => {
   test('shows initial tags', async ({ page }) => {
     await expect(page.getByText('JavaScript')).toBeVisible();
     await expect(page.getByText('TypeScript')).toBeVisible();
-    await expect(page.getByText('LiquidJS')).toBeVisible();
+    await expect(page.getByText('SpecifyJS')).toBeVisible();
     await expect(page.getByText('Rust')).toBeVisible();
   });
 

@@ -17,7 +17,7 @@ export function warn(message: string): void {
 
   if (typeof console !== 'undefined') {
     // eslint-disable-next-line no-console
-    console.warn(`[LiquidJS] ${message}`);
+    console.warn(`[SpecifyJS] ${message}`);
   }
 }
 
@@ -27,7 +27,7 @@ export function warn(message: string): void {
 export function error(message: string): void {
   if (typeof console !== 'undefined') {
     // eslint-disable-next-line no-console
-    console.error(`[LiquidJS] ${message}`);
+    console.error(`[SpecifyJS] ${message}`);
   }
 }
 

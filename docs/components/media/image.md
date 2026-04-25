@@ -5,7 +5,7 @@ Enhanced image component with lazy loading, placeholder, and fallback.
 ## Import
 
 ```typescript
-import { Image } from '@liquidjs/image';
+import { Image } from '@specifyjs/image';
 ```
 
 ## Props
@@ -26,8 +26,8 @@ import { Image } from '@liquidjs/image';
 ## Usage
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { Image } from '@liquidjs/image';
+import { createElement } from 'specifyjs';
+import { Image } from '@specifyjs/image';
 
 function App() {
   return createElement('div', { style: { display: 'flex', gap: '16px' } },

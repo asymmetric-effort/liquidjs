@@ -62,7 +62,7 @@ Available toolbar button identifiers:
 ## Usage
 
 ```ts
-import { createElement } from 'liquidjs';
+import { createElement } from 'specifyjs';
 import { TextEditor } from '@aspect/form/texteditor';
 
 // Basic rich text editor

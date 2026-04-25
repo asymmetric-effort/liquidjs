@@ -2,7 +2,7 @@
 
 ## Library Build
 
-Build the LiquidJS library for distribution:
+Build the SpecifyJS library for distribution:
 
 ```bash
 cd core
@@ -10,15 +10,15 @@ npm run build
 ```
 
 Outputs:
-- `dist/liquidjs.esm.js` — ES module (14KB)
-- `dist/liquidjs.cjs.js` — CommonJS (15KB)
-- `dist/liquidjs-dom.esm.js` — DOM renderer (40KB)
-- `dist/liquidjs-server.esm.js` — Pre-rendering (11KB)
-- `dist/liquidjs.d.ts` — TypeScript declarations
+- `dist/specifyjs.esm.js` — ES module (14KB)
+- `dist/specifyjs.cjs.js` — CommonJS (15KB)
+- `dist/specifyjs-dom.esm.js` — DOM renderer (40KB)
+- `dist/specifyjs-server.esm.js` — Pre-rendering (11KB)
+- `dist/specifyjs.d.ts` — TypeScript declarations
 
 ## Application Build
 
-Build a LiquidJS SPA for deployment using Vite:
+Build a SpecifyJS SPA for deployment using Vite:
 
 ```bash
 npx vite build

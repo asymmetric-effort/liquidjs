@@ -1,6 +1,6 @@
-# LiquidJS Demos
+# SpecifyJS Demos
 
-Containerized demonstration SPAs showcasing LiquidJS features and integration patterns.
+Containerized demonstration SPAs showcasing SpecifyJS features and integration patterns.
 
 ## Prerequisites
 
@@ -51,7 +51,7 @@ Each demo follows this structure:
 ```
 demos/<project>/
   docker-compose.yml    # Container orchestration
-  ui/                   # LiquidJS SPA
+  ui/                   # SpecifyJS SPA
     Dockerfile          # Multi-stage: build with Node, serve with nginx
     src/app.ts          # Application source
     index.html          # HTML shell

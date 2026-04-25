@@ -1,6 +1,6 @@
-import { createElement } from 'liquidjs';
-import { useState, useCallback } from 'liquidjs/hooks';
-import { createRoot } from 'liquidjs/dom';
+import { createElement } from 'specifyjs';
+import { useState, useCallback } from 'specifyjs/hooks';
+import { createRoot } from 'specifyjs/dom';
 import { Accordion } from '../../../../components/nav/accordion/src/index';
 import type { AccordionSection } from '../../../../components/nav/accordion/src/index';
 
@@ -14,7 +14,7 @@ function App() {
       header: 'Getting Started',
       icon: 'R',
       content: createElement('div', null,
-        createElement('p', null, 'Welcome to LiquidJS! Follow these steps to set up your project.'),
+        createElement('p', null, 'Welcome to SpecifyJS! Follow these steps to set up your project.'),
         createElement('ol', { style: { paddingLeft: '20px', marginTop: '8px' } },
           createElement('li', null, 'Install dependencies'),
           createElement('li', null, 'Create your first component'),

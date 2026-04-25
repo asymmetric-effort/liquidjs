@@ -1,5 +1,5 @@
 // ============================================================================
-// LiquidJS — 2D Polar Graph (SVG-based polar coordinate visualization)
+// SpecifyJS — 2D Polar Graph (SVG-based polar coordinate visualization)
 // Zero-dependency polar graph rendered entirely via createElement calls.
 // ============================================================================
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE

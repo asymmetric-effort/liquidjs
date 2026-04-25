@@ -2,10 +2,10 @@ FROM oven/bun:alpine AS build
 WORKDIR /app
 
 # Copy core framework source
-COPY core/src/ /liquidjs-core/src/
+COPY core/src/ /specifyjs-core/src/
 
 # Copy component source
-COPY components/media/carousel/src/ /liquidjs-components/media/carousel/src/
+COPY components/media/carousel/src/ /specifyjs-components/media/carousel/src/
 
 # Copy demo UI source
 COPY demos/media-carousel/ui/package.json ./
@@ -14,10 +14,10 @@ RUN bun install
 COPY demos/media-carousel/ui/ ./
 
 # Fix component import paths for container build
-RUN sed -i 's|../../../../core/src|/liquidjs-core/src|g' /liquidjs-components/media/carousel/src/*.ts
+RUN sed -i 's|../../../../core/src|/specifyjs-core/src|g' /specifyjs-components/media/carousel/src/*.ts
 
 # Write container-specific vite config
-RUN echo 'import { defineConfig } from "vite"; export default defineConfig({ resolve: { alias: { "liquidjs/hooks": "/liquidjs-core/src/hooks/index.ts", "liquidjs/dom": "/liquidjs-core/src/dom/index.ts", "liquidjs": "/liquidjs-core/src/index.ts" } }, build: { outDir: "dist", minify: "esbuild" } });' > vite.config.js && rm -f vite.config.ts
+RUN echo 'import { defineConfig } from "vite"; export default defineConfig({ resolve: { alias: { "specifyjs/hooks": "/specifyjs-core/src/hooks/index.ts", "specifyjs/dom": "/specifyjs-core/src/dom/index.ts", "specifyjs": "/specifyjs-core/src/index.ts" } }, build: { outDir: "dist", minify: "esbuild" } });' > vite.config.js && rm -f vite.config.ts
 
 RUN bun run build
 

@@ -1,19 +1,19 @@
-# LiquidJS
+# SpecifyJS
 
-[![FOSSA Status](https://app.fossa.com/api/projects/custom%2B61980%2Fgit%40github.com%3Aasymmetric-effort%2Fliquidjs.git.svg?type=shield&issueType=license)](https://app.fossa.com/projects/custom%2B61980%2Fgit%40github.com%3Aasymmetric-effort%2Fliquidjs.git?ref=badge_shield&issueType=license)
-[![FOSSA Status](https://app.fossa.com/api/projects/custom%2B61980%2Fgit%40github.com%3Aasymmetric-effort%2Fliquidjs.git.svg?type=shield&issueType=security)](https://app.fossa.com/projects/custom%2B61980%2Fgit%40github.com%3Aasymmetric-effort%2Fliquidjs.git?ref=badge_shield&issueType=security)
+[![FOSSA Status](https://app.fossa.com/api/projects/custom%2B61980%2Fgit%40github.com%3Aasymmetric-effort%2Fspecifyjs.git.svg?type=shield&issueType=license)](https://app.fossa.com/projects/custom%2B61980%2Fgit%40github.com%3Aasymmetric-effort%2Fspecifyjs.git?ref=badge_shield&issueType=license)
+[![FOSSA Status](https://app.fossa.com/api/projects/custom%2B61980%2Fgit%40github.com%3Aasymmetric-effort%2Fspecifyjs.git.svg?type=shield&issueType=security)](https://app.fossa.com/projects/custom%2B61980%2Fgit%40github.com%3Aasymmetric-effort%2Fspecifyjs.git?ref=badge_shield&issueType=security)
 
 A declarative TypeScript UI framework built for performance, browser compatibility, and developer simplicity.
 
 ## Monorepo Structure
 
 ```
-liquidjs/
-  core/           LiquidJS framework — virtual DOM, reconciler, hooks, renderer, static pre-rendering
+specifyjs/
+  core/           SpecifyJS framework — virtual DOM, reconciler, hooks, renderer, static pre-rendering
   tools/          Ecosystem tooling
   components/     Community-contributed reusable components
   docs/           Documentation (you are here)
-  skills/         Claude skills for LiquidJS developers
+  skills/         Claude skills for SpecifyJS developers
   .github/        CI/CD workflows (GitHub Actions)
   scripts/        Repository-wide automation scripts
 ```

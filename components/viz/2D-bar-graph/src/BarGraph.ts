@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * BarGraph — A LiquidJS component that renders 2D bar charts as SVG.
+ * BarGraph — A SpecifyJS component that renders 2D bar charts as SVG.
  *
  * Supports:
  *  - Vertical and horizontal orientation
@@ -14,7 +14,7 @@
  *  - Optional animation
  *  - Configurable colors, gaps, padding
  *
- * Zero runtime dependencies — pure LiquidJS + SVG.
+ * Zero runtime dependencies — pure SpecifyJS + SVG.
  */
 
 import { createElement } from '../../../../core/src/index';

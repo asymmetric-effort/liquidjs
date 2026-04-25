@@ -1,11 +1,11 @@
 # Protobuf Task Tracker Demo
 
-A two-container Docker demo showing a LiquidJS UI communicating with a Go API server using a protobuf-inspired binary protocol over HTTP.
+A two-container Docker demo showing a SpecifyJS UI communicating with a Go API server using a protobuf-inspired binary protocol over HTTP.
 
 ## Architecture
 
 - **API** (Go) — HTTP server that encodes/decodes task messages using `encoding/binary` with a custom wire format. Serves binary endpoints at `/proto/*` and JSON fallback at `/api/*` for debugging.
-- **UI** (LiquidJS + Vite + nginx) — Single-page kanban board that uses `ArrayBuffer`/`DataView` to encode and decode binary task messages. Displays raw hex bytes alongside decoded data.
+- **UI** (SpecifyJS + Vite + nginx) — Single-page kanban board that uses `ArrayBuffer`/`DataView` to encode and decode binary task messages. Displays raw hex bytes alongside decoded data.
 
 ## Wire Format
 

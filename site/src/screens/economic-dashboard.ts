@@ -1,8 +1,8 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import { createElement } from 'liquidjs';
-import { useHead } from 'liquidjs/hooks';
+import { createElement } from 'specifyjs';
+import { useHead } from 'specifyjs/hooks';
 import { useFetch } from '../hooks/use-fetch';
 
 interface President {
@@ -36,9 +36,9 @@ interface EconomicData {
 
 export function EconomicDashboard() {
   useHead({
-    title: 'Economic Dashboard — LiquidJS',
-    description: 'Presidential economic data visualized with LiquidJS: SVG bar charts, line graphs, box plots, and data tables.',
-    keywords: 'liquidjs, dashboard, economics, visualization, charts, data',
+    title: 'Economic Dashboard — SpecifyJS',
+    description: 'Presidential economic data visualized with SpecifyJS: SVG bar charts, line graphs, box plots, and data tables.',
+    keywords: 'specifyjs, dashboard, economics, visualization, charts, data',
     author: 'Asymmetric Effort, LLC',
   });
 
@@ -62,7 +62,7 @@ export function EconomicDashboard() {
     createElement('div', { className: 'section' },
       createElement('h2', null, 'Economic Dashboard'),
       createElement('p', { style: { color: '#64748b', marginBottom: '24px' } },
-        'Real-time data fetched via HTTPS from static JSON — demonstrating LiquidJS data loading, state management, and rendering.',
+        'Real-time data fetched via HTTPS from static JSON — demonstrating SpecifyJS data loading, state management, and rendering.',
       ),
       createElement('p', { style: { fontSize: '12px', color: '#94a3b8', marginBottom: '16px' } },
         `Source: ${presidents.data!.source}`,

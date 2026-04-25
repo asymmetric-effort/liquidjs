@@ -10,7 +10,7 @@ describe('warnings', () => {
     it('logs a warning', () => {
       const spy = vi.spyOn(console, 'warn').mockImplementation(() => {});
       warn('test warning');
-      expect(spy).toHaveBeenCalledWith('[LiquidJS] test warning');
+      expect(spy).toHaveBeenCalledWith('[SpecifyJS] test warning');
       spy.mockRestore();
     });
 
@@ -36,7 +36,7 @@ describe('warnings', () => {
     it('logs an error', () => {
       const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
       error('test error');
-      expect(spy).toHaveBeenCalledWith('[LiquidJS] test error');
+      expect(spy).toHaveBeenCalledWith('[SpecifyJS] test error');
       spy.mockRestore();
     });
 

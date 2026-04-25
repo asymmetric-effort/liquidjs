@@ -1,17 +1,17 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import { createElement } from 'liquidjs';
-import { useState } from 'liquidjs/hooks';
-import { useHead } from 'liquidjs/hooks';
-import { useFeatureFlags, FeatureGate } from 'liquidjs';
+import { createElement } from 'specifyjs';
+import { useState } from 'specifyjs/hooks';
+import { useHead } from 'specifyjs/hooks';
+import { useFeatureFlags, FeatureGate } from 'specifyjs';
 
 export function FeatureFlagsDemo() {
   useHead({
-    title: 'Feature Flags — LiquidJS',
+    title: 'Feature Flags — SpecifyJS',
     description:
       'Feature flag system demo: conditionally render components based on runtime flag state.',
-    keywords: 'liquidjs, feature flags, feature gates, conditional rendering',
+    keywords: 'specifyjs, feature flags, feature gates, conditional rendering',
     author: 'Asymmetric Effort, LLC',
   });
 
@@ -153,7 +153,7 @@ export function FeatureFlagsDemo() {
       createElement(
         'pre',
         { className: 'code-block' },
-        `import { FeatureFlagProvider, FeatureGate, useFeatureFlags } from 'liquidjs';
+        `import { FeatureFlagProvider, FeatureGate, useFeatureFlags } from 'specifyjs';
 
 // Wrap app with provider (loads flags from JSON)
 createElement(FeatureFlagProvider, { url: '/features.json' },

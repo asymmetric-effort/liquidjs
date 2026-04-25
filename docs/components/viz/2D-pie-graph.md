@@ -5,7 +5,7 @@
 ## Import
 
 ```typescript
-import { PieGraph, computeSlices, describeArc } from '@liquidjs/2D-pie-graph';
+import { PieGraph, computeSlices, describeArc } from '@specifyjs/2D-pie-graph';
 ```
 
 ## Props
@@ -41,8 +41,8 @@ import { PieGraph, computeSlices, describeArc } from '@liquidjs/2D-pie-graph';
 ### Pie chart
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { PieGraph } from '@liquidjs/2D-pie-graph';
+import { createElement } from 'specifyjs';
+import { PieGraph } from '@specifyjs/2D-pie-graph';
 
 function App() {
   const data = [
@@ -105,4 +105,4 @@ Generates an SVG path `d` string for an arc or annular sector.
 - Chart title
 - White stroke between slices for visual separation
 - Exported utility functions for custom rendering
-- Zero dependencies (pure LiquidJS + SVG)
+- Zero dependencies (pure SpecifyJS + SVG)

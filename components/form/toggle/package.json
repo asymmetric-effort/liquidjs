@@ -1,8 +1,8 @@
 {
-  "name": "@liquidjs/form-toggle",
+  "name": "@specifyjs/form-toggle",
   "version": "0.0.1",
-  "description": "Toggle/switch component for LiquidJS",
+  "description": "Toggle/switch component for SpecifyJS",
   "type": "module",
   "main": "src/index.ts",
-  "peerDependencies": { "liquidjs": "*" }
+  "peerDependencies": { "specifyjs": "*" }
 }

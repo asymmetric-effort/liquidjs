@@ -42,7 +42,7 @@ import type { TextFieldProps } from '@aspect/form/textfield';
 ## Usage
 
 ```ts
-import { createElement } from 'liquidjs';
+import { createElement } from 'specifyjs';
 import { TextField } from '@aspect/form/textfield';
 
 // Basic text field

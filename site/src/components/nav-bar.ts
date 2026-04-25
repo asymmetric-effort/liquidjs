@@ -1,9 +1,9 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import { createElement, FeatureGate, useFeatureFlags } from 'liquidjs';
-import { Link } from 'liquidjs';
-import { useState } from 'liquidjs/hooks';
+import { createElement, FeatureGate, useFeatureFlags } from 'specifyjs';
+import { Link } from 'specifyjs';
+import { useState } from 'specifyjs/hooks';
 
 function DropletLogo() {
   return createElement(
@@ -113,7 +113,7 @@ export function NavBar() {
         Link,
         { to: '/', className: 'nav-logo', exact: true },
         createElement(DropletLogo, null),
-        'LiquidJS',
+        'SpecifyJS',
       ),
       createElement(GatedNavLinks, null),
       createElement(FeatureGate, { flag: 'dark-mode', fallback: null },

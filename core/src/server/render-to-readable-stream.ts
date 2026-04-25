@@ -16,7 +16,7 @@ export interface RenderToReadableStreamOptions {
 }
 
 /**
- * Renders a LiquidJS tree to a web ReadableStream.
+ * Renders a SpecifyJS tree to a web ReadableStream.
  * **Build-time pre-rendering only.** Intended for build scripts that
  * generate static HTML files, not for runtime server request handlers.
  * Renders the full HTML, then enqueues it in chunks for efficient

@@ -5,7 +5,7 @@ Right-click context menu with nested submenus and keyboard navigation.
 ## Import
 
 ```typescript
-import { ContextMenu } from '@liquidjs/context-menu';
+import { ContextMenu } from '@specifyjs/context-menu';
 ```
 
 ## Props
@@ -29,8 +29,8 @@ import { ContextMenu } from '@liquidjs/context-menu';
 ## Usage
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { ContextMenu } from '@liquidjs/context-menu';
+import { createElement } from 'specifyjs';
+import { ContextMenu } from '@specifyjs/context-menu';
 
 function App() {
   const items = [

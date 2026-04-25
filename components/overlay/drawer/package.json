@@ -1,8 +1,8 @@
 {
-  "name": "@liquidjs/overlay-drawer",
+  "name": "@specifyjs/overlay-drawer",
   "version": "0.0.1",
-  "description": "Slide-in drawer/sheet overlay component for LiquidJS",
+  "description": "Slide-in drawer/sheet overlay component for SpecifyJS",
   "type": "module",
   "main": "src/index.ts",
-  "peerDependencies": { "liquidjs": "*" }
+  "peerDependencies": { "specifyjs": "*" }
 }

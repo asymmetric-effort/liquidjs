@@ -12,7 +12,7 @@ import {
 } from '../shared/types';
 
 /**
- * Creates a LiquidJS element (virtual DOM node).
+ * Creates a SpecifyJS element (virtual DOM node).
  * Equivalent to React.createElement.
  */
 export function createElement<P extends Props>(

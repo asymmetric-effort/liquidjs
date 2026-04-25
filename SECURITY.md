@@ -2,7 +2,7 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in LiquidJS, please report it responsibly.
+If you discover a security vulnerability in SpecifyJS, please report it responsibly.
 
 **Do NOT open a public issue for security vulnerabilities.**
 

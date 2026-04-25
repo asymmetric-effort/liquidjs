@@ -1,8 +1,8 @@
 {
-  "name": "@liquidjs/form-wrapper",
+  "name": "@specifyjs/form-wrapper",
   "version": "0.0.1",
-  "description": "Base wrapper for LiquidJS form/data-entry components",
+  "description": "Base wrapper for SpecifyJS form/data-entry components",
   "type": "module",
   "main": "src/index.ts",
-  "peerDependencies": { "liquidjs": "*" }
+  "peerDependencies": { "specifyjs": "*" }
 }

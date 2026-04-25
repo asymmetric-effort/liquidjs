@@ -27,7 +27,7 @@ interface Task {
 
 let nextId = 4;
 const tasks: Map<number, Task> = new Map([
-  [1, { id: 1, title: 'Set up project', description: 'Initialize the LiquidJS project repository', status: StatusDone, priority: 1 }],
+  [1, { id: 1, title: 'Set up project', description: 'Initialize the SpecifyJS project repository', status: StatusDone, priority: 1 }],
   [2, { id: 2, title: 'Build components', description: 'Implement core UI components', status: StatusInProgress, priority: 2 }],
   [3, { id: 3, title: 'Write tests', description: 'Add comprehensive test coverage', status: StatusPending, priority: 3 }],
 ]);

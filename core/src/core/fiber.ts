@@ -54,7 +54,7 @@ export function getFiberTag(type: ComponentType): FiberTag {
 }
 
 /**
- * Creates a new fiber from a LiquidJS element.
+ * Creates a new fiber from a SpecifyJS element.
  */
 export function createFiberFromElement(element: LiquidElement, lanes: number = 0): Fiber {
   const tag = getFiberTag(element.type);

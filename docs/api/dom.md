@@ -1,11 +1,11 @@
 # DOM API
 
-The DOM module provides browser rendering APIs. Import from `liquidjs/dom`.
+The DOM module provides browser rendering APIs. Import from `specifyjs/dom`.
 
 ## createRoot
 
 ```typescript
-import { createRoot } from 'liquidjs/dom';
+import { createRoot } from 'specifyjs/dom';
 
 const root = createRoot(document.getElementById('root'));
 root.render(createElement(App, null));
@@ -17,7 +17,7 @@ root.unmount();
 Hydrate server-rendered HTML:
 
 ```typescript
-import { hydrateRoot } from 'liquidjs/dom';
+import { hydrateRoot } from 'specifyjs/dom';
 
 const root = hydrateRoot(document, createElement(App, null));
 ```
@@ -27,7 +27,7 @@ const root = hydrateRoot(document, createElement(App, null));
 Render children into a different DOM subtree:
 
 ```typescript
-import { createPortal } from 'liquidjs/dom';
+import { createPortal } from 'specifyjs/dom';
 
 createPortal(createElement(Modal, null), document.getElementById('modal-root'));
 ```
@@ -37,7 +37,7 @@ createPortal(createElement(Modal, null), document.getElementById('modal-root'));
 Force synchronous state updates (escape automatic batching):
 
 ```typescript
-import { flushSync } from 'liquidjs/dom';
+import { flushSync } from 'specifyjs/dom';
 
 flushSync(() => {
   setState(newValue); // Updates DOM synchronously
@@ -49,7 +49,7 @@ flushSync(() => {
 For migration from older patterns:
 
 ```typescript
-import { render, hydrate, unmountComponentAtNode } from 'liquidjs/dom';
+import { render, hydrate, unmountComponentAtNode } from 'specifyjs/dom';
 
 render(element, container, callback);
 hydrate(element, container, callback);
@@ -58,7 +58,7 @@ unmountComponentAtNode(container);
 
 ## Event Handling
 
-LiquidJS uses a synthetic event system with cross-browser normalization:
+SpecifyJS uses a synthetic event system with cross-browser normalization:
 
 ```typescript
 createElement('button', {

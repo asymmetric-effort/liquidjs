@@ -1,6 +1,6 @@
 # Component Library Reference
 
-56 components across 8 families. All zero-dependency, pure LiquidJS, ARIA accessible, keyboard navigable.
+56 components across 8 families. All zero-dependency, pure SpecifyJS, ARIA accessible, keyboard navigable.
 
 ## Layout (7)
 

@@ -5,7 +5,7 @@ Count or dot indicator, positioned as an overlay or rendered inline.
 ## Import
 
 ```typescript
-import { Badge } from '@liquidjs/badge';
+import { Badge } from '@specifyjs/badge';
 ```
 
 ## Props
@@ -23,8 +23,8 @@ import { Badge } from '@liquidjs/badge';
 ## Usage
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { Badge } from '@liquidjs/badge';
+import { createElement } from 'specifyjs';
+import { Badge } from '@specifyjs/badge';
 
 // Overlay mode: badge on top-right of children
 function NotificationIcon() {

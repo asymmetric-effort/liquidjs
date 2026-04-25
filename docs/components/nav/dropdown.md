@@ -5,8 +5,8 @@ A dropdown menu navigation component. Renders a trigger button that toggles a dr
 ## Import
 
 ```ts
-import { Dropdown } from '@liquidjs/components/nav/dropdown';
-import type { DropdownProps, DropdownItem } from '@liquidjs/components/nav/dropdown';
+import { Dropdown } from '@specifyjs/components/nav/dropdown';
+import type { DropdownProps, DropdownItem } from '@specifyjs/components/nav/dropdown';
 ```
 
 ## Props
@@ -39,8 +39,8 @@ import type { DropdownProps, DropdownItem } from '@liquidjs/components/nav/dropd
 ## Usage
 
 ```ts
-import { createElement } from '@liquidjs/core';
-import { Dropdown } from '@liquidjs/components/nav/dropdown';
+import { createElement } from '@specifyjs/core';
+import { Dropdown } from '@specifyjs/components/nav/dropdown';
 
 const menu = createElement(Dropdown, {
   label: 'Actions',

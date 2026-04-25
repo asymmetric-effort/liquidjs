@@ -24,7 +24,7 @@ import type { TimePickerProps } from '@aspect/form/timepicker';
 ## Usage
 
 ```ts
-import { createElement } from 'liquidjs';
+import { createElement } from 'specifyjs';
 import { TimePicker } from '@aspect/form/timepicker';
 
 // 24-hour time picker

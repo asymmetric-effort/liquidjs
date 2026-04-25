@@ -14,12 +14,12 @@ npm install
 
 ## Create Your First Component
 
-LiquidJS uses `createElement` (or JSX) to describe UI:
+SpecifyJS uses `createElement` (or JSX) to describe UI:
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { useState } from 'liquidjs/hooks';
-import { createRoot } from 'liquidjs/dom';
+import { createElement } from 'specifyjs';
+import { useState } from 'specifyjs/hooks';
+import { createRoot } from 'specifyjs/dom';
 
 function App() {
   const [count, setCount] = useState(0);

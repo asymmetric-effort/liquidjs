@@ -5,7 +5,7 @@ test.describe('Navigation', () => {
     const errors: string[] = [];
     page.on('pageerror', (err) => errors.push(err.message));
     await page.goto('/');
-    await expect(page.locator('h1')).toContainText('LiquidJS');
+    await expect(page.locator('h1')).toContainText('SpecifyJS');
     expect(errors).toEqual([]);
   });
 
@@ -66,7 +66,7 @@ test.describe('Navigation', () => {
     await page.goto('/#/components');
     await page.click('.nav-logo');
     await expect(page.locator('.dialog-backdrop')).toHaveCount(0);
-    await expect(page.locator('h1')).toContainText('LiquidJS');
+    await expect(page.locator('h1')).toContainText('SpecifyJS');
     expect(errors).toEqual([]);
   });
 

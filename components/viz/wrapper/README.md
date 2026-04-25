@@ -1,6 +1,6 @@
-# @liquidjs/viz-wrapper
+# @specifyjs/viz-wrapper
 
-A container component for all LiquidJS visualization components. Provides configurable title, legend, and content areas with positional layout and DOM isolation.
+A container component for all SpecifyJS visualization components. Provides configurable title, legend, and content areas with positional layout and DOM isolation.
 
 ## Features
 
@@ -9,14 +9,14 @@ A container component for all LiquidJS visualization components. Provides config
 - **Content isolation** — CSS `contain: layout style paint` prevents style/layout leaks
 - **Configurable styling** — Background, border, radius, shadow, padding, font
 - **Responsive** — Flexbox layout adapts to container size
-- **Zero dependencies** — Pure LiquidJS + inline styles
+- **Zero dependencies** — Pure SpecifyJS + inline styles
 
 ## Usage
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { VizWrapper } from '@liquidjs/viz-wrapper';
-import { LineGraph } from '@liquidjs/2d-line-graph';
+import { createElement } from 'specifyjs';
+import { VizWrapper } from '@specifyjs/viz-wrapper';
+import { LineGraph } from '@specifyjs/2d-line-graph';
 
 function Chart() {
   return createElement(VizWrapper, {

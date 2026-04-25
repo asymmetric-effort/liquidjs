@@ -1,8 +1,8 @@
 {
-  "name": "@liquidjs/media-image",
+  "name": "@specifyjs/media-image",
   "version": "0.0.1",
-  "description": "Enhanced image with lazy loading and fallback for LiquidJS",
+  "description": "Enhanced image with lazy loading and fallback for SpecifyJS",
   "type": "module",
   "main": "src/index.ts",
-  "peerDependencies": { "liquidjs": "*" }
+  "peerDependencies": { "specifyjs": "*" }
 }

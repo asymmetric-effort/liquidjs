@@ -4,11 +4,11 @@ import path from 'path';
 export default defineConfig({
   resolve: {
     alias: {
-      'liquidjs': path.resolve(__dirname, 'src/index.ts'),
-      'liquidjs/dom': path.resolve(__dirname, 'src/dom/index.ts'),
-      'liquidjs/server': path.resolve(__dirname, 'src/server/index.ts'),
-      'liquidjs/client': path.resolve(__dirname, 'src/client/index.ts'),
-      'liquidjs/telemetry': path.resolve(__dirname, 'src/telemetry/index.ts'),
+      'specifyjs': path.resolve(__dirname, 'src/index.ts'),
+      'specifyjs/dom': path.resolve(__dirname, 'src/dom/index.ts'),
+      'specifyjs/server': path.resolve(__dirname, 'src/server/index.ts'),
+      'specifyjs/client': path.resolve(__dirname, 'src/client/index.ts'),
+      'specifyjs/telemetry': path.resolve(__dirname, 'src/telemetry/index.ts'),
     },
   },
   server: {

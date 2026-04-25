@@ -1,14 +1,14 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import { createElement } from 'liquidjs';
-import { useState, useCallback, useHead } from 'liquidjs/hooks';
+import { createElement } from 'specifyjs';
+import { useState, useCallback, useHead } from 'specifyjs/hooks';
 
 export function InteractiveForms() {
   useHead({
-    title: 'Interactive Forms — LiquidJS',
+    title: 'Interactive Forms — SpecifyJS',
     description: 'Form components with live validation and state management.',
-    keywords: 'liquidjs, forms, validation, state management',
+    keywords: 'specifyjs, forms, validation, state management',
     author: 'Asymmetric Effort, LLC',
   });
 
@@ -16,7 +16,7 @@ export function InteractiveForms() {
     createElement('div', { className: 'section' },
       createElement('h2', null, 'Interactive Forms'),
       createElement('p', { style: { color: '#64748b', marginBottom: '24px' } },
-        'Form components with live validation, controlled inputs, and state management — all powered by LiquidJS hooks.',
+        'Form components with live validation, controlled inputs, and state management — all powered by SpecifyJS hooks.',
       ),
     ),
     createElement('div', { className: 'preview-grid' },
@@ -107,7 +107,7 @@ function SettingsPanel() {
 }
 
 function SearchSuggestions() {
-  const items = ['React', 'LiquidJS', 'Vue', 'Angular', 'Svelte', 'Solid', 'Preact', 'Lit', 'Qwik', 'Astro'];
+  const items = ['React', 'SpecifyJS', 'Vue', 'Angular', 'Svelte', 'Solid', 'Preact', 'Lit', 'Qwik', 'Astro'];
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState('');
 

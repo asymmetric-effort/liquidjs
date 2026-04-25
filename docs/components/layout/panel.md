@@ -5,7 +5,7 @@ Collapsible panel with a header bar, optional icon, and animated expand/collapse
 ## Import
 
 ```ts
-import { Panel } from 'liquidjs/components/layout/panel';
+import { Panel } from 'specifyjs/components/layout/panel';
 ```
 
 ## Props
@@ -26,8 +26,8 @@ import { Panel } from 'liquidjs/components/layout/panel';
 ## Usage
 
 ```ts
-import { createElement } from 'liquidjs/core';
-import { Panel } from 'liquidjs/components/layout/panel';
+import { createElement } from 'specifyjs/core';
+import { Panel } from 'specifyjs/components/layout/panel';
 
 const panel = createElement(
   Panel,

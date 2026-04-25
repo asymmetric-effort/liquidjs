@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * Feature flag system — context-based feature gating for LiquidJS.
+ * Feature flag system — context-based feature gating for SpecifyJS.
  */
 
 import { createElement } from '../core/create-element';

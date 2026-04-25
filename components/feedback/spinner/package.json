@@ -1,8 +1,8 @@
 {
-  "name": "@liquidjs/feedback-spinner",
+  "name": "@specifyjs/feedback-spinner",
   "version": "0.0.1",
-  "description": "Loading spinner for LiquidJS",
+  "description": "Loading spinner for SpecifyJS",
   "type": "module",
   "main": "src/index.ts",
-  "peerDependencies": { "liquidjs": "*" }
+  "peerDependencies": { "specifyjs": "*" }
 }

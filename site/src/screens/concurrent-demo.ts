@@ -1,14 +1,14 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import { createElement } from 'liquidjs';
-import { useState, useTransition, useDeferredValue, useMemo, useCallback, useHead } from 'liquidjs/hooks';
+import { createElement } from 'specifyjs';
+import { useState, useTransition, useDeferredValue, useMemo, useCallback, useHead } from 'specifyjs/hooks';
 
 export function ConcurrentDemo() {
   useHead({
-    title: 'Concurrent Rendering — LiquidJS',
+    title: 'Concurrent Rendering — SpecifyJS',
     description: 'Lane-based concurrent rendering with useTransition, useDeferredValue, and time-slicing demos.',
-    keywords: 'liquidjs, concurrent rendering, useTransition, useDeferredValue, time slicing',
+    keywords: 'specifyjs, concurrent rendering, useTransition, useDeferredValue, time slicing',
     author: 'Asymmetric Effort, LLC',
   });
 
@@ -16,7 +16,7 @@ export function ConcurrentDemo() {
     createElement('div', { className: 'section' },
       createElement('h2', null, 'Concurrent Rendering'),
       createElement('p', { style: { color: '#64748b', marginBottom: '24px' } },
-        'LiquidJS implements lane-based concurrent rendering. useTransition and useDeferredValue let you keep the UI responsive during expensive updates.',
+        'SpecifyJS implements lane-based concurrent rendering. useTransition and useDeferredValue let you keep the UI responsive during expensive updates.',
       ),
     ),
     createElement('div', { className: 'preview-grid' },
@@ -165,7 +165,7 @@ function LanePriorityDemo() {
 
   return createElement('div', null,
     createElement('p', { style: { fontSize: '13px', color: '#64748b', marginBottom: '12px' } },
-      'LiquidJS uses a bitmask-based lane system for priority scheduling:',
+      'SpecifyJS uses a bitmask-based lane system for priority scheduling:',
     ),
     ...lanes.map(lane =>
       createElement('div', {

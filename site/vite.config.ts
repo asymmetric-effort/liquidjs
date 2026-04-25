@@ -48,9 +48,9 @@ const https = loadHttpsCerts();
 export default defineConfig({
   resolve: {
     alias: {
-      'liquidjs/hooks': path.resolve(__dirname, '../core/src/hooks/index.ts'),
-      'liquidjs/dom': path.resolve(__dirname, '../core/src/dom/index.ts'),
-      'liquidjs': path.resolve(__dirname, '../core/src/index.ts'),
+      'specifyjs/hooks': path.resolve(__dirname, '../core/src/hooks/index.ts'),
+      'specifyjs/dom': path.resolve(__dirname, '../core/src/dom/index.ts'),
+      'specifyjs': path.resolve(__dirname, '../core/src/index.ts'),
     },
   },
   server: {

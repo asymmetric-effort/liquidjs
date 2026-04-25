@@ -5,8 +5,8 @@ Collapsible sidebar navigation component. Renders a vertical navigation panel wi
 ## Import
 
 ```ts
-import { Sidebar } from '@liquidjs/components/nav/sidebar';
-import type { SidebarProps, SidebarItem } from '@liquidjs/components/nav/sidebar';
+import { Sidebar } from '@specifyjs/components/nav/sidebar';
+import type { SidebarProps, SidebarItem } from '@specifyjs/components/nav/sidebar';
 ```
 
 ## Props
@@ -36,8 +36,8 @@ import type { SidebarProps, SidebarItem } from '@liquidjs/components/nav/sidebar
 ## Usage
 
 ```ts
-import { createElement } from '@liquidjs/core';
-import { Sidebar } from '@liquidjs/components/nav/sidebar';
+import { createElement } from '@specifyjs/core';
+import { Sidebar } from '@specifyjs/components/nav/sidebar';
 
 const sidebar = createElement(Sidebar, {
   items: [

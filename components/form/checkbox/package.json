@@ -1,8 +1,8 @@
 {
-  "name": "@liquidjs/form-checkbox",
+  "name": "@specifyjs/form-checkbox",
   "version": "0.0.1",
-  "description": "Checkbox component with label for LiquidJS",
+  "description": "Checkbox component with label for SpecifyJS",
   "type": "module",
   "main": "src/index.ts",
-  "peerDependencies": { "liquidjs": "*" }
+  "peerDependencies": { "specifyjs": "*" }
 }

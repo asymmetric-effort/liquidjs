@@ -1,8 +1,8 @@
 {
-  "name": "@liquidjs/form-select",
+  "name": "@specifyjs/form-select",
   "version": "0.0.1",
-  "description": "Select/combobox dropdown component for LiquidJS",
+  "description": "Select/combobox dropdown component for SpecifyJS",
   "type": "module",
   "main": "src/index.ts",
-  "peerDependencies": { "liquidjs": "*" }
+  "peerDependencies": { "specifyjs": "*" }
 }

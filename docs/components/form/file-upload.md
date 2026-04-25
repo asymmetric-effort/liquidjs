@@ -24,7 +24,7 @@ import type { FileUploadProps } from '@aspect/form/file-upload';
 ## Usage
 
 ```ts
-import { createElement } from 'liquidjs';
+import { createElement } from 'specifyjs';
 import { FileUpload } from '@aspect/form/file-upload';
 
 // Basic file upload

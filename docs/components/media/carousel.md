@@ -5,7 +5,7 @@ Image/content carousel slider with arrows, dots, auto-play, and touch support.
 ## Import
 
 ```typescript
-import { Carousel } from '@liquidjs/carousel';
+import { Carousel } from '@specifyjs/carousel';
 ```
 
 ## Props
@@ -31,8 +31,8 @@ import { Carousel } from '@liquidjs/carousel';
 ## Usage
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { Carousel } from '@liquidjs/carousel';
+import { createElement } from 'specifyjs';
+import { Carousel } from '@specifyjs/carousel';
 
 function App() {
   const items = [

@@ -5,7 +5,7 @@ Content card with optional image, header (title, subtitle, action slot), body, a
 ## Import
 
 ```ts
-import { Card } from 'liquidjs/components/layout/card';
+import { Card } from 'specifyjs/components/layout/card';
 ```
 
 ## Props
@@ -30,8 +30,8 @@ import { Card } from 'liquidjs/components/layout/card';
 ## Usage
 
 ```ts
-import { createElement } from 'liquidjs/core';
-import { Card } from 'liquidjs/components/layout/card';
+import { createElement } from 'specifyjs/core';
+import { Card } from 'specifyjs/components/layout/card';
 
 const card = createElement(
   Card,

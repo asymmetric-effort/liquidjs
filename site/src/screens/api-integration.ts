@@ -1,15 +1,15 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import { createElement } from 'liquidjs';
-import { useState, useCallback, useHead } from 'liquidjs/hooks';
+import { createElement } from 'specifyjs';
+import { useState, useCallback, useHead } from 'specifyjs/hooks';
 import { useFetch } from '../hooks/use-fetch';
 
 export function ApiIntegration() {
   useHead({
-    title: 'API Integration — LiquidJS',
-    description: 'REST, GraphQL, and gRPC client integration patterns with LiquidJS hooks.',
-    keywords: 'liquidjs, rest api, graphql, grpc, useFetch, data fetching',
+    title: 'API Integration — SpecifyJS',
+    description: 'REST, GraphQL, and gRPC client integration patterns with SpecifyJS hooks.',
+    keywords: 'specifyjs, rest api, graphql, grpc, useFetch, data fetching',
     author: 'Asymmetric Effort, LLC',
   });
 
@@ -17,7 +17,7 @@ export function ApiIntegration() {
     createElement('div', { className: 'section' },
       createElement('h2', null, 'API Integration'),
       createElement('p', { style: { color: '#64748b', marginBottom: '24px' } },
-        'LiquidJS includes built-in REST, GraphQL, and gRPC clients. This page demonstrates data fetching patterns with custom hooks.',
+        'SpecifyJS includes built-in REST, GraphQL, and gRPC clients. This page demonstrates data fetching patterns with custom hooks.',
       ),
     ),
     createElement('div', { className: 'preview-grid' },
@@ -66,7 +66,7 @@ function RestPatternDemo() {
       'Built-in REST client with interceptors, timeout, and abort:',
     ),
     createElement('pre', { className: 'code-block', style: { fontSize: '12px' } },
-      `import { createRestClient } from 'liquidjs/client';
+      `import { createRestClient } from 'specifyjs/client';
 
 const client = createRestClient({
   baseURL: 'https://api.example.com',
@@ -95,7 +95,7 @@ function GraphQLPatternDemo() {
       'Zero-dependency GraphQL client with caching:',
     ),
     createElement('pre', { className: 'code-block', style: { fontSize: '12px' } },
-      `import { createGraphQLClient, gql } from 'liquidjs/client';
+      `import { createGraphQLClient, gql } from 'specifyjs/client';
 
 const client = createGraphQLClient({
   url: '/graphql',

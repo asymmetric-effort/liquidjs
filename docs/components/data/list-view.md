@@ -5,7 +5,7 @@ Styled list with configurable item rendering, dividers, selection, hover effects
 ## Import
 
 ```typescript
-import { ListView } from '@liquidjs/list-view';
+import { ListView } from '@specifyjs/list-view';
 ```
 
 ## Props
@@ -26,8 +26,8 @@ import { ListView } from '@liquidjs/list-view';
 ## Usage
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { ListView } from '@liquidjs/list-view';
+import { createElement } from 'specifyjs';
+import { ListView } from '@specifyjs/list-view';
 
 function App() {
   const items = ['Apple', 'Banana', 'Cherry'];

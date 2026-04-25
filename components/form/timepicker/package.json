@@ -1,8 +1,8 @@
 {
-  "name": "@liquidjs/form-timepicker",
+  "name": "@specifyjs/form-timepicker",
   "version": "0.0.1",
-  "description": "Time picker component for LiquidJS",
+  "description": "Time picker component for SpecifyJS",
   "type": "module",
   "main": "src/index.ts",
-  "peerDependencies": { "liquidjs": "*" }
+  "peerDependencies": { "specifyjs": "*" }
 }

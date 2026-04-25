@@ -5,7 +5,7 @@ Full-featured data table/grid with sorting, pagination, selection, filtering, an
 ## Import
 
 ```typescript
-import { DataGrid } from '@liquidjs/data-grid';
+import { DataGrid } from '@specifyjs/data-grid';
 ```
 
 ## Props
@@ -42,8 +42,8 @@ import { DataGrid } from '@liquidjs/data-grid';
 ## Usage
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { DataGrid } from '@liquidjs/data-grid';
+import { createElement } from 'specifyjs';
+import { DataGrid } from '@specifyjs/data-grid';
 
 function App() {
   const columns = [

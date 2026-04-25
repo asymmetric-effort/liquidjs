@@ -1,5 +1,5 @@
 // ============================================================================
-// LiquidJS — 2D Complex Graph (Canvas-based Mandelbrot / Complex Plane)
+// SpecifyJS — 2D Complex Graph (Canvas-based Mandelbrot / Complex Plane)
 // Zero-dependency canvas visualization via createElement calls.
 // ============================================================================
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE

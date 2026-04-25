@@ -12,7 +12,7 @@ import {
 import { isValidElement } from './is-valid-element';
 
 /**
- * Clones a LiquidJS element with new props merged in.
+ * Clones a SpecifyJS element with new props merged in.
  * Equivalent to React.cloneElement.
  */
 export function cloneElement<P extends Props>(
@@ -21,7 +21,7 @@ export function cloneElement<P extends Props>(
   ...children: LiquidNode[]
 ): LiquidElement<P> {
   if (!isValidElement(element)) {
-    throw new Error('cloneElement: argument must be a valid LiquidJS element');
+    throw new Error('cloneElement: argument must be a valid SpecifyJS element');
   }
 
   let key: Key = element.key;

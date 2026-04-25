@@ -1,8 +1,8 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import { createElement } from 'liquidjs';
-import { useState, useCallback, useEffect, useRef, useHead } from 'liquidjs/hooks';
+import { createElement } from 'specifyjs';
+import { useState, useCallback, useEffect, useRef, useHead } from 'specifyjs/hooks';
 
 function preview(title: string, comp: () => ReturnType<typeof createElement>) {
   return createElement(PreviewCard, { title, component: comp });
@@ -47,9 +47,9 @@ function PreviewCard(props: { title: string; component: () => ReturnType<typeof 
 
 export function ComponentsGallery() {
   useHead({
-    title: 'Component Gallery — LiquidJS',
-    description: 'Live interactive previews of 80+ LiquidJS components: forms, data display, charts, visualizations.',
-    keywords: 'liquidjs, components, gallery, visualization, charts, forms, interactive',
+    title: 'Component Gallery — SpecifyJS',
+    description: 'Live interactive previews of 80+ SpecifyJS components: forms, data display, charts, visualizations.',
+    keywords: 'specifyjs, components, gallery, visualization, charts, forms, interactive',
     author: 'Asymmetric Effort, LLC',
   });
 
@@ -294,7 +294,7 @@ function BadgeDemo() {
 }
 
 function TagDemo() {
-  const [tags, setTags] = useState(['LiquidJS', 'TypeScript', 'SPA']);
+  const [tags, setTags] = useState(['SpecifyJS', 'TypeScript', 'SPA']);
   return createElement('div', { style: { display: 'flex', gap: '6px', flexWrap: 'wrap' } },
     ...tags.map(tag =>
       createElement('span', { key: tag, style: { padding: '4px 10px', background: '#eff6ff', color: '#3b82f6', borderRadius: '12px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '4px' } },
@@ -328,7 +328,7 @@ function AlertDemo() {
   const [visible, setVisible] = useState(true);
   if (!visible) return createElement('button', { onClick: () => setVisible(true), style: { padding: '6px 14px', border: '1px solid #d1d5db', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' } }, 'Show Alert');
   return createElement('div', { style: { padding: '12px 16px', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '14px', color: '#1e40af' } },
-    createElement('span', null, 'Informational alert built with LiquidJS.'),
+    createElement('span', null, 'Informational alert built with SpecifyJS.'),
     createElement('button', { onClick: () => setVisible(false), style: { background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', color: '#1e40af' } }, '\u00d7'),
   );
 }
@@ -1603,7 +1603,7 @@ function SettingsPanelDemo() {
 }
 
 function SearchSuggestionsDemo() {
-  const items = ['React', 'LiquidJS', 'Vue', 'Angular', 'Svelte', 'Solid', 'Preact', 'Lit', 'Qwik', 'Astro'];
+  const items = ['React', 'SpecifyJS', 'Vue', 'Angular', 'Svelte', 'Solid', 'Preact', 'Lit', 'Qwik', 'Astro'];
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState('');
 

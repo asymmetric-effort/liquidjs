@@ -5,8 +5,8 @@ Horizontal menu bar with dropdown menus. Renders a bar of top-level menu trigger
 ## Import
 
 ```ts
-import { Menubar } from '@liquidjs/components/nav/menubar';
-import type { MenubarProps, MenuDefinition, MenuItem } from '@liquidjs/components/nav/menubar';
+import { Menubar } from '@specifyjs/components/nav/menubar';
+import type { MenubarProps, MenuDefinition, MenuItem } from '@specifyjs/components/nav/menubar';
 ```
 
 ## Props
@@ -39,8 +39,8 @@ import type { MenubarProps, MenuDefinition, MenuItem } from '@liquidjs/component
 ## Usage
 
 ```ts
-import { createElement } from '@liquidjs/core';
-import { Menubar } from '@liquidjs/components/nav/menubar';
+import { createElement } from '@specifyjs/core';
+import { Menubar } from '@specifyjs/components/nav/menubar';
 
 const menubar = createElement(Menubar, {
   menus: [

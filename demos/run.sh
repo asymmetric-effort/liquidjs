@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Launch a LiquidJS demo project.
+# Launch a SpecifyJS demo project.
 #
 # Usage:
 #   ./demos/run.sh <project>       # Build and start a demo

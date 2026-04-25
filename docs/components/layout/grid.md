@@ -5,7 +5,7 @@ CSS Grid layout container with declarative column, row, gap, area, and responsiv
 ## Import
 
 ```ts
-import { Grid, GridItem } from 'liquidjs/components/layout/grid';
+import { Grid, GridItem } from 'specifyjs/components/layout/grid';
 ```
 
 ## Props
@@ -51,8 +51,8 @@ import { Grid, GridItem } from 'liquidjs/components/layout/grid';
 ## Usage
 
 ```ts
-import { createElement } from 'liquidjs/core';
-import { Grid, GridItem } from 'liquidjs/components/layout/grid';
+import { createElement } from 'specifyjs/core';
+import { Grid, GridItem } from 'specifyjs/components/layout/grid';
 
 const layout = createElement(
   Grid,

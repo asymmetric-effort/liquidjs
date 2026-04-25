@@ -1,6 +1,6 @@
 # Dashboard Demo
 
-A single-container standalone LiquidJS SPA demonstrating advanced framework features through an interactive system dashboard.
+A single-container standalone SpecifyJS SPA demonstrating advanced framework features through an interactive system dashboard.
 
 ## Features Demonstrated
 

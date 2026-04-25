@@ -36,7 +36,7 @@ import type { SliderProps, SliderMark } from '@aspect/form/slider';
 ## Usage
 
 ```ts
-import { createElement } from 'liquidjs';
+import { createElement } from 'specifyjs';
 import { Slider } from '@aspect/form/slider';
 
 // Basic slider

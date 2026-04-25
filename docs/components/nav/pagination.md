@@ -5,8 +5,8 @@ Page navigation component. Renders First, Previous, page number buttons with ell
 ## Import
 
 ```ts
-import { Pagination } from '@liquidjs/components/nav/pagination';
-import type { PaginationProps } from '@liquidjs/components/nav/pagination';
+import { Pagination } from '@specifyjs/components/nav/pagination';
+import type { PaginationProps } from '@specifyjs/components/nav/pagination';
 ```
 
 ## Props
@@ -27,8 +27,8 @@ import type { PaginationProps } from '@liquidjs/components/nav/pagination';
 ## Usage
 
 ```ts
-import { createElement } from '@liquidjs/core';
-import { Pagination } from '@liquidjs/components/nav/pagination';
+import { createElement } from '@specifyjs/core';
+import { Pagination } from '@specifyjs/components/nav/pagination';
 
 const pagination = createElement(Pagination, {
   total: 200,

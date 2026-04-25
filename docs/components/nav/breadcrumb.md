@@ -5,8 +5,8 @@ A breadcrumb trail navigation component. Renders an ordered list of navigation l
 ## Import
 
 ```ts
-import { Breadcrumb } from '@liquidjs/components/nav/breadcrumb';
-import type { BreadcrumbProps, BreadcrumbItem, BreadcrumbSize } from '@liquidjs/components/nav/breadcrumb';
+import { Breadcrumb } from '@specifyjs/components/nav/breadcrumb';
+import type { BreadcrumbProps, BreadcrumbItem, BreadcrumbSize } from '@specifyjs/components/nav/breadcrumb';
 ```
 
 ## Props
@@ -39,8 +39,8 @@ import type { BreadcrumbProps, BreadcrumbItem, BreadcrumbSize } from '@liquidjs/
 ## Usage
 
 ```ts
-import { createElement } from '@liquidjs/core';
-import { Breadcrumb } from '@liquidjs/components/nav/breadcrumb';
+import { createElement } from '@specifyjs/core';
+import { Breadcrumb } from '@specifyjs/components/nav/breadcrumb';
 
 const breadcrumb = createElement(Breadcrumb, {
   items: [

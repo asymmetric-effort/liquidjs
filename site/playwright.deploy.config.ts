@@ -10,7 +10,7 @@ export default defineConfig({
   retries: 2,
   timeout: 30000,
   use: {
-    baseURL: process.env.SITE_URL || 'https://liquidjs.asymmetric-effort.com',
+    baseURL: process.env.SITE_URL || 'https://specifyjs.asymmetric-effort.com',
     trace: 'on-first-retry',
   },
   // No webServer — tests run against the already-deployed site

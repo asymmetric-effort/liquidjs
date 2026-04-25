@@ -2,7 +2,7 @@
 
 ## Elements
 
-LiquidJS elements are lightweight objects describing what to render:
+SpecifyJS elements are lightweight objects describing what to render:
 
 ```typescript
 const element = createElement('div', { className: 'card' },

@@ -56,7 +56,7 @@ export interface HeadMeta {
  * useHead({
  *   title: 'My Page',
  *   description: 'Page description for SEO',
- *   keywords: 'liquidjs, framework, spa',
+ *   keywords: 'specifyjs, framework, spa',
  *   author: 'Your Name',
  *   og: { title: 'My Page', image: '/og-image.png' },
  * });

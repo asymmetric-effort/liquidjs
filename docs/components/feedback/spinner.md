@@ -5,7 +5,7 @@ Loading spinner indicator rendered as a rotating SVG circle.
 ## Import
 
 ```typescript
-import { Spinner } from '@liquidjs/spinner';
+import { Spinner } from '@specifyjs/spinner';
 ```
 
 ## Props
@@ -21,8 +21,8 @@ import { Spinner } from '@liquidjs/spinner';
 ## Usage
 
 ```typescript
-import { createElement } from 'liquidjs';
-import { Spinner } from '@liquidjs/spinner';
+import { createElement } from 'specifyjs';
+import { Spinner } from '@specifyjs/spinner';
 
 function App() {
   return createElement('div', { style: { display: 'flex', gap: '16px', alignItems: 'center' } },

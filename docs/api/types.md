@@ -1,6 +1,6 @@
 # TypeScript Types
 
-LiquidJS is written in TypeScript strict mode. All public APIs are fully typed.
+SpecifyJS is written in TypeScript strict mode. All public APIs are fully typed.
 
 ## Core Types
 

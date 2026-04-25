@@ -10,7 +10,7 @@ test.describe('Todo App', () => {
   });
 
   test('shows the page title', async ({ page }) => {
-    await expect(page.locator('h1')).toHaveText('LiquidJS Todo');
+    await expect(page.locator('h1')).toHaveText('SpecifyJS Todo');
   });
 
   test('shows todo input', async ({ page }) => {

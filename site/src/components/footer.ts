@@ -1,9 +1,9 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import { createElement } from 'liquidjs';
+import { createElement } from 'specifyjs';
 
-const VERSION = '0.2.2';
+const VERSION = '0.0.1';
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -25,7 +25,7 @@ export function Footer() {
       createElement(
         'p',
         null,
-        `LiquidJS v${VERSION}`,
+        `SpecifyJS v${VERSION}`,
       ),
       createElement(
         'p',
@@ -47,7 +47,7 @@ export function Footer() {
         createElement(
           'a',
           {
-            href: 'https://github.com/asymmetric-effort/liquidjs',
+            href: 'https://github.com/asymmetric-effort/specifyjs',
             style: { color: '#3b82f6', textDecoration: 'none' },
           },
           'GitHub Repository',
@@ -59,20 +59,20 @@ export function Footer() {
         createElement(
           'a',
           {
-            href: 'https://app.fossa.com/projects/custom%2B61980%2Fgit%40github.com%3Aasymmetric-effort%2Fliquidjs.git?ref=badge_shield&issueType=license',
+            href: 'https://app.fossa.com/projects/custom%2B61980%2Fgit%40github.com%3Aasymmetric-effort%2Fspecifyjs.git?ref=badge_shield&issueType=license',
           },
           createElement('img', {
-            src: 'https://app.fossa.com/api/projects/custom%2B61980%2Fgit%40github.com%3Aasymmetric-effort%2Fliquidjs.git.svg?type=shield&issueType=license',
+            src: 'https://app.fossa.com/api/projects/custom%2B61980%2Fgit%40github.com%3Aasymmetric-effort%2Fspecifyjs.git.svg?type=shield&issueType=license',
             alt: 'FOSSA Status',
           }),
         ),
         createElement(
           'a',
           {
-            href: 'https://app.fossa.com/projects/custom%2B61980%2Fgit%40github.com%3Aasymmetric-effort%2Fliquidjs.git?ref=badge_shield&issueType=security',
+            href: 'https://app.fossa.com/projects/custom%2B61980%2Fgit%40github.com%3Aasymmetric-effort%2Fspecifyjs.git?ref=badge_shield&issueType=security',
           },
           createElement('img', {
-            src: 'https://app.fossa.com/api/projects/custom%2B61980%2Fgit%40github.com%3Aasymmetric-effort%2Fliquidjs.git.svg?type=shield&issueType=security',
+            src: 'https://app.fossa.com/api/projects/custom%2B61980%2Fgit%40github.com%3Aasymmetric-effort%2Fspecifyjs.git.svg?type=shield&issueType=security',
             alt: 'FOSSA Status',
           }),
         ),

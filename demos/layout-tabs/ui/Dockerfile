@@ -2,10 +2,10 @@ FROM oven/bun:alpine AS build
 WORKDIR /app
 
 # Copy core framework source
-COPY core/src/ /liquidjs-core/src/
+COPY core/src/ /specifyjs-core/src/
 
 # Copy components
-COPY components/ /liquidjs-components/
+COPY components/ /specifyjs-components/
 
 # Copy demo UI source
 COPY demos/layout-tabs/ui/package.json ./
@@ -14,10 +14,10 @@ RUN bun install
 COPY demos/layout-tabs/ui/ ./
 
 # Fix component imports to use absolute container paths
-RUN sed -i 's|../../../../components/|/liquidjs-components/|g' src/app.ts
+RUN sed -i 's|../../../../components/|/specifyjs-components/|g' src/app.ts
 
 # Write container-specific vite config using JS
-RUN echo 'import { defineConfig } from "vite"; export default defineConfig({ resolve: { alias: { "liquidjs/hooks": "/liquidjs-core/src/hooks/index.ts", "liquidjs/dom": "/liquidjs-core/src/dom/index.ts", "liquidjs": "/liquidjs-core/src/index.ts" } }, build: { outDir: "dist", minify: "esbuild" } });' > vite.config.js
+RUN echo 'import { defineConfig } from "vite"; export default defineConfig({ resolve: { alias: { "specifyjs/hooks": "/specifyjs-core/src/hooks/index.ts", "specifyjs/dom": "/specifyjs-core/src/dom/index.ts", "specifyjs": "/specifyjs-core/src/index.ts" } }, build: { outDir: "dist", minify: "esbuild" } });' > vite.config.js
 
 RUN bun run build
 

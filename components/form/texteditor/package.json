@@ -1,8 +1,8 @@
 {
-  "name": "@liquidjs/form-texteditor",
+  "name": "@specifyjs/form-texteditor",
   "version": "0.0.1",
-  "description": "Simple WYSIWYG rich text editor component for LiquidJS",
+  "description": "Simple WYSIWYG rich text editor component for SpecifyJS",
   "type": "module",
   "main": "src/index.ts",
-  "peerDependencies": { "liquidjs": "*" }
+  "peerDependencies": { "specifyjs": "*" }
 }

@@ -5,13 +5,13 @@
     "moduleResolution": "bundler",
     "strict": true,
     "jsx": "react-jsx",
-    "jsxImportSource": "liquidjs",
+    "jsxImportSource": "specifyjs",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "paths": {
-      "liquidjs": ["../core/src/index.ts"],
-      "liquidjs/hooks": ["../core/src/hooks/index.ts"],
-      "liquidjs/dom": ["../core/src/dom/index.ts"]
+      "specifyjs": ["../core/src/index.ts"],
+      "specifyjs/hooks": ["../core/src/hooks/index.ts"],
+      "specifyjs/dom": ["../core/src/dom/index.ts"]
     }
   },
   "include": ["src"]

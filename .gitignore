@@ -10,7 +10,7 @@ test-results/
 *.log
 
 # Go
-tools/*/liquidjs-*
+tools/*/specifyjs-*
 tools/*/__debug_bin*
 bin/
 .certs/

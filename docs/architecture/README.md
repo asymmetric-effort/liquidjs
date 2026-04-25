@@ -1,6 +1,6 @@
 # Architecture
 
-LiquidJS follows a three-phase rendering architecture similar to React's Fiber architecture.
+SpecifyJS follows a three-phase rendering architecture similar to React's Fiber architecture.
 
 ## System Overview
 

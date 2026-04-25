@@ -6,7 +6,7 @@ test.describe('Home Screen', () => {
   });
 
   test('renders hero section', async ({ page }) => {
-    await expect(page.locator('h1')).toContainText('LiquidJS');
+    await expect(page.locator('h1')).toContainText('SpecifyJS');
     await expect(page.locator('.hero p').first()).toContainText('TypeScript UI framework');
   });
 
