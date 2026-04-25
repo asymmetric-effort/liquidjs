@@ -44,10 +44,10 @@ const COMPONENTS: ComponentInfo[] = [
   { name: 'flushSync', category: 'DOM', description: 'Forces synchronous rendering.', api: ['callback → result'] },
   { name: 'createPortal', category: 'DOM', description: 'Renders children into a different DOM node.', api: ['children, container'] },
 
-  // Server
-  { name: 'renderToString', category: 'Server', description: 'Renders to an HTML string.', api: ['element → string'] },
-  { name: 'renderToPipeableStream', category: 'Server', description: 'Renders to a Node.js pipeable stream with chunked output.', api: ['element, options? → { pipe, abort }'] },
-  { name: 'renderToReadableStream', category: 'Server', description: 'Renders to a Web ReadableStream.', api: ['element, options? → Promise<ReadableStream>'] },
+  // Pre-rendering (build-time only)
+  { name: 'renderToString', category: 'Pre-render', description: 'Generates HTML string at build time (not runtime SSR).', api: ['element → string'] },
+  { name: 'renderToPipeableStream', category: 'Pre-render', description: 'Chunked HTML to Node.js stream for build-time static generation.', api: ['element, options? → { pipe, abort }'] },
+  { name: 'renderToReadableStream', category: 'Pre-render', description: 'Chunked HTML to Web ReadableStream for build-time generation.', api: ['element, options? → Promise<ReadableStream>'] },
 ];
 
 export function ComponentReference() {
@@ -143,7 +143,7 @@ function categoryColor(cat: string): string {
     case 'Hooks': return '#3b82f6';
     case 'Router': return '#8b5cf6';
     case 'DOM': return '#f59e0b';
-    case 'Server': return '#10b981';
+    case 'Pre-render': return '#10b981';
     default: return '#94a3b8';
   }
 }
