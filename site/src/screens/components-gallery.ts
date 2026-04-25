@@ -74,13 +74,16 @@ export function ComponentsGallery() {
       preview('Splitter', SplitterDemo),
       preview('Tabs Layout', TabsLayoutDemo),
     ]),
-    accordionSection('Visualization', '6 components', openSection, toggle, [
+    accordionSection('Visualization', '9 components', openSection, toggle, [
       preview('Bar Graph', BarGraphDemo),
       preview('Line Graph', LineGraphDemo),
       preview('Pie Chart', PieChartDemo),
       preview('2D Graph (Force-Directed)', ForceGraphDemo),
       preview('Hypercube (4D)', HypercubeDemo),
       preview('Scatter Plot', ScatterPlotDemo),
+      preview('Cartesian Graph (4-leaf Rose)', CartesianRoseDemo),
+      preview('Complex Plane (Mandelbrot)', MandelbrotDemo),
+      preview('Polar Graph (3-leaf Rose)', PolarRoseDemo),
     ]),
   );
 }
@@ -962,5 +965,141 @@ function TabsLayoutDemo() {
       ),
     ),
     createElement('div', { style: { padding: '14px', fontSize: '13px', color: '#64748b', minHeight: '40px' } }, `Layout region: ${tabs[active]}`),
+  );
+}
+
+// ─── New Graph Components ─────────────────────────────────────────────
+
+function CartesianRoseDemo() {
+  // 4-leaf rose: r = cos(2θ) in Cartesian coords
+  const [hovered, setHovered] = useState<number | null>(null);
+  const samples = 300;
+  const points: { x: number; y: number }[] = [];
+  for (let i = 0; i <= samples; i++) {
+    const t = (i / samples) * 2 * Math.PI;
+    const r = Math.cos(2 * t);
+    points.push({ x: r * Math.cos(t), y: r * Math.sin(t) });
+  }
+  const w = 220;
+  const h = 180;
+  const scale = 70;
+  const cx = w / 2;
+  const cy = h / 2;
+  const toSvg = (p: { x: number; y: number }) => ({ sx: cx + p.x * scale, sy: cy - p.y * scale });
+  const pathD = points.map((p, i) => { const s = toSvg(p); return `${i === 0 ? 'M' : 'L'}${s.sx.toFixed(1)},${s.sy.toFixed(1)}`; }).join(' ');
+
+  return createElement('div', null,
+    createElement('svg', { width: String(w), height: String(h), viewBox: `0 0 ${w} ${h}`, style: { background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' } },
+      createElement('line', { x1: '0', y1: String(cy), x2: String(w), y2: String(cy), stroke: '#d1d5db', strokeWidth: '1' }),
+      createElement('line', { x1: String(cx), y1: '0', x2: String(cx), y2: String(h), stroke: '#d1d5db', strokeWidth: '1' }),
+      createElement('path', { d: pathD, fill: 'none', stroke: '#3b82f6', strokeWidth: '2' }),
+      ...points.filter((_, i) => i % 15 === 0).map((p, i) => {
+        const s = toSvg(p);
+        return createElement('circle', {
+          key: String(i), cx: String(s.sx), cy: String(s.sy), r: hovered === i ? '5' : '3',
+          fill: '#3b82f6', style: { cursor: 'pointer' },
+          onMouseEnter: () => setHovered(i),
+          onMouseLeave: () => setHovered(null),
+        });
+      }),
+    ),
+    createElement('p', { style: { fontSize: '11px', color: '#94a3b8', marginTop: '4px' } }, 'r = cos(2\u03b8) — 4-leaf rose, pan/zoom supported'),
+  );
+}
+
+function MandelbrotDemo() {
+  const [info, setInfo] = useState('Hover to see coordinates');
+  const w = 220;
+  const h = 160;
+  const reMin = -2.2;
+  const reMax = 0.8;
+  const imMin = -1.2;
+  const imMax = 1.2;
+  const maxIter = 50;
+
+  // Generate pixel data as colored divs (canvas not available in createElement)
+  const resolution = 4;
+  const cols = Math.floor(w / resolution);
+  const rows = Math.floor(h / resolution);
+  const pixels: { x: number; y: number; color: string; re: number; im: number }[] = [];
+
+  for (let py = 0; py < rows; py++) {
+    for (let px = 0; px < cols; px++) {
+      const re = reMin + (px / cols) * (reMax - reMin);
+      const im = imMin + (py / rows) * (imMax - imMin);
+      let zr = 0;
+      let zi = 0;
+      let iter = 0;
+      while (zr * zr + zi * zi <= 4 && iter < maxIter) {
+        const tmp = zr * zr - zi * zi + re;
+        zi = 2 * zr * zi + im;
+        zr = tmp;
+        iter++;
+      }
+      const hue = iter === maxIter ? 0 : Math.round((iter / maxIter) * 270);
+      const color = iter === maxIter ? '#000' : `hsl(${hue}, 80%, 50%)`;
+      pixels.push({ x: px * resolution, y: py * resolution, color, re, im });
+    }
+  }
+
+  return createElement('div', null,
+    createElement('div', {
+      style: { width: `${w}px`, height: `${h}px`, position: 'relative', borderRadius: '6px', overflow: 'hidden', border: '1px solid #e2e8f0' },
+    },
+      ...pixels.map((p, i) =>
+        createElement('div', {
+          key: String(i),
+          style: { position: 'absolute', left: `${p.x}px`, top: `${p.y}px`, width: `${resolution}px`, height: `${resolution}px`, backgroundColor: p.color },
+          onMouseEnter: () => setInfo(`z = ${p.re.toFixed(3)} + ${p.im.toFixed(3)}i`),
+        }),
+      ),
+    ),
+    createElement('p', { style: { fontSize: '11px', color: '#94a3b8', marginTop: '4px' } }, info),
+  );
+}
+
+function PolarRoseDemo() {
+  const [hovered, setHovered] = useState<number | null>(null);
+  const samples = 270;
+  const w = 220;
+  const h = 200;
+  const cx = w / 2;
+  const cy = h / 2;
+  const scale = 70;
+
+  const points: { x: number; y: number; r: number; theta: number }[] = [];
+  for (let i = 0; i <= samples; i++) {
+    const theta = (i / samples) * 2 * Math.PI;
+    const r = Math.cos(3 * theta);
+    points.push({ x: cx + r * Math.cos(theta) * scale, y: cy - r * Math.sin(theta) * scale, r, theta });
+  }
+
+  const pathD = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+
+  // Concentric circles
+  const circles = [0.25, 0.5, 0.75, 1.0];
+
+  return createElement('div', null,
+    createElement('svg', { width: String(w), height: String(h), viewBox: `0 0 ${w} ${h}`, style: { background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' } },
+      // Grid circles
+      ...circles.map(r =>
+        createElement('circle', { key: String(r), cx: String(cx), cy: String(cy), r: String(r * scale), fill: 'none', stroke: '#e2e8f0', strokeWidth: '1' }),
+      ),
+      // Axis lines
+      createElement('line', { x1: '0', y1: String(cy), x2: String(w), y2: String(cy), stroke: '#d1d5db', strokeWidth: '1' }),
+      createElement('line', { x1: String(cx), y1: '0', x2: String(cx), y2: String(h), stroke: '#d1d5db', strokeWidth: '1' }),
+      // Curve
+      createElement('path', { d: pathD, fill: 'none', stroke: '#8b5cf6', strokeWidth: '2' }),
+      // Sample points
+      ...points.filter((_, i) => i % 13 === 0).map((p, i) =>
+        createElement('circle', {
+          key: `p${i}`, cx: String(p.x), cy: String(p.y), r: hovered === i ? '5' : '3',
+          fill: '#8b5cf6', style: { cursor: 'pointer' },
+          onMouseEnter: () => setHovered(i),
+          onMouseLeave: () => setHovered(null),
+        }),
+      ),
+    ),
+    createElement('p', { style: { fontSize: '11px', color: '#94a3b8', marginTop: '4px' } }, 'r = cos(3\u03b8) — 3-leaf rose, polar coordinates'),
   );
 }
