@@ -497,6 +497,8 @@ function ForceGraphDemo() {
   const edgePairs = [['A','B'],['B','C'],['C','D'],['D','E'],['E','A'],['A','C'],['B','D']];
   const [nodes, setNodes] = useState(initNodes);
   const [hovered, setHovered] = useState<string | null>(null);
+  const draggingRef = useRef<string | null>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
   const w = 240, h = 160, cx = w / 2, cy = h / 2;
 
   // Physics simulation
@@ -544,8 +546,24 @@ function ForceGraphDemo() {
   const nodeMap = new Map(nodes.map(n => [n.id, n]));
   const lockNode = (id: string) => setNodes((prev: typeof nodes) => prev.map(n => n.id === id ? { ...n, locked: !n.locked } : n));
 
+  const getSvgPoint = (e: Event): { x: number; y: number } => {
+    const me = e as MouseEvent;
+    const svg = svgRef.current;
+    if (!svg) return { x: me.clientX, y: me.clientY };
+    const rect = (svg as unknown as Element).getBoundingClientRect();
+    return { x: me.clientX - rect.left, y: me.clientY - rect.top };
+  };
+  const handleMouseDown = (id: string) => { draggingRef.current = id; setNodes((prev: typeof nodes) => prev.map(n => n.id === id ? { ...n, locked: true, vx: 0, vy: 0 } : n)); };
+  const handleMouseMove = (e: Event) => {
+    if (!draggingRef.current) return;
+    const pt = getSvgPoint(e);
+    const id = draggingRef.current;
+    setNodes((prev: typeof nodes) => prev.map(n => n.id === id ? { ...n, x: Math.max(12, Math.min(w - 12, pt.x)), y: Math.max(12, Math.min(h - 12, pt.y)) } : n));
+  };
+  const handleMouseUp = () => { draggingRef.current = null; };
+
   return createElement('div', null,
-    createElement('svg', { width: String(w), height: String(h), viewBox: `0 0 ${w} ${h}`, style: { background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' } },
+    createElement('svg', { ref: svgRef, width: String(w), height: String(h), viewBox: `0 0 ${w} ${h}`, style: { background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0', cursor: draggingRef.current ? 'grabbing' : 'default' }, onMouseMove: handleMouseMove, onMouseUp: handleMouseUp, onMouseLeave: handleMouseUp },
       ...edgePairs.map(([from, to]) => {
         const f = nodeMap.get(from!)!, t = nodeMap.get(to!)!;
         return createElement('line', { key: `${from}-${to}`, x1: String(f.x), y1: String(f.y), x2: String(t.x), y2: String(t.y), stroke: hovered === from || hovered === to ? '#0f172a' : '#94a3b8', strokeWidth: hovered === from || hovered === to ? '2' : '1.5' });
@@ -554,8 +572,9 @@ function ForceGraphDemo() {
         createElement('circle', {
           cx: String(n.x), cy: String(n.y), r: hovered === n.id ? '12' : '10',
           fill: n.color, stroke: n.locked ? '#0f172a' : '#fff', strokeWidth: n.locked ? '3' : '2',
-          style: { cursor: 'pointer' },
-          onClick: () => lockNode(n.id),
+          style: { cursor: draggingRef.current === n.id ? 'grabbing' : 'grab' },
+          onMouseDown: () => handleMouseDown(n.id),
+          onDblClick: () => lockNode(n.id),
           onMouseEnter: () => setHovered(n.id),
           onMouseLeave: () => setHovered(null),
         }),
@@ -563,7 +582,7 @@ function ForceGraphDemo() {
       )),
     ),
     createElement('p', { style: { fontSize: '12px', color: '#64748b', marginTop: '6px' } },
-      hovered ? `Vertex ${hovered}${nodeMap.get(hovered)?.locked ? ' (locked)' : ''} — click to lock/unlock` : 'Vertices float freely — click to lock position',
+      hovered ? `Vertex ${hovered}${nodeMap.get(hovered)?.locked ? ' (locked)' : ''} — drag to move, dblclick to lock/unlock` : 'Drag vertices to reposition — double-click to lock',
     ),
   );
 }

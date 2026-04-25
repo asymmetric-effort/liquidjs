@@ -1,6 +1,6 @@
 # LiquidJS
 
-A TypeScript UI framework with 100% feature parity to React.js, built for performance, compatibility, and developer simplicity.
+A declarative TypeScript UI framework built for performance, browser compatibility, and developer simplicity.
 
 ## Monorepo Layout
 
@@ -16,17 +16,17 @@ A TypeScript UI framework with 100% feature parity to React.js, built for perfor
 
 ## Project Vision
 
-LiquidJS is a declarative, component-based UI framework that mirrors the full React.js API surface while prioritizing:
+LiquidJS is a declarative, component-based UI framework prioritizing:
 
 - **Performance** — Minimal overhead, efficient diffing, fast rendering
 - **Browser & device compatibility** — Broad support across modern and legacy browsers
 - **Simplicity** — Easy to learn for new developers, intuitive API design
-- **Extensibility** — Full plugin/extension ecosystem support matching React's flexibility
+- **Extensibility** — Full plugin/extension ecosystem support
 
 ## Core Principles
 
 1. **Declarative by default** — Components describe *what* to render, not *how*
-2. **Feature parity with React.js** — Every React API has a LiquidJS equivalent
+2. **Comprehensive API** — Complete hooks, routing, and rendering APIs
 3. **Test-driven development** — All code is written tests-first
 4. **Simplicity over cleverness** — Prefer straightforward patterns that new developers can follow
 
@@ -66,7 +66,7 @@ LiquidJS is a declarative, component-based UI framework that mirrors the full Re
 - Virtual DOM with efficient tree diffing algorithm
 - Keyed list reconciliation
 - Batched state updates
-- Concurrent rendering support (React 18+ parity)
+- Concurrent rendering support
 - `startTransition`, `useDeferredValue`
 - Automatic batching
 - Static pre-rendering (build-time HTML generation, NOT runtime SSR)
@@ -82,7 +82,7 @@ LiquidJS is a declarative, component-based UI framework that mirrors the full Re
 - Web Components interop
 
 ### Rendering APIs
-- `createRoot` / `hydrateRoot` (React 18+ concurrent API)
+- `createRoot` / `hydrateRoot` (concurrent API)
 - Legacy `render` / `hydrate` for migration support
 - `flushSync`
 - `unmountComponentAtNode`
@@ -214,7 +214,7 @@ LiquidJS is designed for building **single-page web applications** that compile 
 - Pure functions where possible
 
 ### API Design
-- Match React's API naming and signatures exactly where possible
+- Use clear, intuitive API naming and signatures
 - Add LiquidJS-specific extensions as separate named exports
 - Deprecation warnings before removing any API
 - JSDoc comments on all public APIs
@@ -235,7 +235,7 @@ LiquidJS is designed for building **single-page web applications** that compile 
 - Dev-only deps (TypeScript, Vitest, Playwright, Rollup) are acceptable since they don't ship to consumers
 
 ### Performance Targets
-- Virtual DOM diffing must be competitive with React's reconciler
+- Virtual DOM diffing must be efficient and performant
 - Memory allocation should be minimized during renders
 - Event system should use delegation to reduce listener count
 - Bundle size target: < 15KB minified + gzipped for core

@@ -82,7 +82,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Working `flushSync()`** for synchronous rendering bypass
 
 #### DOM Rendering
-- `createRoot` / `hydrateRoot` (React 18 concurrent API)
+- `createRoot` / `hydrateRoot` (concurrent API)
 - Legacy `render` / `hydrate` / `unmountComponentAtNode`
 - `createPortal` for rendering into external DOM nodes
 - **Synthetic event system** with cross-browser normalization (mouse, keyboard, focus, wheel, input, touch)
@@ -133,5 +133,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - API reference for all modules
 - Architecture docs (fiber, reconciler, hooks, events)
 - Getting started guide
-- React migration guide
+- Migration guide
 - Component library documentation

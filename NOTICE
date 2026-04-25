@@ -1,0 +1,31 @@
+LiquidJS
+(c) 2025-2026 Asymmetric Effort, LLC
+SPDX-License-Identifier: MIT
+
+This project is licensed under the MIT License. See LICENSE for details.
+
+Third-Party Dependencies
+========================
+
+Go Binaries (tools/)
+--------------------
+The Go tools in this project use only the Go standard library.
+No third-party Go modules are imported at runtime.
+
+- Go standard library: BSD-3-Clause license
+  https://go.dev/LICENSE
+
+Development Dependencies (not shipped to consumers)
+----------------------------------------------------
+- TypeScript: Apache-2.0 (https://github.com/microsoft/TypeScript)
+- Vitest: MIT (https://github.com/vitest-dev/vitest)
+- Playwright: Apache-2.0 (https://github.com/microsoft/playwright)
+- Rollup: MIT (https://github.com/rollup/rollup)
+- Prettier: MIT (https://github.com/prettier/prettier)
+- Vite: MIT (https://github.com/vitejs/vite)
+- @rollup/plugin-terser: MIT
+- rollup-plugin-dts: MIT
+
+Runtime Dependencies
+--------------------
+None. LiquidJS has zero runtime dependencies.
