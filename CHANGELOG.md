@@ -5,6 +5,61 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-04-25
+
+### Added
+
+#### Visualization Components
+- 35 visualization demos in Component Gallery across 5 sections:
+  Charts & Graphs (12), Data & Analytics (9), Hierarchical & Relational (9),
+  Mathematical (3), 3D & Advanced (2)
+- New components: Time-Series, Donut, Histogram, Box Plot, Bubble Chart,
+  Lollipop, Waterfall, Funnel, Heat Map, Calendar Heat Map, Gauge, Radar,
+  Big Number, Word Cloud, Pivot Table, Matrix, Gantt, Tree Map, Sunburst,
+  Sankey, Chord, Partition, Decomposition Tree, Geospatial Map, Vector Field,
+  3D Layers
+- All visualizations support hover events with visual feedback
+
+#### Security
+- `secureFetch` wrapper enforcing HTTPS-only network requests
+- Content-Security-Policy and Referrer-Policy headers via `useHead` httpEquiv
+- `useHead` httpEquiv support for CSP, Referrer-Policy, Cache-Control
+- ReDoS fix in router matchPath (replaced polynomial regex with linear loop)
+- Integer overflow fix in protobuf API (bounds check before uint32 cast)
+- SHA-pinned all GitHub Actions to verified commit hashes
+- CodeQL and Dependabot configured for automated security scanning
+
+#### Framework Features
+- Hash-based router: Router, Route, Link, useRouter, useParams, useNavigate
+- `useHead` hook for declarative meta tags (title, description, OG, Twitter, httpEquiv)
+- `secureFetch` and `assertSecureUrl` for HTTPS enforcement
+- `ErrorBoundary` component exported from core
+- `createFactory` legacy API
+
+#### Showcase Site
+- 7-screen SPA at liquidjs.asymmetric-effort.com
+- Getting Started dialog with code examples
+- Feature article dialogs with detailed explanations
+- Economic Dashboard with SVG bar chart, line graph, box plot
+- Dialog overlay UX for all non-home screens
+- Copyright banners on JS/CSS build output
+- Favicon (blue droplet with gold stripe)
+- Post-deployment Playwright verification
+
+#### Tooling
+- `liquidjs-cert` Go tool for self-signed certificate generation
+- Local HTTPS dev via auto-loaded certs in Vite config
+- Pre-commit hook (typecheck + format)
+- Pre-push hook (typecheck + format + tests + coverage + security review)
+
+### Fixed
+- Text Editor: real WYSIWYG with contentEditable + execCommand
+- File Upload: OS file selector via hidden input
+- Visualization section crash (missing useEffect import)
+- Bar chart rendering (SVG-based)
+- Route hooks violation (useMemo called conditionally)
+- matchPath root pattern ignoring exact option
+
 ## [0.1.0] - 2026-04-24
 
 ### Added
