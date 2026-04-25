@@ -17,7 +17,7 @@ jobs:
       run:
         working-directory: core
     steps:
-      - uses: actions/checkout@de0fac25514ed1b867c1f36070283ac3a3f2ffb0 # v6.0.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
@@ -40,7 +40,7 @@ jobs:
           echo "Build verified"
           ls -lh dist/
 
-      - uses: actions/setup-node@48b55a068e5ee264b836c3e5ea9a0c3b74b294fb # v6.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
