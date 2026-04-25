@@ -54,10 +54,13 @@ export function ComponentsGallery() {
       preview('Counter', CounterDemo),
       preview('List with Filter', FilterListDemo),
     ]),
-    accordionSection('Visualization', '3 components', openSection, toggle, [
+    accordionSection('Visualization', '6 components', openSection, toggle, [
       preview('Bar Graph', BarGraphDemo),
       preview('Line Graph', LineGraphDemo),
       preview('Pie Chart', PieChartDemo),
+      preview('2D Graph (Force-Directed)', ForceGraphDemo),
+      preview('Hypercube (4D)', HypercubeDemo),
+      preview('Scatter Plot', ScatterPlotDemo),
     ]),
   );
 }
@@ -396,6 +399,162 @@ function PieChartDemo() {
           createElement('span', null, `${d.label} (${d.value}%)`),
         ),
       ),
+    ),
+  );
+}
+
+function ForceGraphDemo() {
+  // Simple force-directed graph layout with interactive vertices
+  const [nodes] = useState(() => [
+    { id: 'A', x: 80, y: 50, color: '#3b82f6' },
+    { id: 'B', x: 160, y: 40, color: '#10b981' },
+    { id: 'C', x: 200, y: 110, color: '#f59e0b' },
+    { id: 'D', x: 120, y: 130, color: '#ef4444' },
+    { id: 'E', x: 40, y: 110, color: '#8b5cf6' },
+  ]);
+  const edges = [
+    ['A', 'B'], ['B', 'C'], ['C', 'D'], ['D', 'E'], ['E', 'A'], ['A', 'C'], ['B', 'D'],
+  ];
+  const [hovered, setHovered] = useState<string | null>(null);
+
+  const nodeMap = new Map(nodes.map(n => [n.id, n]));
+
+  return createElement('div', null,
+    createElement('svg', { width: '240', height: '160', viewBox: '0 0 240 160', style: { background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' } },
+      // Edges
+      ...edges.map(([from, to]) => {
+        const f = nodeMap.get(from!)!;
+        const t = nodeMap.get(to!)!;
+        const isHovered = hovered === from || hovered === to;
+        return createElement('line', {
+          key: `${from}-${to}`,
+          x1: String(f.x), y1: String(f.y),
+          x2: String(t.x), y2: String(t.y),
+          stroke: isHovered ? '#0f172a' : '#94a3b8',
+          strokeWidth: isHovered ? '2' : '1.5',
+        });
+      }),
+      // Vertices
+      ...nodes.map(n => createElement('g', { key: n.id },
+        createElement('circle', {
+          cx: String(n.x), cy: String(n.y), r: hovered === n.id ? '12' : '10',
+          fill: n.color, stroke: '#fff', strokeWidth: '2',
+          style: { cursor: 'pointer', transition: 'r 0.15s' },
+          onMouseEnter: () => setHovered(n.id),
+          onMouseLeave: () => setHovered(null),
+        }),
+        createElement('text', {
+          x: String(n.x), y: String(n.y + 4),
+          textAnchor: 'middle', fill: '#fff', fontSize: '10', fontWeight: '700',
+        }, n.id),
+      )),
+    ),
+    createElement('p', { style: { fontSize: '12px', color: '#64748b', marginTop: '6px' } },
+      hovered ? `Hovering: vertex ${hovered}` : 'Hover over vertices to highlight connections',
+    ),
+  );
+}
+
+function HypercubeDemo() {
+  // Render a small rotating 4D hypercube wireframe
+  const [angle, setAngle] = useState(0);
+
+  useEffect(() => {
+    let running = true;
+    const animate = () => {
+      if (!running) return;
+      setAngle((a: number) => a + 0.02);
+      requestAnimationFrame(animate);
+    };
+    requestAnimationFrame(animate);
+    return () => { running = false; };
+  }, []);
+
+  // Generate 4D hypercube vertices (16 vertices of a tesseract)
+  const dim = 4;
+  const count = 1 << dim;
+  const vertices: [number, number, number, number][] = [];
+  for (let i = 0; i < count; i++) {
+    vertices.push([
+      (i & 1) ? 1 : -1,
+      (i & 2) ? 1 : -1,
+      (i & 4) ? 1 : -1,
+      (i & 8) ? 1 : -1,
+    ]);
+  }
+
+  // Generate edges (connect vertices that differ by exactly 1 bit)
+  const edgePairs: [number, number][] = [];
+  for (let i = 0; i < count; i++) {
+    for (let j = i + 1; j < count; j++) {
+      const xor = i ^ j;
+      if (xor && (xor & (xor - 1)) === 0) edgePairs.push([i, j]);
+    }
+  }
+
+  // Rotate in the XW and YZ planes
+  const cos1 = Math.cos(angle);
+  const sin1 = Math.sin(angle);
+  const cos2 = Math.cos(angle * 0.7);
+  const sin2 = Math.sin(angle * 0.7);
+
+  const project = (v: [number, number, number, number]): [number, number] => {
+    // Rotate XW
+    const x1 = v[0] * cos1 - v[3] * sin1;
+    const w1 = v[0] * sin1 + v[3] * cos1;
+    // Rotate YZ
+    const y1 = v[1] * cos2 - v[2] * sin2;
+    const z1 = v[1] * sin2 + v[2] * cos2;
+    // Perspective from 4D to 2D
+    const d = 3 / (3 - w1 * 0.3 - z1 * 0.3);
+    return [120 + x1 * 40 * d, 80 + y1 * 40 * d];
+  };
+
+  const projected = vertices.map(project);
+  const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'];
+
+  return createElement('svg', { width: '240', height: '160', viewBox: '0 0 240 160', style: { background: '#0f172a', borderRadius: '6px' } },
+    // Edges
+    ...edgePairs.map(([i, j]) =>
+      createElement('line', {
+        key: `e${i}-${j}`,
+        x1: String(projected[i]![0]), y1: String(projected[i]![1]),
+        x2: String(projected[j]![0]), y2: String(projected[j]![1]),
+        stroke: '#334155', strokeWidth: '1',
+      }),
+    ),
+    // Vertices
+    ...projected.map((p, i) =>
+      createElement('circle', {
+        key: `v${i}`, cx: String(p[0]), cy: String(p[1]), r: '3',
+        fill: colors[i % colors.length]!,
+      }),
+    ),
+  );
+}
+
+function ScatterPlotDemo() {
+  const points = [
+    { x: 20, y: 80 }, { x: 45, y: 55 }, { x: 70, y: 90 }, { x: 90, y: 30 },
+    { x: 120, y: 65 }, { x: 150, y: 20 }, { x: 170, y: 50 }, { x: 200, y: 35 },
+    { x: 60, y: 40 }, { x: 130, y: 75 }, { x: 180, y: 85 }, { x: 100, y: 100 },
+  ];
+  const [hovered, setHovered] = useState(-1);
+
+  return createElement('svg', { width: '240', height: '120', viewBox: '0 0 240 120', style: { background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' } },
+    // Axes
+    createElement('line', { x1: '15', y1: '5', x2: '15', y2: '115', stroke: '#d1d5db', strokeWidth: '1' }),
+    createElement('line', { x1: '15', y1: '115', x2: '235', y2: '115', stroke: '#d1d5db', strokeWidth: '1' }),
+    // Points
+    ...points.map((p, i) =>
+      createElement('circle', {
+        key: String(i), cx: String(p.x + 15), cy: String(p.y),
+        r: hovered === i ? '6' : '4',
+        fill: '#3b82f6', opacity: hovered === i ? '1' : '0.7',
+        style: { cursor: 'pointer', transition: 'r 0.15s' },
+        onMouseEnter: () => setHovered(i),
+        onMouseLeave: () => setHovered(-1),
+      }),
     ),
   );
 }
