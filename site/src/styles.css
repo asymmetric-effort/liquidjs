@@ -99,11 +99,36 @@ body {
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   padding: 24px;
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.2s, border-color 0.2s;
 }
-.feature-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.feature-card--clickable { cursor: pointer; }
+.feature-card--clickable:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  border-color: var(--color-primary);
+}
 .feature-card h3 { font-size: 18px; margin-bottom: 8px; }
 .feature-card p { font-size: 14px; color: var(--color-text-muted); }
+.feature-card-cta {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+/* Article sections inside feature dialogs */
+.article-section { margin-bottom: 24px; }
+.article-heading {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--color-text);
+}
+.article-body {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+}
 
 /* Section */
 .section { margin: 48px 0; }
