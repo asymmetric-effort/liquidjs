@@ -18,7 +18,7 @@ test.describe('Home Screen', () => {
 
   test('displays feature cards', async ({ page }) => {
     const cards = page.locator('.feature-card');
-    await expect(cards).toHaveCount(6);
+    await expect(cards).toHaveCount(8);
     await expect(cards.first()).toContainText('Concurrent Rendering');
   });
 

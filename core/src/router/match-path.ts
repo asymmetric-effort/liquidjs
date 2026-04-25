@@ -41,9 +41,13 @@ export function matchPath(
 
   // Root pattern
   if (normalizedPattern === '/') {
+    const isExact = normalizedPath === '/';
+    if (exact && !isExact) {
+      return null;
+    }
     return {
       params: {},
-      isExact: normalizedPath === '/',
+      isExact,
       path: pattern,
       url: '/',
     };

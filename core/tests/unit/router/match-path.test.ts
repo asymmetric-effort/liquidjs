@@ -39,6 +39,17 @@ describe('matchPath', () => {
       expect(result!.isExact).toBe(false);
     });
 
+    it('root pattern with exact rejects non-root paths', () => {
+      expect(matchPath('/', '/users/123', { exact: true })).toBeNull();
+      expect(matchPath('/', '/about', { exact: true })).toBeNull();
+    });
+
+    it('root pattern with exact matches root', () => {
+      const result = matchPath('/', '/', { exact: true });
+      expect(result).not.toBeNull();
+      expect(result!.isExact).toBe(true);
+    });
+
     it('strips trailing slashes', () => {
       const result = matchPath('/about/', '/about');
       expect(result).not.toBeNull();
