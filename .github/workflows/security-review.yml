@@ -12,6 +12,7 @@ jobs:
   claude-security-review:
     name: Claude Security Review
     runs-on: ubuntu-latest
+    if: ${{ secrets.CLAUDE_API_KEY != '' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -25,3 +26,10 @@ jobs:
           claude-api-key: ${{ secrets.CLAUDE_API_KEY }}
           claude-model: claude-opus-4-1-20250805
           exclude-directories: node_modules,dist,coverage,.git
+
+  security-review-skip:
+    name: Claude Security Review
+    runs-on: ubuntu-latest
+    if: ${{ secrets.CLAUDE_API_KEY == '' }}
+    steps:
+      - run: echo "Skipped — CLAUDE_API_KEY not configured. Add it in repo Settings → Secrets → Actions."

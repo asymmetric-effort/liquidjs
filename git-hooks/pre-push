@@ -6,23 +6,39 @@ echo "=== pre-push: running local CI pipeline ==="
 cd "$(git rev-parse --show-toplevel)/core"
 
 # 1. TypeScript type check
-echo "[1/4] TypeScript typecheck..."
+echo "[1/5] TypeScript typecheck..."
 bun x tsc --noEmit
 echo "  ✓ typecheck passed"
 
 # 2. Prettier format check
-echo "[2/4] Prettier format check..."
+echo "[2/5] Prettier format check..."
 bun x prettier --check 'src/**/*.ts' 'tests/**/*.ts'
 echo "  ✓ formatting passed"
 
 # 3. Unit and integration tests
-echo "[3/4] Running tests..."
+echo "[3/5] Running tests..."
 bun run test
 echo "  ✓ tests passed"
 
 # 4. Coverage threshold check
-echo "[4/4] Running coverage..."
+echo "[4/5] Running coverage..."
 bun run test:coverage
 echo "  ✓ coverage thresholds met"
+
+# 5. Security review (requires claude CLI)
+echo "[5/5] Security review..."
+if command -v claude &>/dev/null; then
+  cd "$(git rev-parse --show-toplevel)"
+  DIFF=$(git diff HEAD~1 --name-only -- '*.ts' '*.js' '*.tsx' '*.jsx' 2>/dev/null || true)
+  if [ -n "$DIFF" ]; then
+    echo "  Reviewing changed files for security issues..."
+    echo "$DIFF" | claude -p "Review these changed files for security vulnerabilities. Check for: XSS, injection, prototype pollution, unsafe eval, hardcoded secrets, insecure crypto, path traversal, and OWASP Top 10. Report only confirmed issues with file path and line number. If no issues found, respond with exactly: No security issues found." --max-turns 1 2>/dev/null || true
+  else
+    echo "  No TypeScript/JavaScript files changed"
+  fi
+  echo "  ✓ security review complete"
+else
+  echo "  ⊘ skipped (claude CLI not installed)"
+fi
 
 echo "=== pre-push: all CI checks passed ==="
