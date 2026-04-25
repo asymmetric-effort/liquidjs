@@ -15,6 +15,6 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Run FOSSA Analyze
-        uses: fossas/fossa-action@a1a2c57355f5e962d8af113a4e2f708f9dd0bff1 # v1.9.0
+        uses: fossas/fossa-action@ff70fe9fe17cbd2040648f1c45e8ec4e4884dcf3 # v1.9.0
         with:
           api-key: ${{ secrets.FOSSA_API_KEY }}
