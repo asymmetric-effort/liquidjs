@@ -104,12 +104,6 @@ export function FeatureFlagsDemo() {
 
       createElement(
         FeatureGate,
-        { flag: 'charts', fallback: gatedOff('charts') },
-        gatedOn('charts', 'Chart components are available for rendering.'),
-      ),
-
-      createElement(
-        FeatureGate,
         { flag: 'dark-mode', fallback: gatedOff('dark-mode') },
         gatedOn('dark-mode', 'Dark mode UI is now active.'),
       ),

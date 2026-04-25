@@ -100,7 +100,7 @@ function AppContent() {
 export function App() {
   return createElement(
     FeatureFlagProvider,
-    { url: './features.json', defaults: { charts: true, dashboard: true } },
+    { url: './features.json', defaults: { dashboard: true } },
     createElement(
       Router,
       null,

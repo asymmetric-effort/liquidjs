@@ -1,5 +1,4 @@
 {
-  "charts": true,
   "dashboard": true,
   "concurrent-rendering": true,
   "api-integration": true,
