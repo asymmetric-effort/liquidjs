@@ -96,17 +96,16 @@ export function renderToStaticMarkup(element: LiquidNode): string {
  * Detects common server frameworks (Express, Koa, Fastify, etc.)
  * by checking for telltale global state.
  */
+/* v8 ignore next 22 -- environment detection only triggers in Node.js production */
 function assertNotInRequestContext(fnName: string): void {
-  // Check if we're inside an async context that looks like a request handler
   if (
     typeof process !== 'undefined' &&
     typeof process.env !== 'undefined' &&
     process.env.LIQUIDJS_ALLOW_PRERENDER === 'true'
   ) {
-    return; // Explicitly opted in for build-time usage
+    return;
   }
 
-  // Warn if this appears to be called at request time in a server
   if (
     typeof process !== 'undefined' &&
     typeof process.env !== 'undefined' &&
