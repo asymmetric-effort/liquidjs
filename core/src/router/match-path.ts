@@ -24,6 +24,15 @@ export interface MatchOptions {
   exact?: boolean;
 }
 
+/** Strip trailing slash characters without regex (avoids ReDoS). */
+function stripTrailingSlashes(s: string): string {
+  let end = s.length;
+  while (end > 1 && s.charCodeAt(end - 1) === 47 /* '/' */) {
+    end--;
+  }
+  return end === s.length ? s : s.slice(0, end);
+}
+
 /**
  * Match a route pattern against a pathname.
  * Returns a MatchResult if the pattern matches, or null if it doesn't.
@@ -36,8 +45,8 @@ export function matchPath(
   const exact = options?.exact ?? false;
 
   // Normalize: strip trailing slashes (but keep root /)
-  const normalizedPattern = pattern === '/' ? '/' : pattern.replace(/\/+$/, '');
-  const normalizedPath = pathname === '/' ? '/' : pathname.replace(/\/+$/, '');
+  const normalizedPattern = pattern === '/' ? '/' : stripTrailingSlashes(pattern);
+  const normalizedPath = pathname === '/' ? '/' : stripTrailingSlashes(pathname);
 
   // Root pattern
   if (normalizedPattern === '/') {
