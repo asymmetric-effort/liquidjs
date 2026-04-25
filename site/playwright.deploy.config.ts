@@ -12,6 +12,10 @@ export default defineConfig({
   use: {
     baseURL: process.env.SITE_URL || 'https://specifyjs.asymmetric-effort.com',
     trace: 'on-first-retry',
+    extraHTTPHeaders: {
+      'Cache-Control': 'no-cache',
+      'Pragma': 'no-cache',
+    },
   },
   // No webServer — tests run against the already-deployed site
 });

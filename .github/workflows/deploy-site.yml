@@ -83,8 +83,10 @@ jobs:
           npm install
           npx playwright install chromium --with-deps
 
-      - name: Wait for deployment to propagate
-        run: sleep 60
+      - name: Wait for CDN cache purge
+        run: |
+          echo "Waiting 120s for GitHub Pages CDN to purge cached content..."
+          sleep 120
 
       - name: Run post-deployment E2E tests
         id: e2e
