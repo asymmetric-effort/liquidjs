@@ -46,6 +46,7 @@ export { Router, Route, Link, useRouter, useParams, useNavigate, matchPath } fro
 // Utilities
 export { startTransition } from './core/transitions';
 export { act } from './shared/act';
+export { secureFetch, assertSecureUrl } from './shared/secure-fetch';
 
 // Types
 export type {
