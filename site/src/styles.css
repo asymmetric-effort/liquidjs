@@ -16,6 +16,17 @@
   --max-width: 1200px;
 }
 
+[data-theme="dark"] {
+  --color-primary: #60a5fa;
+  --color-primary-dark: #3b82f6;
+  --color-bg: #0f172a;
+  --color-bg-subtle: #1e293b;
+  --color-bg-muted: #334155;
+  --color-text: #f1f5f9;
+  --color-text-muted: #94a3b8;
+  --color-border: #334155;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: var(--color-bg);
@@ -23,6 +34,29 @@ body {
   line-height: 1.6;
   min-height: 100vh;
 }
+
+/* Dark mode overrides */
+[data-theme="dark"] .code-block { background: #0f172a; border: 1px solid #334155; }
+[data-theme="dark"] .feature-card--clickable:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+[data-theme="dark"] .dialog-panel { box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05); }
+
+/* Dark mode toggle button */
+.dark-mode-toggle {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-subtle);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: background 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.dark-mode-toggle:hover { background: var(--color-bg-muted); border-color: var(--color-primary); }
 
 /* Nav Bar */
 .nav-bar {

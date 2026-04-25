@@ -1,8 +1,9 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import { createElement } from 'liquidjs';
+import { createElement, FeatureGate } from 'liquidjs';
 import { Link } from 'liquidjs';
+import { useState } from 'liquidjs/hooks';
 
 function DropletLogo() {
   return createElement(
@@ -53,6 +54,26 @@ function DropletLogo() {
   );
 }
 
+function DarkModeToggle() {
+  const [dark, setDark] = useState(() => document.documentElement.getAttribute('data-theme') === 'dark');
+
+  const toggle = () => {
+    const next = !dark;
+    setDark(next);
+    document.documentElement.setAttribute('data-theme', next ? 'dark' : 'light');
+  };
+
+  return createElement(
+    'button',
+    {
+      className: 'dark-mode-toggle',
+      onClick: toggle,
+      title: dark ? 'Switch to light mode' : 'Switch to dark mode',
+    },
+    dark ? '\u2600\ufe0f' : '\ud83c\udf19',
+  );
+}
+
 export function NavBar() {
   return createElement(
     'nav',
@@ -77,6 +98,9 @@ export function NavBar() {
         createElement(Link, { to: '/reference', className: 'nav-link', activeClassName: 'active' }, 'Reference'),
         createElement(Link, { to: '/getting-started', className: 'nav-link', activeClassName: 'active' }, 'Get Started'),
         createElement(Link, { to: '/featureflags', className: 'nav-link', activeClassName: 'active' }, 'Flags'),
+      ),
+      createElement(FeatureGate, { flag: 'dark-mode', fallback: null },
+        createElement(DarkModeToggle, null),
       ),
     ),
   );
