@@ -313,7 +313,7 @@ function performConcurrentWorkOnRoot(root: FiberRoot): SchedulerCallback | null 
       children: root.pendingChildren,
     } as Props);
     wipRoot = root;
-    }
+  }
 
   resetDeadline();
   const remaining = workLoopConcurrent(wipFiber);
@@ -632,16 +632,54 @@ function cloneFiberSubtree(source: Fiber | null, parent: Fiber): Fiber | null {
 // ---------------------------------------------------------------------------
 
 const SVG_TAGS = new Set([
-  'svg', 'circle', 'clipPath', 'defs', 'ellipse', 'g', 'line',
-  'linearGradient', 'mask', 'path', 'pattern', 'polygon', 'polyline',
-  'radialGradient', 'rect', 'stop', 'text', 'tspan', 'use', 'image',
-  'symbol', 'foreignObject', 'desc', 'title', 'metadata', 'marker',
-  'filter', 'feBlend', 'feColorMatrix', 'feComponentTransfer',
-  'feComposite', 'feConvolveMatrix', 'feDiffuseLighting',
-  'feDisplacementMap', 'feFlood', 'feGaussianBlur', 'feImage',
-  'feMerge', 'feMergeNode', 'feMorphology', 'feOffset',
-  'feSpecularLighting', 'feTile', 'feTurbulence',
-  'animate', 'animateMotion', 'animateTransform', 'set',
+  'svg',
+  'circle',
+  'clipPath',
+  'defs',
+  'ellipse',
+  'g',
+  'line',
+  'linearGradient',
+  'mask',
+  'path',
+  'pattern',
+  'polygon',
+  'polyline',
+  'radialGradient',
+  'rect',
+  'stop',
+  'text',
+  'tspan',
+  'use',
+  'image',
+  'symbol',
+  'foreignObject',
+  'desc',
+  'title',
+  'metadata',
+  'marker',
+  'filter',
+  'feBlend',
+  'feColorMatrix',
+  'feComponentTransfer',
+  'feComposite',
+  'feConvolveMatrix',
+  'feDiffuseLighting',
+  'feDisplacementMap',
+  'feFlood',
+  'feGaussianBlur',
+  'feImage',
+  'feMerge',
+  'feMergeNode',
+  'feMorphology',
+  'feOffset',
+  'feSpecularLighting',
+  'feTile',
+  'feTurbulence',
+  'animate',
+  'animateMotion',
+  'animateTransform',
+  'set',
 ]);
 
 function isSvgTag(tag: string): boolean {
@@ -697,10 +735,7 @@ function getNextHydratableSibling(node: Node): Node | null {
  * Try to hydrate a HostComponent fiber by matching it to an existing DOM element.
  * Returns the matched DOM element or null if no match.
  */
-function tryHydrateInstance(
-  fiber: Fiber,
-  parentNode: Node,
-): HTMLElement | null {
+function tryHydrateInstance(fiber: Fiber, parentNode: Node): HTMLElement | null {
   // Get the next unmatched child from the cursor, or the first child
   let candidate = hydrationCursor.get(parentNode) ?? getNextHydratableChild(parentNode);
 

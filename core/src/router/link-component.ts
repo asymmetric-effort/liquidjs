@@ -29,20 +29,25 @@ export function Link(props: LinkProps): LiquidNode {
 
   const isActive = matchPath(to, router.pathname, { exact: exact ?? false }) !== null;
 
-  const handleClick = useCallback(((...args: unknown[]) => {
-    const e = args[0] as Event;
-    e.preventDefault();
-    router.navigate(to);
-  }) as (...args: unknown[]) => unknown, [to, router.navigate]);
+  const handleClick = useCallback(
+    ((...args: unknown[]) => {
+      const e = args[0] as Event;
+      e.preventDefault();
+      router.navigate(to);
+    }) as (...args: unknown[]) => unknown,
+    [to, router.navigate],
+  );
 
-  const cls = [className, isActive ? activeClassName : null]
-    .filter(Boolean)
-    .join(' ') || undefined;
+  const cls = [className, isActive ? activeClassName : null].filter(Boolean).join(' ') || undefined;
 
-  return createElement('a', {
-    ...rest,
-    href: '#' + to,
-    onClick: handleClick,
-    className: cls,
-  }, children);
+  return createElement(
+    'a',
+    {
+      ...rest,
+      href: '#' + to,
+      onClick: handleClick,
+      className: cls,
+    },
+    children,
+  );
 }

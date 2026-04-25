@@ -155,9 +155,12 @@ describe('useStateImpl', () => {
 describe('useReducerImpl', () => {
   const reducer = (state: number, action: { type: string; payload?: number }) => {
     switch (action.type) {
-      case 'increment': return state + 1;
-      case 'add': return state + (action.payload ?? 0);
-      default: return state;
+      case 'increment':
+        return state + 1;
+      case 'add':
+        return state + (action.payload ?? 0);
+      default:
+        return state;
     }
   };
 

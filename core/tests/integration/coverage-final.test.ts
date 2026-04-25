@@ -39,7 +39,9 @@ describe('useRest async paths', () => {
   it('sets data on successful response', async () => {
     let activeRoot: ReturnType<typeof createRoot> | null = null;
     const mockClient = makeClient({
-      get: vi.fn().mockResolvedValue({ data: { name: 'Alice' }, status: 200, headers: {}, ok: true }),
+      get: vi
+        .fn()
+        .mockResolvedValue({ data: { name: 'Alice' }, status: 200, headers: {}, ok: true }),
     });
     let capturedData: unknown = null;
 
@@ -53,7 +55,7 @@ describe('useRest async paths', () => {
     activeRoot.render(createElement(Comp, null));
 
     // Wait for the async effect + microtask re-render
-    await new Promise(r => setTimeout(r, 100));
+    await new Promise((r) => setTimeout(r, 100));
 
     // The data should have been set via the .then() path
     // Re-render to pick up state changes
@@ -78,7 +80,7 @@ describe('useRest async paths', () => {
     activeRoot = createRoot(container);
     activeRoot.render(createElement(Comp, null));
 
-    await new Promise(r => setTimeout(r, 100));
+    await new Promise((r) => setTimeout(r, 100));
 
     activeRoot.render(createElement(Comp, null));
     expect(capturedError).toBeTruthy();
@@ -89,7 +91,9 @@ describe('useRest async paths', () => {
   it('sets RestError directly when thrown', async () => {
     let activeRoot: ReturnType<typeof createRoot> | null = null;
     const restErr = new RestError('Not Found', 404, 'Not Found', null, {
-      url: '/missing', method: 'GET', headers: {},
+      url: '/missing',
+      method: 'GET',
+      headers: {},
     });
     const mockClient = makeClient({
       get: vi.fn().mockRejectedValue(restErr),
@@ -104,7 +108,7 @@ describe('useRest async paths', () => {
 
     activeRoot = createRoot(container);
     activeRoot.render(createElement(Comp, null));
-    await new Promise(r => setTimeout(r, 100));
+    await new Promise((r) => setTimeout(r, 100));
     activeRoot.render(createElement(Comp, null));
     expect(capturedError).toBe(restErr);
     activeRoot.unmount();
@@ -129,12 +133,12 @@ describe('useRest async paths', () => {
 
     activeRoot = createRoot(container);
     activeRoot.render(createElement(Comp, null));
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
 
     expect(callCount).toBeGreaterThanOrEqual(1);
     const prevCount = callCount;
     refetchFn!();
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     expect(callCount).toBeGreaterThan(prevCount);
     activeRoot.unmount();
   });
@@ -154,8 +158,10 @@ describe('reconciler — createChild and updateFromMap paths', () => {
     function App() {
       const [items, si] = useState(['a', 'b']);
       setItems = si;
-      return createElement('ul', null,
-        ...items.map(i => createElement('li', { key: i }, i)),
+      return createElement(
+        'ul',
+        null,
+        ...items.map((i) => createElement('li', { key: i }, i)),
         createElement('li', null, 'unkeyed'),
       );
     }
@@ -163,7 +169,7 @@ describe('reconciler — createChild and updateFromMap paths', () => {
     root.render(createElement(App, null));
 
     setItems!(['b', 'c']);
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     const lis = container.querySelectorAll('li');
     expect(lis.length).toBe(3);
     root.unmount();
@@ -174,7 +180,9 @@ describe('reconciler — createChild and updateFromMap paths', () => {
     function App() {
       const [mode, sm] = useState(0);
       setMode = sm;
-      return createElement('div', null,
+      return createElement(
+        'div',
+        null,
         createElement('span', { key: 'a' }, 'first'),
         mode === 0 ? 'text-child' : createElement('span', { key: 'b' }, 'second'),
         createElement('span', { key: 'c' }, 'third'),
@@ -185,7 +193,7 @@ describe('reconciler — createChild and updateFromMap paths', () => {
     expect(container.textContent).toContain('text-child');
 
     setMode!(1);
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     expect(container.textContent).toContain('second');
     root.unmount();
   });
@@ -196,10 +204,10 @@ describe('work-loop — insertion ordering with fragments', () => {
   it('inserts before existing siblings through fragment boundaries', () => {
     const root = createRoot(container);
     root.render(
-      createElement('div', null,
-        createElement(Fragment, null,
-          createElement('span', null, 'A'),
-        ),
+      createElement(
+        'div',
+        null,
+        createElement(Fragment, null, createElement('span', null, 'A')),
         createElement('span', null, 'B'),
       ),
     );
@@ -212,11 +220,15 @@ describe('work-loop — insertion ordering with fragments', () => {
 
   it('handles deletion through nested component boundaries', async () => {
     let setShow: (v: boolean) => void;
-    function Inner() { return createElement('em', null, 'inner'); }
+    function Inner() {
+      return createElement('em', null, 'inner');
+    }
     function App() {
       const [show, s] = useState(true);
       setShow = s;
-      return createElement('div', null,
+      return createElement(
+        'div',
+        null,
         show ? createElement(Inner, null) : null,
         createElement('span', null, 'stays'),
       );
@@ -226,7 +238,7 @@ describe('work-loop — insertion ordering with fragments', () => {
     expect(container.querySelector('em')).toBeTruthy();
 
     setShow!(false);
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     expect(container.querySelector('em')).toBeNull();
     expect(container.querySelector('span')!.textContent).toBe('stays');
     root.unmount();
@@ -292,7 +304,7 @@ describe('reconciler — deletion sequences', () => {
     expect(container.querySelectorAll('div').length).toBe(6); // outer + 5
 
     setCount!(2);
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     expect(container.querySelectorAll('div').length).toBe(3); // outer + 2
     root.unmount();
   });
@@ -311,7 +323,7 @@ describe('reconciler — deletion sequences', () => {
     expect(container.querySelector('span')).toBeTruthy();
 
     setMode!('text');
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     expect(container.querySelector('span')).toBeNull();
     expect(container.textContent).toBe('just text');
     root.unmount();

@@ -3,11 +3,7 @@
  * crypto fallback, auto-flush timer with unref.
  */
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import {
-  createTracer,
-  generateTraceId,
-  generateSpanId,
-} from '../../../src/telemetry/tracing';
+import { createTracer, generateTraceId, generateSpanId } from '../../../src/telemetry/tracing';
 
 afterEach(() => {
   vi.restoreAllMocks();

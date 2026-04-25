@@ -27,12 +27,15 @@ export function Route(props: RouteProps): LiquidNode {
   if (!match) return null;
 
   // Build nested context with updated params and basePath
-  const nestedValue: RouterContextValue = useMemo(() => ({
-    pathname: router.pathname,
-    params: { ...router.params, ...match.params },
-    navigate: router.navigate,
-    basePath: match.url,
-  }), [router.pathname, router.navigate, match.url]);
+  const nestedValue: RouterContextValue = useMemo(
+    () => ({
+      pathname: router.pathname,
+      params: { ...router.params, ...match.params },
+      navigate: router.navigate,
+      basePath: match.url,
+    }),
+    [router.pathname, router.navigate, match.url],
+  );
 
   // Merge parent params
   for (const key of Object.keys(router.params)) {

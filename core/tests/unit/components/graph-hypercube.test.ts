@@ -223,9 +223,7 @@ describe('generateHypercube', () => {
     const b = generateHypercube(3, [1, 0.5, 0.3], 0, 100);
     // At least one vertex should have moved
     const moved = a.vertices.some(
-      (v, i) =>
-        Math.abs(v.x - b.vertices[i]!.x) > 0.01 ||
-        Math.abs(v.y - b.vertices[i]!.y) > 0.01,
+      (v, i) => Math.abs(v.x - b.vertices[i]!.x) > 0.01 || Math.abs(v.y - b.vertices[i]!.y) > 0.01,
     );
     expect(moved).toBe(true);
   });

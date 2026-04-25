@@ -6,19 +6,36 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createElement, Fragment } from '../../src/index';
 import { createRoot } from '../../src/dom/create-root';
-import { useState, useEffect, useCallback, useReducer, useMemo, useRef, useId, useTransition, useDeferredValue, useImperativeHandle } from '../../src/hooks/index';
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useReducer,
+  useMemo,
+  useRef,
+  useId,
+  useTransition,
+  useDeferredValue,
+  useImperativeHandle,
+} from '../../src/hooks/index';
 import { forwardRef } from '../../src/core/forward-ref';
 import { memo } from '../../src/core/memo';
 import { Component } from '../../src/components/component';
 import { scheduleMicrotask } from '../../src/core/scheduler';
-import { createSyntheticEvent, SyntheticTouchEvent, SyntheticWheelEvent } from '../../src/dom/synthetic-event';
+import {
+  createSyntheticEvent,
+  SyntheticTouchEvent,
+  SyntheticWheelEvent,
+} from '../../src/dom/synthetic-event';
 
 let container: HTMLDivElement;
 
 beforeEach(() => {
   container = document.createElement('div');
   document.body.appendChild(container);
-  return () => { document.body.removeChild(container); };
+  return () => {
+    document.body.removeChild(container);
+  };
 });
 
 // ─── Reconciler: keyed list reordering ────────────────────────────────
@@ -28,9 +45,7 @@ describe('reconciler — keyed list operations', () => {
     function List() {
       const [items, si] = useState(['a', 'b', 'c']);
       setItems = si;
-      return createElement('ul', null,
-        ...items.map(i => createElement('li', { key: i }, i)),
-      );
+      return createElement('ul', null, ...items.map((i) => createElement('li', { key: i }, i)));
     }
     const root = createRoot(container);
     root.render(createElement(List, null));
@@ -38,7 +53,7 @@ describe('reconciler — keyed list operations', () => {
 
     // Replace with completely different keys
     setItems!(['x', 'y']);
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     expect(container.querySelectorAll('li').length).toBe(2);
     expect(container.textContent).toContain('x');
     expect(container.textContent).toContain('y');
@@ -50,16 +65,14 @@ describe('reconciler — keyed list operations', () => {
     function List() {
       const [items, si] = useState(['a', 'b', 'c']);
       setItems = si;
-      return createElement('ul', null,
-        ...items.map(i => createElement('li', { key: i }, i)),
-      );
+      return createElement('ul', null, ...items.map((i) => createElement('li', { key: i }, i)));
     }
     const root = createRoot(container);
     root.render(createElement(List, null));
 
     // Reverse the order
     setItems!(['c', 'b', 'a']);
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     const lis = container.querySelectorAll('li');
     expect(lis[0].textContent).toBe('c');
     expect(lis[2].textContent).toBe('a');
@@ -71,15 +84,13 @@ describe('reconciler — keyed list operations', () => {
     function List() {
       const [items, si] = useState(['a', 'c']);
       setItems = si;
-      return createElement('ul', null,
-        ...items.map(i => createElement('li', { key: i }, i)),
-      );
+      return createElement('ul', null, ...items.map((i) => createElement('li', { key: i }, i)));
     }
     const root = createRoot(container);
     root.render(createElement(List, null));
 
     setItems!(['a', 'b', 'c']);
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     const lis = container.querySelectorAll('li');
     expect(lis.length).toBe(3);
     expect(lis[1].textContent).toBe('b');
@@ -100,7 +111,7 @@ describe('reconciler — keyed list operations', () => {
     expect(container.querySelector('div')).toBeTruthy();
 
     setUseSpan!(true);
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     expect(container.querySelector('span')).toBeTruthy();
     expect(container.querySelector('div')).toBeNull();
     root.unmount();
@@ -120,7 +131,7 @@ describe('reconciler — keyed list operations', () => {
     expect(container.textContent).toBe('just text');
 
     setMode!('element');
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     expect(container.querySelector('span')).toBeTruthy();
     root.unmount();
   });
@@ -138,7 +149,7 @@ describe('memo bail-out and custom compare', () => {
     let forceUpdate: () => void;
     function App() {
       const [, setCount] = useState(0);
-      forceUpdate = () => setCount(c => c + 1);
+      forceUpdate = () => setCount((c) => c + 1);
       return createElement(MemoComp, { value: 42 });
     }
 
@@ -147,7 +158,7 @@ describe('memo bail-out and custom compare', () => {
     expect(renderSpy).toHaveBeenCalledTimes(1);
 
     forceUpdate!();
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     // Same props, should bail out
     expect(renderSpy).toHaveBeenCalledTimes(1);
     root.unmount();
@@ -172,7 +183,7 @@ describe('memo bail-out and custom compare', () => {
     expect(renderSpy).toHaveBeenCalledTimes(1);
 
     setVal!(2);
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     expect(renderSpy).toHaveBeenCalledTimes(2);
     root.unmount();
   });
@@ -215,9 +226,11 @@ describe('synthetic events — touch and wheel', () => {
 describe('scheduleMicrotask', () => {
   it('runs callback asynchronously', async () => {
     let ran = false;
-    scheduleMicrotask(() => { ran = true; });
+    scheduleMicrotask(() => {
+      ran = true;
+    });
     expect(ran).toBe(false);
-    await new Promise(r => setTimeout(r, 10));
+    await new Promise((r) => setTimeout(r, 10));
     expect(ran).toBe(true);
   });
 });

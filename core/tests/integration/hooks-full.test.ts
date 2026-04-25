@@ -355,7 +355,7 @@ describe('useDeferredValue full coverage', () => {
 
     root.render(createElement(Comp, { query: 'world' }));
     // The deferred value eventually updates
-    await new Promise(r => setTimeout(r, 100));
+    await new Promise((r) => setTimeout(r, 100));
     root.render(createElement(Comp, { query: 'world' }));
     expect(container.innerHTML).toBe('<div>world</div>');
   });

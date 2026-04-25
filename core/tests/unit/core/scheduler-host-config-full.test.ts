@@ -127,7 +127,7 @@ describe('async MessageChannel delivery', () => {
     scheduleCallback(fn);
     expect(fn).not.toHaveBeenCalled();
     // MessageChannel fires via macrotask in jsdom — wait for it
-    await new Promise(r => setTimeout(r, 100));
+    await new Promise((r) => setTimeout(r, 100));
     // The MessageChannel handler (performWorkUntilDeadline) should have run
     expect(fn).toHaveBeenCalled();
   });
@@ -140,14 +140,14 @@ describe('async MessageChannel delivery', () => {
     };
     scheduleCallback(fn);
     // Wait for all continuations to process through MessageChannel
-    await new Promise(r => setTimeout(r, 200));
+    await new Promise((r) => setTimeout(r, 200));
     expect(count).toBe(3);
   });
 
   it('MessageChannel stops when no more work', async () => {
     const fn = vi.fn(() => null);
     scheduleCallback(fn);
-    await new Promise(r => setTimeout(r, 100));
+    await new Promise((r) => setTimeout(r, 100));
     expect(fn).toHaveBeenCalledOnce();
     expect(hasPendingWork()).toBe(false);
   });
@@ -168,7 +168,7 @@ describe('async MessageChannel delivery', () => {
     const fn = vi.fn(() => null);
     const node = scheduleCallback(fn);
     cancelCallback(node);
-    await new Promise(r => setTimeout(r, 100));
+    await new Promise((r) => setTimeout(r, 100));
     expect(fn).not.toHaveBeenCalled();
   });
 });

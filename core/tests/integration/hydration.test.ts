@@ -13,7 +13,9 @@ let container: HTMLDivElement;
 beforeEach(() => {
   container = document.createElement('div');
   document.body.appendChild(container);
-  return () => { document.body.removeChild(container); };
+  return () => {
+    document.body.removeChild(container);
+  };
 });
 
 describe('hydrateRoot — DOM reuse', () => {
@@ -35,7 +37,9 @@ describe('hydrateRoot — DOM reuse', () => {
   });
 
   it('reuses nested DOM elements', () => {
-    const vdom = createElement('div', null,
+    const vdom = createElement(
+      'div',
+      null,
       createElement('h1', null, 'Title'),
       createElement('p', null, 'Content'),
     );
@@ -79,9 +83,7 @@ describe('hydrateRoot — DOM reuse', () => {
 
   it('hydrates function components', () => {
     function Greeting({ name }: { name: string }) {
-      return createElement('div', null,
-        createElement('span', null, `Hello, ${name}!`),
-      );
+      return createElement('div', null, createElement('span', null, `Hello, ${name}!`));
     }
     // Pre-populate with matching server HTML
     container.innerHTML = '<div><span>Hello, World!</span></div>';
@@ -124,7 +126,7 @@ describe('hydrateRoot — DOM reuse', () => {
 
     // State updates should work after hydration
     setCount!(5);
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     expect(container.textContent).toBe('5');
     root.unmount();
   });
@@ -143,7 +145,8 @@ describe('hydrateRoot — mismatch handling', () => {
   it('handles missing server content', () => {
     // Server has less content than client expects
     container.innerHTML = '';
-    const root = hydrateRoot(container,
+    const root = hydrateRoot(
+      container,
       createElement('div', null, createElement('span', null, 'new')),
     );
     // Should create the missing content
@@ -165,7 +168,7 @@ describe('hydrateRoot — mismatch handling', () => {
 
     // Re-renders should work normally (not in hydration mode)
     setText!('updated');
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     expect(container.textContent).toBe('updated');
     root.unmount();
   });

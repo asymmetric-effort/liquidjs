@@ -5,11 +5,7 @@
  * made inside startTransition. Also tracks flushSync context.
  */
 
-import {
-  DefaultLane,
-  SyncLane,
-  claimNextTransitionLane,
-} from './lanes';
+import { DefaultLane, SyncLane, claimNextTransitionLane } from './lanes';
 
 // ---------------------------------------------------------------------------
 // Lane context — tracks which lane new updates should be assigned to

@@ -10,18 +10,16 @@ import { startTransition, requestUpdateLane } from '../../src/core/transitions';
 import { DefaultLane, TransitionLane1, TransitionLane2 } from '../../src/core/lanes';
 import { flushAllWork } from '../../src/core/scheduler-host-config';
 import { flushSync } from '../../src/dom/flush-sync';
-import {
-  createFiberRoot,
-  markRootUpdated,
-  ensureRootIsScheduled,
-} from '../../src/dom/work-loop';
+import { createFiberRoot, markRootUpdated, ensureRootIsScheduled } from '../../src/dom/work-loop';
 
 let container: HTMLDivElement;
 
 beforeEach(() => {
   container = document.createElement('div');
   document.body.appendChild(container);
-  return () => { document.body.removeChild(container); };
+  return () => {
+    document.body.removeChild(container);
+  };
 });
 
 // ─── StrictMode double-render ─────────────────────────────────────────
@@ -33,11 +31,7 @@ describe('StrictMode double-render detection', () => {
       return createElement('div', null, 'tracked');
     }
     const root = createRoot(container);
-    root.render(
-      createElement(StrictMode, null,
-        createElement(Tracker, null),
-      ),
-    );
+    root.render(createElement(StrictMode, null, createElement(Tracker, null)));
     // StrictMode should double-invoke on mount
     expect(renderCount).toBe(2);
     expect(container.textContent).toBe('tracked');
@@ -62,7 +56,9 @@ describe('SVG namespace rendering', () => {
   it('creates SVG elements with correct namespace', () => {
     const root = createRoot(container);
     root.render(
-      createElement('svg', { width: '100', height: '100' },
+      createElement(
+        'svg',
+        { width: '100', height: '100' },
         createElement('circle', { cx: '50', cy: '50', r: '40' }),
         createElement('rect', { x: '10', y: '10', width: '80', height: '80' }),
       ),
@@ -163,8 +159,11 @@ describe('hydration — additional edge cases', () => {
     container.innerHTML = '<div><span>A</span><span>B</span><span>C</span></div>';
     const existingSpans = Array.from(container.querySelectorAll('span'));
 
-    const root = hydrateRoot(container,
-      createElement('div', null,
+    const root = hydrateRoot(
+      container,
+      createElement(
+        'div',
+        null,
         createElement('span', null, 'A'),
         createElement('span', null, 'B'),
         createElement('span', null, 'C'),
@@ -180,9 +179,7 @@ describe('hydration — additional edge cases', () => {
 
   it('hydrates with mismatched text content', () => {
     container.innerHTML = '<div>server text</div>';
-    const root = hydrateRoot(container,
-      createElement('div', null, 'client text'),
-    );
+    const root = hydrateRoot(container, createElement('div', null, 'client text'));
     // Text should be updated to client value
     expect(container.textContent).toBe('client text');
     root.unmount();

@@ -170,9 +170,9 @@ describe('createGrpcWebClient', () => {
     });
 
     const client = createGrpcWebClient({ baseURL: 'https://api.example.com' });
-    await expect(
-      client.unary('Svc', 'Method', PingMsg, PongMsg, { seq: 1 }),
-    ).rejects.toThrow('gRPC-Web request failed: 503 Service Unavailable');
+    await expect(client.unary('Svc', 'Method', PingMsg, PongMsg, { seq: 1 })).rejects.toThrow(
+      'gRPC-Web request failed: 503 Service Unavailable',
+    );
   });
 
   it('throws when response contains only trailer frames (no data frame)', async () => {
@@ -185,9 +185,9 @@ describe('createGrpcWebClient', () => {
     });
 
     const client = createGrpcWebClient({ baseURL: 'https://api.example.com' });
-    await expect(
-      client.unary('Svc', 'Method', PingMsg, PongMsg, { seq: 1 }),
-    ).rejects.toThrow('No data frame found in gRPC-Web response');
+    await expect(client.unary('Svc', 'Method', PingMsg, PongMsg, { seq: 1 })).rejects.toThrow(
+      'No data frame found in gRPC-Web response',
+    );
   });
 
   it('handles baseURL without trailing slash', async () => {
@@ -226,9 +226,9 @@ describe('createGrpcWebClient', () => {
     fetchMock.mockRejectedValue(new Error('Network error'));
 
     const client = createGrpcWebClient({ baseURL: 'https://api.example.com' });
-    await expect(
-      client.unary('Svc', 'Method', PingMsg, PongMsg, { seq: 1 }),
-    ).rejects.toThrow('Network error');
+    await expect(client.unary('Svc', 'Method', PingMsg, PongMsg, { seq: 1 })).rejects.toThrow(
+      'Network error',
+    );
   });
 });
 
@@ -252,12 +252,11 @@ describe('useProto', () => {
     const refs: Array<{ current: unknown }> = [];
     let refIndex = 0;
 
-    function useState<T>(
-      initialState: T | (() => T),
-    ): [T, (action: T | ((prev: T) => T)) => void] {
+    function useState<T>(initialState: T | (() => T)): [T, (action: T | ((prev: T) => T)) => void] {
       const idx = stateIndex++;
       if (states[idx] === undefined) {
-        states[idx] = typeof initialState === 'function' ? (initialState as () => T)() : initialState;
+        states[idx] =
+          typeof initialState === 'function' ? (initialState as () => T)() : initialState;
         setters[idx] = (action) => {
           states[idx] =
             typeof action === 'function'
@@ -362,13 +361,9 @@ describe('useProto', () => {
 
     // Allow microtasks to settle
     await vi.waitFor(() => {
-      expect(mockClient.unary).toHaveBeenCalledWith(
-        'MySvc',
-        'MyMethod',
-        PingMsg,
-        PongMsg,
-        { seq: 5 },
-      );
+      expect(mockClient.unary).toHaveBeenCalledWith('MySvc', 'MyMethod', PingMsg, PongMsg, {
+        seq: 5,
+      });
     });
   });
 

@@ -4,7 +4,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createElement } from '../../src/index';
 import { createRoot } from '../../src/dom/create-root';
-import { useState, useSyncExternalStore, useTransition, useDeferredValue } from '../../src/hooks/index';
+import {
+  useState,
+  useSyncExternalStore,
+  useTransition,
+  useDeferredValue,
+} from '../../src/hooks/index';
 import { flushSync } from '../../src/dom/flush-sync';
 import { startTransition } from '../../src/core/transitions';
 import { DefaultLane, TransitionLane1 } from '../../src/core/lanes';
@@ -14,7 +19,9 @@ let container: HTMLDivElement;
 beforeEach(() => {
   container = document.createElement('div');
   document.body.appendChild(container);
-  return () => { document.body.removeChild(container); };
+  return () => {
+    document.body.removeChild(container);
+  };
 });
 
 // ─── useSyncExternalStore effect body ─────────────────────────────────
@@ -25,7 +32,9 @@ describe('useSyncExternalStore — full lifecycle', () => {
 
     const subscribe = (cb: () => void) => {
       listeners.push(cb);
-      return () => { listeners = listeners.filter(l => l !== cb); };
+      return () => {
+        listeners = listeners.filter((l) => l !== cb);
+      };
     };
     const getSnapshot = () => storeValue;
 
@@ -42,7 +51,7 @@ describe('useSyncExternalStore — full lifecycle', () => {
     storeValue = 'updated';
     for (const l of listeners) l();
 
-    await new Promise(r => setTimeout(r, 100));
+    await new Promise((r) => setTimeout(r, 100));
     // Re-render to pick up the new value
     root.render(createElement(StoreConsumer, null));
     expect(container.textContent).toBe('updated');
@@ -55,7 +64,9 @@ describe('useSyncExternalStore — full lifecycle', () => {
 
     const subscribe = (cb: () => void) => {
       listeners.push(cb);
-      return () => { listeners = listeners.filter(l => l !== cb); };
+      return () => {
+        listeners = listeners.filter((l) => l !== cb);
+      };
     };
     const getSnapshot = () => storeValue;
     let renderCount = 0;
@@ -72,7 +83,7 @@ describe('useSyncExternalStore — full lifecycle', () => {
 
     // Notify but value hasn't changed
     for (const l of listeners) l();
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
 
     // Should not have re-rendered since Object.is returns true
     root.unmount();
@@ -105,7 +116,9 @@ describe('useTransition — isPending behavior', () => {
     }
     const root = createRoot(container);
     root.render(createElement(App, null));
-    startFn!(() => { called = true; });
+    startFn!(() => {
+      called = true;
+    });
     expect(called).toBe(true);
     root.unmount();
   });
@@ -161,7 +174,9 @@ describe('reconciler — filtering invalid children', () => {
     function App() {
       const [show, s] = useState(true);
       setShow = s;
-      return createElement('div', null,
+      return createElement(
+        'div',
+        null,
         show && createElement('span', null, 'visible'),
         !show && createElement('span', null, 'hidden'),
         null,
@@ -178,7 +193,7 @@ describe('reconciler — filtering invalid children', () => {
     expect(container.textContent).toContain('text');
 
     setShow!(false);
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     expect(container.textContent).toContain('hidden');
     root.unmount();
   });
@@ -204,13 +219,12 @@ describe('render-to-pipeable-stream — backpressure', () => {
     });
 
     const bigText = 'y'.repeat(20000);
-    const stream = renderToPipeableStream(
-      createElement('div', null, bigText),
-      { progressiveChunkSize: 5000 },
-    );
+    const stream = renderToPipeableStream(createElement('div', null, bigText), {
+      progressiveChunkSize: 5000,
+    });
     stream.pipe(dest);
 
-    await new Promise(r => setTimeout(r, 500));
+    await new Promise((r) => setTimeout(r, 500));
     expect(chunks.length).toBeGreaterThan(1);
     const combined = chunks.join('');
     expect(combined).toContain(bigText.substring(0, 100));

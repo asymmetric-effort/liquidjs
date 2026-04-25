@@ -27,19 +27,19 @@ export function Router(props: RouterProps): LiquidNode {
     return unsubscribe;
   }, []);
 
-  const nav = useCallback(
-    ((...args: unknown[]) => {
-      navigate(args[0] as string, args[1] as { replace?: boolean } | undefined);
-    }),
-    [],
-  ) as unknown as (to: string, options?: { replace?: boolean }) => void;
+  const nav = useCallback((...args: unknown[]) => {
+    navigate(args[0] as string, args[1] as { replace?: boolean } | undefined);
+  }, []) as unknown as (to: string, options?: { replace?: boolean }) => void;
 
-  const value: RouterContextValue = useMemo(() => ({
-    pathname,
-    params: {},
-    navigate: nav,
-    basePath: '',
-  }), [pathname, nav]);
+  const value: RouterContextValue = useMemo(
+    () => ({
+      pathname,
+      params: {},
+      navigate: nav,
+      basePath: '',
+    }),
+    [pathname, nav],
+  );
 
   return createElement(RouterContext.Provider, { value }, props.children);
 }

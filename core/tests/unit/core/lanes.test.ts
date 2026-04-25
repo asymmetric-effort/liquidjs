@@ -21,8 +21,16 @@ import {
 
 describe('lane constants', () => {
   it('are distinct powers of two', () => {
-    const lanes = [SyncLane, InputContinuousLane, DefaultLane,
-      TransitionLane1, TransitionLane2, 32, IdleLane, OffscreenLane];
+    const lanes = [
+      SyncLane,
+      InputContinuousLane,
+      DefaultLane,
+      TransitionLane1,
+      TransitionLane2,
+      32,
+      IdleLane,
+      OffscreenLane,
+    ];
     for (let i = 0; i < lanes.length; i++) {
       for (let j = i + 1; j < lanes.length; j++) {
         expect(lanes[i] & lanes[j]).toBe(0);

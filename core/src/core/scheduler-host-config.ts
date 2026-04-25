@@ -64,7 +64,7 @@ function performWorkUntilDeadline(): void {
       } else {
         scheduledCallback = null;
       }
-    /* v8 ignore next 4 */
+      /* v8 ignore next 4 */
     } catch (err) {
       scheduledCallback = null;
       isMessageLoopRunning = false;
@@ -90,7 +90,7 @@ if (typeof MessageChannel !== 'undefined') {
   schedulePerformWorkUntilDeadline = () => {
     channel.port2.postMessage(null);
   };
-/* v8 ignore next 5 */
+  /* v8 ignore next 5 */
 } else {
   schedulePerformWorkUntilDeadline = () => {
     setTimeout(performWorkUntilDeadline, 0);

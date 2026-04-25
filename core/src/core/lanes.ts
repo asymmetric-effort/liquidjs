@@ -39,8 +39,8 @@ export const IdleLane = /* .............. */ 0b01000000; // 64
 export const OffscreenLane = /* ......... */ 0b10000000; // 128
 
 /** All non-idle lanes */
-export const NonIdleLanes = SyncLane | InputContinuousLane | DefaultLane |
-  TransitionLane1 | TransitionLane2 | RetryLane;
+export const NonIdleLanes =
+  SyncLane | InputContinuousLane | DefaultLane | TransitionLane1 | TransitionLane2 | RetryLane;
 
 // ---------------------------------------------------------------------------
 // Lane utilities

@@ -37,8 +37,12 @@ describe('class component lifecycle', () => {
   it('calls componentDidMount on initial render', () => {
     const didMount = vi.fn();
     class MyComp extends Component {
-      componentDidMount() { didMount(); }
-      render() { return createElement('div', null, 'hello'); }
+      componentDidMount() {
+        didMount();
+      }
+      render() {
+        return createElement('div', null, 'hello');
+      }
     }
     const root = createRoot(container);
     root.render(createElement(MyComp, null));
@@ -49,8 +53,12 @@ describe('class component lifecycle', () => {
   it('calls componentDidUpdate on re-render', () => {
     const didUpdate = vi.fn();
     class MyComp extends Component<{ value: number }> {
-      componentDidUpdate() { didUpdate(); }
-      render() { return createElement('span', null, String(this.props.value)); }
+      componentDidUpdate() {
+        didUpdate();
+      }
+      render() {
+        return createElement('span', null, String(this.props.value));
+      }
     }
     const root = createRoot(container);
     root.render(createElement(MyComp, { value: 1 }));
@@ -63,8 +71,12 @@ describe('class component lifecycle', () => {
   it('calls componentWillUnmount on unmount', () => {
     const willUnmount = vi.fn();
     class MyComp extends Component {
-      componentWillUnmount() { willUnmount(); }
-      render() { return createElement('div', null, 'mounted'); }
+      componentWillUnmount() {
+        willUnmount();
+      }
+      render() {
+        return createElement('div', null, 'mounted');
+      }
     }
     const root = createRoot(container);
     root.render(createElement(MyComp, null));
@@ -82,11 +94,7 @@ describe('context provider rendering', () => {
       return createElement('span', null, Ctx._currentValue);
     }
     const root = createRoot(container);
-    root.render(
-      createElement(Ctx.Provider, { value: 'provided' },
-        createElement(Consumer, null),
-      ),
-    );
+    root.render(createElement(Ctx.Provider, { value: 'provided' }, createElement(Consumer, null)));
     expect(container.textContent).toBe('provided');
   });
 });
@@ -103,7 +111,7 @@ describe('effect lifecycle', () => {
     root.render(createElement(Comp, null));
     root.render(null);
     // Cleanup may run during deletion
-    await new Promise(r => setTimeout(r, 20));
+    await new Promise((r) => setTimeout(r, 20));
     expect(cleanup).toHaveBeenCalled();
   });
 
@@ -127,7 +135,7 @@ describe('effect lifecycle', () => {
 
     // Trigger re-render
     setVal!(1);
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     // Cleanup of old effect should run before new effect
     expect(order).toContain('cleanup-0');
     expect(order).toContain('effect-1');
@@ -159,7 +167,9 @@ describe('DOM deletion', () => {
     function App() {
       const [show, s] = useState(true);
       setShow = s;
-      return createElement('div', null,
+      return createElement(
+        'div',
+        null,
         show ? createElement('span', { key: 'a' }, 'visible') : null,
       );
     }
@@ -168,7 +178,7 @@ describe('DOM deletion', () => {
     expect(container.querySelector('span')).toBeTruthy();
 
     setShow!(false);
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     expect(container.querySelector('span')).toBeNull();
   });
 });
@@ -243,7 +253,9 @@ describe('child ordering', () => {
   it('renders multiple children in order', () => {
     const root = createRoot(container);
     root.render(
-      createElement('div', null,
+      createElement(
+        'div',
+        null,
         createElement('span', null, 'A'),
         createElement('span', null, 'B'),
         createElement('span', null, 'C'),
@@ -257,8 +269,12 @@ describe('child ordering', () => {
   });
 
   it('handles nested function components', () => {
-    function Inner() { return createElement('em', null, 'nested'); }
-    function Outer() { return createElement('div', null, createElement(Inner, null)); }
+    function Inner() {
+      return createElement('em', null, 'nested');
+    }
+    function Outer() {
+      return createElement('div', null, createElement(Inner, null));
+    }
     const root = createRoot(container);
     root.render(createElement(Outer, null));
     expect(container.querySelector('em')!.textContent).toBe('nested');

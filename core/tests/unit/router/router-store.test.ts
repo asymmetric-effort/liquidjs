@@ -1,5 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { subscribe, getSnapshot, getServerSnapshot, navigate, __resetSnapshot } from '../../../src/router/router-store';
+import {
+  subscribe,
+  getSnapshot,
+  getServerSnapshot,
+  navigate,
+  __resetSnapshot,
+} from '../../../src/router/router-store';
 
 describe('router-store', () => {
   beforeEach(() => {

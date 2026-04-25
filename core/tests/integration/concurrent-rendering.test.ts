@@ -7,17 +7,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createElement } from '../../src/index';
 import { createRoot } from '../../src/dom/create-root';
 import { useState } from '../../src/hooks/index';
-import {
-  createFiberRoot,
-  markRootUpdated,
-  ensureRootIsScheduled,
-} from '../../src/dom/work-loop';
-import {
-  SyncLane,
-  DefaultLane,
-  TransitionLane1,
-  NoLanes,
-} from '../../src/core/lanes';
+import { createFiberRoot, markRootUpdated, ensureRootIsScheduled } from '../../src/dom/work-loop';
+import { SyncLane, DefaultLane, TransitionLane1, NoLanes } from '../../src/core/lanes';
 import { flushAllWork } from '../../src/core/scheduler-host-config';
 
 let container: HTMLDivElement;
@@ -25,7 +16,9 @@ let container: HTMLDivElement;
 beforeEach(() => {
   container = document.createElement('div');
   document.body.appendChild(container);
-  return () => { document.body.removeChild(container); };
+  return () => {
+    document.body.removeChild(container);
+  };
 });
 
 describe('concurrent rendering infrastructure', () => {
@@ -84,7 +77,7 @@ describe('synchronous rendering path (existing behavior)', () => {
     expect(container.textContent).toBe('initial');
 
     setText!('updated');
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     expect(container.textContent).toBe('updated');
     root.unmount();
   });
@@ -101,10 +94,10 @@ describe('synchronous rendering path (existing behavior)', () => {
     expect(container.textContent).toBe('0');
 
     // Multiple updates should batch
-    setCount!(n => n + 1);
-    setCount!(n => n + 1);
-    setCount!(n => n + 1);
-    await new Promise(r => setTimeout(r, 50));
+    setCount!((n) => n + 1);
+    setCount!((n) => n + 1);
+    setCount!((n) => n + 1);
+    await new Promise((r) => setTimeout(r, 50));
     expect(container.textContent).toBe('3');
     root.unmount();
   });

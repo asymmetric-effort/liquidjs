@@ -15,7 +15,9 @@ let container: HTMLDivElement;
 beforeEach(() => {
   container = document.createElement('div');
   document.body.appendChild(container);
-  return () => { document.body.removeChild(container); };
+  return () => {
+    document.body.removeChild(container);
+  };
 });
 
 describe('reconciler — array child reconciliation edge cases', () => {
@@ -24,9 +26,13 @@ describe('reconciler — array child reconciliation edge cases', () => {
     function App() {
       const [items, si] = useState<(string | number | null)[]>(['hello', 42, null, 'world']);
       setItems = si;
-      return createElement('div', null, ...items.map((item, i) =>
-        item !== null ? createElement('span', { key: String(i) }, String(item)) : null
-      ));
+      return createElement(
+        'div',
+        null,
+        ...items.map((item, i) =>
+          item !== null ? createElement('span', { key: String(i) }, String(item)) : null,
+        ),
+      );
     }
     const root = createRoot(container);
     root.render(createElement(App, null));
@@ -34,7 +40,7 @@ describe('reconciler — array child reconciliation edge cases', () => {
 
     // Completely different set of items — triggers updateFromMap
     setItems!([null, 'new', 99]);
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     expect(container.querySelectorAll('span').length).toBe(2);
     root.unmount();
   });
@@ -55,7 +61,7 @@ describe('reconciler — array child reconciliation edge cases', () => {
     expect(container.querySelectorAll('li').length).toBe(2);
 
     setCount!(5);
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     expect(container.querySelectorAll('li').length).toBe(5);
     root.unmount();
   });
@@ -75,7 +81,7 @@ describe('reconciler — array child reconciliation edge cases', () => {
     root.render(createElement(App, null));
 
     setCount!(1);
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     // 1 child div + the outer div
     expect(container.textContent).toBe('item-0');
     root.unmount();
@@ -86,16 +92,14 @@ describe('reconciler — array child reconciliation edge cases', () => {
     function App() {
       const [items, si] = useState(['a', 'b', 'c', 'd', 'e']);
       setItems = si;
-      return createElement('div', null,
-        ...items.map(i => createElement('span', { key: i }, i)),
-      );
+      return createElement('div', null, ...items.map((i) => createElement('span', { key: i }, i)));
     }
     const root = createRoot(container);
     root.render(createElement(App, null));
 
     // Move 'e' to position 0 — forces oldFiber.index > newIdx
     setItems!(['e', 'a', 'b', 'c', 'd']);
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     const spans = container.querySelectorAll('span');
     expect(spans[0].textContent).toBe('e');
     expect(spans[4].textContent).toBe('d');
@@ -104,11 +108,9 @@ describe('reconciler — array child reconciliation edge cases', () => {
 
   it('handles text children interleaved with elements', () => {
     const root = createRoot(container);
-    root.render(createElement('div', null,
-      'before',
-      createElement('span', null, 'middle'),
-      'after',
-    ));
+    root.render(
+      createElement('div', null, 'before', createElement('span', null, 'middle'), 'after'),
+    );
     expect(container.textContent).toBe('beforemiddleafter');
     root.unmount();
   });
@@ -118,7 +120,9 @@ describe('reconciler — array child reconciliation edge cases', () => {
     function App() {
       const [useSpan, su] = useState(false);
       setUseSpan = su;
-      return createElement('section', null,
+      return createElement(
+        'section',
+        null,
         useSpan
           ? createElement('span', { key: 'child' }, 'span-content')
           : createElement('div', { key: 'child' }, 'div-content'),
@@ -129,7 +133,7 @@ describe('reconciler — array child reconciliation edge cases', () => {
     expect(container.querySelector('section div')).toBeTruthy();
 
     setUseSpan!(true);
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     expect(container.querySelector('section span')).toBeTruthy();
     root.unmount();
   });

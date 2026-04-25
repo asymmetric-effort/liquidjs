@@ -41,10 +41,13 @@ function UserProfile(props: { id?: string }) {
 
 describe('Router + Route', () => {
   it('renders the matching route', () => {
-    window.location.hash = '#/'; __resetSnapshot();
+    window.location.hash = '#/';
+    __resetSnapshot();
     const root = createRoot(container);
     root.render(
-      createElement(Router, null,
+      createElement(
+        Router,
+        null,
         createElement(Route, { path: '/', component: Home, exact: true }),
         createElement(Route, { path: '/about', component: About }),
       ),
@@ -55,10 +58,13 @@ describe('Router + Route', () => {
   });
 
   it('renders about route when hash matches', () => {
-    window.location.hash = '#/about'; __resetSnapshot();
+    window.location.hash = '#/about';
+    __resetSnapshot();
     const root = createRoot(container);
     root.render(
-      createElement(Router, null,
+      createElement(
+        Router,
+        null,
         createElement(Route, { path: '/', component: Home, exact: true }),
         createElement(Route, { path: '/about', component: About }),
       ),
@@ -68,10 +74,13 @@ describe('Router + Route', () => {
   });
 
   it('passes route params to component', () => {
-    window.location.hash = '#/users/42'; __resetSnapshot();
+    window.location.hash = '#/users/42';
+    __resetSnapshot();
     const root = createRoot(container);
     root.render(
-      createElement(Router, null,
+      createElement(
+        Router,
+        null,
         createElement(Route, { path: '/users/:id', component: UserProfile }),
       ),
     );
@@ -80,10 +89,13 @@ describe('Router + Route', () => {
   });
 
   it('renders nothing for non-matching route', () => {
-    window.location.hash = '#/contact'; __resetSnapshot();
+    window.location.hash = '#/contact';
+    __resetSnapshot();
     const root = createRoot(container);
     root.render(
-      createElement(Router, null,
+      createElement(
+        Router,
+        null,
         createElement(Route, { path: '/about', component: About, exact: true }),
       ),
     );
@@ -92,11 +104,16 @@ describe('Router + Route', () => {
   });
 
   it('renders children instead of component when provided', () => {
-    window.location.hash = '#/info'; __resetSnapshot();
+    window.location.hash = '#/info';
+    __resetSnapshot();
     const root = createRoot(container);
     root.render(
-      createElement(Router, null,
-        createElement(Route, { path: '/info' },
+      createElement(
+        Router,
+        null,
+        createElement(
+          Route,
+          { path: '/info' },
           createElement('span', { id: 'info' }, 'Info content'),
         ),
       ),
@@ -108,12 +125,11 @@ describe('Router + Route', () => {
 
 describe('Link', () => {
   it('renders an anchor with hash href', () => {
-    window.location.hash = '#/'; __resetSnapshot();
+    window.location.hash = '#/';
+    __resetSnapshot();
     const root = createRoot(container);
     root.render(
-      createElement(Router, null,
-        createElement(Link, { to: '/about', id: 'link' }, 'Go to About'),
-      ),
+      createElement(Router, null, createElement(Link, { to: '/about', id: 'link' }, 'Go to About')),
     );
     const anchor = container.querySelector('#link') as HTMLAnchorElement;
     expect(anchor).toBeTruthy();
@@ -124,16 +140,23 @@ describe('Link', () => {
   });
 
   it('applies activeClassName when path matches', () => {
-    window.location.hash = '#/about'; __resetSnapshot();
+    window.location.hash = '#/about';
+    __resetSnapshot();
     const root = createRoot(container);
     root.render(
-      createElement(Router, null,
-        createElement(Link, {
-          to: '/about',
-          className: 'nav-link',
-          activeClassName: 'active',
-          id: 'link',
-        }, 'About'),
+      createElement(
+        Router,
+        null,
+        createElement(
+          Link,
+          {
+            to: '/about',
+            className: 'nav-link',
+            activeClassName: 'active',
+            id: 'link',
+          },
+          'About',
+        ),
       ),
     );
     const anchor = container.querySelector('#link')!;
@@ -143,16 +166,23 @@ describe('Link', () => {
   });
 
   it('does not apply activeClassName when path does not match', () => {
-    window.location.hash = '#/'; __resetSnapshot();
+    window.location.hash = '#/';
+    __resetSnapshot();
     const root = createRoot(container);
     root.render(
-      createElement(Router, null,
-        createElement(Link, {
-          to: '/about',
-          className: 'nav-link',
-          activeClassName: 'active',
-          id: 'link',
-        }, 'About'),
+      createElement(
+        Router,
+        null,
+        createElement(
+          Link,
+          {
+            to: '/about',
+            className: 'nav-link',
+            activeClassName: 'active',
+            id: 'link',
+          },
+          'About',
+        ),
       ),
     );
     const anchor = container.querySelector('#link')!;
@@ -163,7 +193,8 @@ describe('Link', () => {
 
 describe('useRouter', () => {
   it('returns router context with pathname', () => {
-    window.location.hash = '#/test'; __resetSnapshot();
+    window.location.hash = '#/test';
+    __resetSnapshot();
     let captured: any = null;
     function Inspector() {
       captured = useRouter();
@@ -179,7 +210,8 @@ describe('useRouter', () => {
 
 describe('useParams', () => {
   it('returns matched params inside a Route', () => {
-    window.location.hash = '#/items/abc'; __resetSnapshot();
+    window.location.hash = '#/items/abc';
+    __resetSnapshot();
     let captured: any = null;
     function ParamReader() {
       captured = useParams();
@@ -187,7 +219,9 @@ describe('useParams', () => {
     }
     const root = createRoot(container);
     root.render(
-      createElement(Router, null,
+      createElement(
+        Router,
+        null,
         createElement(Route, { path: '/items/:itemId', component: ParamReader }),
       ),
     );
@@ -198,7 +232,8 @@ describe('useParams', () => {
 
 describe('useNavigate', () => {
   it('returns a navigate function', () => {
-    window.location.hash = '#/'; __resetSnapshot();
+    window.location.hash = '#/';
+    __resetSnapshot();
     let navFn: any = null;
     function NavGetter() {
       navFn = useNavigate();

@@ -11,7 +11,9 @@ let container: HTMLDivElement;
 beforeEach(() => {
   container = document.createElement('div');
   document.body.appendChild(container);
-  return () => { document.body.removeChild(container); };
+  return () => {
+    document.body.removeChild(container);
+  };
 });
 
 // ─── reconciler: createChild returns null for invalid child types ──────
@@ -27,15 +29,16 @@ describe('reconciler — invalid child types', () => {
   it('handles deeply nested fragments with mixed types', () => {
     const root = createRoot(container);
     root.render(
-      createElement('div', null,
-        createElement(Fragment, null,
+      createElement(
+        'div',
+        null,
+        createElement(
+          Fragment,
+          null,
           'text1',
           createElement('span', null, 'el1'),
           null,
-          createElement(Fragment, null,
-            'text2',
-            createElement('em', null, 'el2'),
-          ),
+          createElement(Fragment, null, 'text2', createElement('em', null, 'el2')),
         ),
       ),
     );
@@ -55,7 +58,7 @@ describe('reconciler — updateFromMap edge cases', () => {
         createElement('div', { key: 'c' }, 'C'),
       ]);
       setItems = si;
-      return createElement('div', null, ...items as any[]);
+      return createElement('div', null, ...(items as any[]));
     }
     const root = createRoot(container);
     root.render(createElement(App, null));
@@ -67,7 +70,7 @@ describe('reconciler — updateFromMap edge cases', () => {
       'text-node',
       createElement('div', { key: 'a' }, 'A-updated'),
     ]);
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     expect(container.textContent).toContain('C');
     expect(container.textContent).toContain('text-node');
     expect(container.textContent).toContain('A-updated');
@@ -86,8 +89,10 @@ describe('work-loop — insertion ordering edge cases', () => {
     function App() {
       const [items, si] = useState(['B', 'C']);
       setItems = si;
-      return createElement('div', null,
-        ...items.map(i => createElement(Child, { key: i, text: i })),
+      return createElement(
+        'div',
+        null,
+        ...items.map((i) => createElement(Child, { key: i, text: i })),
       );
     }
     const root = createRoot(container);
@@ -96,7 +101,7 @@ describe('work-loop — insertion ordering edge cases', () => {
 
     // Insert 'A' at the beginning — needs getHostSibling to find existing 'B' span
     setItems!(['A', 'B', 'C']);
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     const spans = container.querySelectorAll('span');
     expect(spans.length).toBe(3);
     expect(spans[0].textContent).toBe('A');
@@ -112,7 +117,9 @@ describe('work-loop — insertion ordering edge cases', () => {
     function App() {
       const [show, s] = useState(true);
       setShow = s;
-      return createElement('div', null,
+      return createElement(
+        'div',
+        null,
         createElement('span', null, 'first'),
         show ? createElement(Middle, null) : null,
         createElement('span', null, 'last'),
@@ -123,7 +130,7 @@ describe('work-loop — insertion ordering edge cases', () => {
     expect(container.querySelector('em')).toBeTruthy();
 
     setShow!(false);
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     expect(container.querySelector('em')).toBeNull();
     const spans = container.querySelectorAll('span');
     expect(spans.length).toBe(2);
@@ -166,7 +173,7 @@ describe('scheduler — scheduleMicrotask via render', () => {
     // Not updated synchronously
     expect(container.textContent).toBe('initial');
     // But updated after microtask flush
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     expect(container.textContent).toBe('updated');
     root.unmount();
   });
@@ -179,16 +186,14 @@ describe('reconciler — placeChild stable position', () => {
     function App() {
       const [items, si] = useState(['a', 'b', 'c']);
       setItems = si;
-      return createElement('ul', null,
-        ...items.map(i => createElement('li', { key: i }, i)),
-      );
+      return createElement('ul', null, ...items.map((i) => createElement('li', { key: i }, i)));
     }
     const root = createRoot(container);
     root.render(createElement(App, null));
 
     // Update with same order but different content
     setItems!(['a', 'b', 'c']);
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     const lis = container.querySelectorAll('li');
     expect(lis.length).toBe(3);
     expect(lis[0].textContent).toBe('a');
@@ -210,7 +215,7 @@ describe('work-loop — DOM node updates', () => {
     expect(container.querySelector('div')!.style.color).toBe('red');
 
     setColor!('blue');
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 50));
     expect(container.querySelector('div')!.style.color).toBe('blue');
     root.unmount();
   });

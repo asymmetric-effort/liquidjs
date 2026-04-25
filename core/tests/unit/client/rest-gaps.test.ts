@@ -11,10 +11,11 @@ afterEach(() => {
 
 describe('createRestClient — timeout + external signal', () => {
   it('aborts via timeout controller when timeout is set', async () => {
-    const mockFetch = vi.fn().mockImplementation(() =>
-      new Promise((_, reject) => {
-        setTimeout(() => reject(new DOMException('The operation was aborted.', 'AbortError')), 5);
-      }),
+    const mockFetch = vi.fn().mockImplementation(
+      () =>
+        new Promise((_, reject) => {
+          setTimeout(() => reject(new DOMException('The operation was aborted.', 'AbortError')), 5);
+        }),
     );
     vi.stubGlobal('fetch', mockFetch);
 
@@ -38,9 +39,14 @@ describe('createRestClient — timeout + external signal', () => {
   });
 
   it('aborts when external signal fires during request with timeout', async () => {
-    const mockFetch = vi.fn().mockImplementation(
-      () => new Promise((_, reject) => setTimeout(() => reject(new DOMException('Aborted', 'AbortError')), 50)),
-    );
+    const mockFetch = vi
+      .fn()
+      .mockImplementation(
+        () =>
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new DOMException('Aborted', 'AbortError')), 50),
+          ),
+      );
     vi.stubGlobal('fetch', mockFetch);
 
     const abortController = new AbortController();
@@ -79,7 +85,13 @@ describe('createRestClient — error interceptors', () => {
     vi.stubGlobal('fetch', mockFetch);
 
     const interceptor = vi.fn(async (err: RestError) => {
-      return new RestError('intercepted: ' + err.message, err.status, err.statusText, err.data, err.config);
+      return new RestError(
+        'intercepted: ' + err.message,
+        err.status,
+        err.statusText,
+        err.data,
+        err.config,
+      );
     });
 
     const client = createRestClient({

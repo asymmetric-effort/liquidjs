@@ -2,11 +2,7 @@
  * Additional tracing tests to close coverage gaps.
  */
 import { describe, it, expect, vi } from 'vitest';
-import {
-  createTracer,
-  startSpan,
-  endSpan,
-} from '../../../src/telemetry/tracing';
+import { createTracer, startSpan, endSpan } from '../../../src/telemetry/tracing';
 
 describe('createTracer — advanced', () => {
   it('flush is no-op when buffer is empty', async () => {
@@ -46,7 +42,9 @@ describe('createTracer — advanced', () => {
     const tracer = createTracer({ serviceName: 'test' });
     const span = tracer.startSpan('async-fail');
     await expect(
-      tracer.withSpan(span, async () => { throw new Error('boom'); }),
+      tracer.withSpan(span, async () => {
+        throw new Error('boom');
+      }),
     ).rejects.toThrow('boom');
   });
 
@@ -54,7 +52,9 @@ describe('createTracer — advanced', () => {
     const tracer = createTracer({ serviceName: 'test' });
     const span = tracer.startSpan('sync-fail');
     expect(() =>
-      tracer.withSpan(span, () => { throw new Error('sync-boom'); }),
+      tracer.withSpan(span, () => {
+        throw new Error('sync-boom');
+      }),
     ).toThrow('sync-boom');
   });
 

@@ -6,10 +6,7 @@
  * and are flushed before flushSync returns.
  */
 
-import {
-  enterFlushSyncContext,
-  exitFlushSyncContext,
-} from '../core/transitions';
+import { enterFlushSyncContext, exitFlushSyncContext } from '../core/transitions';
 import { flushPendingTasks } from '../core/scheduler';
 
 export function flushSync<T>(fn: () => T): T {
