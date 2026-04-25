@@ -78,16 +78,50 @@ export function ComponentsGallery() {
       preview('Splitter', SplitterDemo),
       preview('Tabs Layout', TabsLayoutDemo),
     ]),
-    accordionSection('Visualization', '9 components', openSection, toggle, [
+    accordionSection('Charts & Graphs', '12 components', openSection, toggle, [
       preview('Bar Graph', BarGraphDemo),
       preview('Line Graph', LineGraphDemo),
+      preview('Time-Series', TimeSeriesDemo),
       preview('Pie Chart', PieChartDemo),
-      preview('2D Graph (Force-Directed)', ForceGraphDemo),
-      preview('Hypercube (4D)', HypercubeDemo),
+      preview('Donut Chart', DonutChartDemo),
+      preview('Histogram', HistogramDemo),
+      preview('Box Plot', BoxPlotDemo),
       preview('Scatter Plot', ScatterPlotDemo),
+      preview('Bubble Chart', BubbleChartDemo),
+      preview('Lollipop Chart', LollipopDemo),
+      preview('Waterfall Chart', WaterfallDemo),
+      preview('Funnel Chart', FunnelDemo),
+    ]),
+    accordionSection('Data & Analytics', '9 components', openSection, toggle, [
+      preview('Heat Map', HeatMapDemo),
+      preview('Calendar Heat Map', CalendarHeatMapDemo),
+      preview('Gauge', GaugeDemo),
+      preview('Radar Chart', RadarDemo),
+      preview('Big Number', BigNumberDemo),
+      preview('Word Cloud', WordCloudDemo),
+      preview('Pivot Table', PivotTableDemo),
+      preview('Matrix', MatrixDemo),
+      preview('Gantt Chart', GanttDemo),
+    ]),
+    accordionSection('Hierarchical & Relational', '9 components', openSection, toggle, [
+      preview('Tree Map', TreeMapDemo),
+      preview('Sunburst', SunburstDemo),
+      preview('Sankey Diagram', SankeyDemo),
+      preview('Chord Diagram', ChordDemo),
+      preview('Force-Directed Graph', ForceGraphDemo),
+      preview('Partition Diagram', PartitionDemo),
+      preview('Decomposition Tree', DecompositionTreeDemo),
+      preview('Geospatial Map', GeoMapDemo),
+      preview('Vector Field', VectorFieldDemo),
+    ]),
+    accordionSection('Mathematical', '3 components', openSection, toggle, [
       preview('Cartesian Graph (4-leaf Rose)', CartesianRoseDemo),
       preview('Complex Plane (Mandelbrot)', MandelbrotDemo),
       preview('Polar Graph (3-leaf Rose)', PolarRoseDemo),
+    ]),
+    accordionSection('3D & Advanced', '2 components', openSection, toggle, [
+      preview('Hypercube (4D)', HypercubeDemo),
+      preview('3D Layers', ThreeDLayersDemo),
     ]),
   );
 }
@@ -1283,5 +1317,852 @@ function MultiStepWizardDemo() {
         ? createElement('button', { onClick: () => setStep(step + 1), style: { ...formBtnStyle(), backgroundColor: '#3b82f6', color: 'white', border: 'none' } }, 'Next')
         : createElement('button', { onClick: () => setStep(0), style: { ...formBtnStyle(), backgroundColor: '#16a34a', color: 'white', border: 'none' } }, 'Finish'),
     ),
+  );
+}
+
+// ─── Visualization Demos ────────────────────────────────────────────
+
+function TimeSeriesDemo() {
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const values = [32, 45, 38, 62, 55, 78, 85, 72, 90, 68, 54, 42];
+  const [hovered, setHovered] = useState(-1);
+  const w = 280, h = 120, pad = 25;
+  const max = Math.max(...values);
+  const stepX = (w - pad * 2) / (values.length - 1);
+
+  const pathD = values.map((v, i) => {
+    const x = pad + i * stepX;
+    const y = h - pad - (v / max) * (h - pad * 2);
+    return `${i === 0 ? 'M' : 'L'}${x},${y}`;
+  }).join(' ');
+
+  return createElement('svg', { width: String(w), height: String(h + 20), viewBox: `0 0 ${w} ${h + 20}`, style: { background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' } },
+    createElement('line', { x1: String(pad), y1: String(h - pad), x2: String(w - pad), y2: String(h - pad), stroke: '#d1d5db', strokeWidth: '1' }),
+    createElement('path', { d: pathD, fill: 'none', stroke: '#3b82f6', strokeWidth: '2' }),
+    ...values.map((v, i) => {
+      const x = pad + i * stepX;
+      const y = h - pad - (v / max) * (h - pad * 2);
+      return createElement('g', { key: String(i) },
+        createElement('circle', {
+          cx: String(x), cy: String(y), r: hovered === i ? '5' : '3',
+          fill: '#3b82f6', opacity: hovered === i ? '1' : '0.7',
+          style: { cursor: 'pointer', transition: 'r 0.15s' },
+          onMouseEnter: () => setHovered(i),
+          onMouseLeave: () => setHovered(-1),
+        }),
+        createElement('text', { x: String(x), y: String(h - 8), textAnchor: 'middle', fontSize: '8', fill: '#64748b' }, months[i]),
+        hovered === i
+          ? createElement('text', { x: String(x), y: String(y - 10), textAnchor: 'middle', fontSize: '10', fill: '#0f172a', fontWeight: '600' }, String(v))
+          : null,
+      );
+    }),
+  );
+}
+
+function DonutChartDemo() {
+  const data = [
+    { label: 'Desktop', value: 45, color: '#3b82f6' },
+    { label: 'Mobile', value: 30, color: '#10b981' },
+    { label: 'Tablet', value: 15, color: '#f59e0b' },
+    { label: 'Other', value: 10, color: '#8b5cf6' },
+  ];
+  const [hovered, setHovered] = useState(-1);
+  const total = data.reduce((s, d) => s + d.value, 0);
+  const cx = 60, cy = 60, outer = 50, inner = 30;
+  let startAngle = -Math.PI / 2;
+
+  const arcs = data.map((d, i) => {
+    const angle = (d.value / total) * 2 * Math.PI;
+    const x1 = cx + outer * Math.cos(startAngle), y1 = cy + outer * Math.sin(startAngle);
+    const x2 = cx + outer * Math.cos(startAngle + angle), y2 = cy + outer * Math.sin(startAngle + angle);
+    const ix1 = cx + inner * Math.cos(startAngle + angle), iy1 = cy + inner * Math.sin(startAngle + angle);
+    const ix2 = cx + inner * Math.cos(startAngle), iy2 = cy + inner * Math.sin(startAngle);
+    const large = angle > Math.PI ? 1 : 0;
+    const path = `M${x1},${y1} A${outer},${outer} 0 ${large} 1 ${x2},${y2} L${ix1},${iy1} A${inner},${inner} 0 ${large} 0 ${ix2},${iy2} Z`;
+    startAngle += angle;
+    return createElement('path', {
+      key: d.label, d: path, fill: d.color,
+      opacity: hovered === i ? '1' : '0.8',
+      style: { cursor: 'pointer', transition: 'opacity 0.15s' },
+      onMouseEnter: () => setHovered(i),
+      onMouseLeave: () => setHovered(-1),
+    });
+  });
+
+  return createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '16px' } },
+    createElement('svg', { width: '120', height: '120', viewBox: '0 0 120 120' }, ...arcs),
+    createElement('div', { style: { fontSize: '12px' } },
+      ...data.map((d, i) =>
+        createElement('div', { key: d.label, style: { display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px', fontWeight: hovered === i ? '700' : '400' } },
+          createElement('div', { style: { width: '10px', height: '10px', borderRadius: '2px', backgroundColor: d.color } }),
+          createElement('span', null, `${d.label} ${d.value}%`),
+        ),
+      ),
+    ),
+  );
+}
+
+function HistogramDemo() {
+  const bins = [3, 7, 12, 18, 25, 22, 15, 9, 5, 2];
+  const labels = ['0-9','10-19','20-29','30-39','40-49','50-59','60-69','70-79','80-89','90-99'];
+  const [hovered, setHovered] = useState(-1);
+  const w = 260, h = 120, pad = 20;
+  const max = Math.max(...bins);
+  const barW = (w - pad * 2) / bins.length;
+
+  return createElement('svg', { width: String(w), height: String(h + 20), viewBox: `0 0 ${w} ${h + 20}`, style: { background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' } },
+    createElement('line', { x1: String(pad), y1: String(h), x2: String(w - pad), y2: String(h), stroke: '#d1d5db', strokeWidth: '1' }),
+    ...bins.map((count, i) => {
+      const barH = (count / max) * (h - pad);
+      const x = pad + i * barW;
+      const y = h - barH;
+      return createElement('g', { key: String(i) },
+        createElement('rect', {
+          x: String(x + 1), y: String(y), width: String(barW - 2), height: String(barH),
+          fill: '#3b82f6', opacity: hovered === i ? '1' : '0.7',
+          style: { cursor: 'pointer', transition: 'opacity 0.15s' },
+          onMouseEnter: () => setHovered(i),
+          onMouseLeave: () => setHovered(-1),
+        }),
+        hovered === i
+          ? createElement('text', { x: String(x + barW / 2), y: String(y - 4), textAnchor: 'middle', fontSize: '10', fill: '#0f172a', fontWeight: '600' }, `n=${count}`)
+          : null,
+        createElement('text', { x: String(x + barW / 2), y: String(h + 12), textAnchor: 'middle', fontSize: '6', fill: '#64748b' }, labels[i]),
+      );
+    }),
+  );
+}
+
+function BoxPlotDemo() {
+  const stats = { min: 35000, q1: 52000, median: 68000, q3: 85000, max: 120000 };
+  const [hovered, setHovered] = useState<string | null>(null);
+  const w = 260, h = 80, pad = 30;
+  const range = stats.max - stats.min;
+  const scale = (v: number) => pad + ((v - stats.min) / range) * (w - pad * 2);
+
+  const fmt = (v: number) => `$${Math.round(v / 1000)}k`;
+  const cy = 40;
+
+  return createElement('svg', { width: String(w), height: String(h), viewBox: `0 0 ${w} ${h}`, style: { background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' } },
+    createElement('line', { x1: String(scale(stats.min)), y1: String(cy), x2: String(scale(stats.q1)), y2: String(cy), stroke: '#64748b', strokeWidth: '2' }),
+    createElement('line', { x1: String(scale(stats.q3)), y1: String(cy), x2: String(scale(stats.max)), y2: String(cy), stroke: '#64748b', strokeWidth: '2' }),
+    createElement('rect', {
+      x: String(scale(stats.q1)), y: String(cy - 15), width: String(scale(stats.q3) - scale(stats.q1)), height: '30',
+      fill: hovered === 'box' ? '#3b82f6' : '#93c5fd', stroke: '#3b82f6', strokeWidth: '1.5', rx: '3',
+      style: { cursor: 'pointer', transition: 'fill 0.15s' },
+      onMouseEnter: () => setHovered('box'),
+      onMouseLeave: () => setHovered(null),
+    }),
+    createElement('line', { x1: String(scale(stats.median)), y1: String(cy - 15), x2: String(scale(stats.median)), y2: String(cy + 15), stroke: '#1d4ed8', strokeWidth: '2' }),
+    ...(['min', 'q1', 'median', 'q3', 'max'] as const).map(k => {
+      const x = scale(stats[k]);
+      return createElement('g', { key: k,
+        onMouseEnter: () => setHovered(k),
+        onMouseLeave: () => setHovered(null),
+      },
+        createElement('line', { x1: String(x), y1: String(cy - 10), x2: String(x), y2: String(cy + 10), stroke: '#1d4ed8', strokeWidth: k === 'min' || k === 'max' ? '1.5' : '0' }),
+        hovered === k
+          ? createElement('text', { x: String(x), y: '12', textAnchor: 'middle', fontSize: '10', fill: '#0f172a', fontWeight: '600' }, `${k}: ${fmt(stats[k])}`)
+          : null,
+      );
+    }),
+    createElement('text', { x: String(scale(stats.min)), y: String(h - 4), textAnchor: 'middle', fontSize: '9', fill: '#64748b' }, fmt(stats.min)),
+    createElement('text', { x: String(scale(stats.max)), y: String(h - 4), textAnchor: 'middle', fontSize: '9', fill: '#64748b' }, fmt(stats.max)),
+    hovered === 'box'
+      ? createElement('text', { x: String((scale(stats.q1) + scale(stats.q3)) / 2), y: '12', textAnchor: 'middle', fontSize: '10', fill: '#0f172a', fontWeight: '600' },
+          `IQR: ${fmt(stats.q1)}-${fmt(stats.q3)}`)
+      : null,
+  );
+}
+
+function BubbleChartDemo() {
+  const data = [
+    { label: 'React', x: 40, y: 30, r: 22, color: '#3b82f6' },
+    { label: 'Vue', x: 100, y: 55, r: 16, color: '#10b981' },
+    { label: 'Angular', x: 170, y: 40, r: 18, color: '#ef4444' },
+    { label: 'Svelte', x: 65, y: 80, r: 12, color: '#f59e0b' },
+    { label: 'Solid', x: 140, y: 85, r: 10, color: '#8b5cf6' },
+    { label: 'Liquid', x: 210, y: 65, r: 20, color: '#ec4899' },
+  ];
+  const [hovered, setHovered] = useState(-1);
+
+  return createElement('svg', { width: '260', height: '120', viewBox: '0 0 260 120', style: { background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' } },
+    ...data.map((d, i) =>
+      createElement('g', { key: d.label,
+        onMouseEnter: () => setHovered(i),
+        onMouseLeave: () => setHovered(-1),
+        style: { cursor: 'pointer' },
+      },
+        createElement('circle', {
+          cx: String(d.x), cy: String(d.y), r: String(hovered === i ? d.r + 3 : d.r),
+          fill: d.color, opacity: hovered === i ? '1' : '0.6',
+          style: { transition: 'r 0.15s, opacity 0.15s' },
+        }),
+        hovered === i
+          ? createElement('text', { x: String(d.x), y: String(d.y - d.r - 6), textAnchor: 'middle', fontSize: '10', fill: '#0f172a', fontWeight: '600' },
+              `${d.label}: ${d.r * 5}`)
+          : null,
+      ),
+    ),
+  );
+}
+
+function LollipopDemo() {
+  const data = [
+    { label: 'Mon', value: 42 }, { label: 'Tue', value: 65 },
+    { label: 'Wed', value: 38 }, { label: 'Thu', value: 78 },
+    { label: 'Fri', value: 55 }, { label: 'Sat', value: 90 },
+  ];
+  const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+  const [hovered, setHovered] = useState(-1);
+  const w = 240, h = 120, pad = 20;
+  const max = Math.max(...data.map(d => d.value));
+  const gap = (w - pad * 2) / data.length;
+
+  return createElement('svg', { width: String(w), height: String(h + 15), viewBox: `0 0 ${w} ${h + 15}`, style: { background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' } },
+    createElement('line', { x1: String(pad), y1: String(h), x2: String(w - pad), y2: String(h), stroke: '#d1d5db', strokeWidth: '1' }),
+    ...data.map((d, i) => {
+      const x = pad + gap * i + gap / 2;
+      const y = h - (d.value / max) * (h - pad * 2);
+      return createElement('g', { key: d.label,
+        onMouseEnter: () => setHovered(i),
+        onMouseLeave: () => setHovered(-1),
+        style: { cursor: 'pointer' },
+      },
+        createElement('line', { x1: String(x), y1: String(h), x2: String(x), y2: String(y), stroke: colors[i], strokeWidth: '2' }),
+        createElement('circle', {
+          cx: String(x), cy: String(y), r: hovered === i ? '7' : '5',
+          fill: colors[i], opacity: hovered === i ? '1' : '0.8',
+          style: { transition: 'r 0.15s' },
+        }),
+        createElement('text', { x: String(x), y: String(h + 12), textAnchor: 'middle', fontSize: '9', fill: '#64748b' }, d.label),
+        hovered === i
+          ? createElement('text', { x: String(x), y: String(y - 10), textAnchor: 'middle', fontSize: '10', fill: '#0f172a', fontWeight: '600' }, String(d.value))
+          : null,
+      );
+    }),
+  );
+}
+
+function WaterfallDemo() {
+  const data = [
+    { label: 'Revenue', value: 500, type: 'pos' as const },
+    { label: 'COGS', value: -200, type: 'neg' as const },
+    { label: 'OpEx', value: -120, type: 'neg' as const },
+    { label: 'Tax', value: -45, type: 'neg' as const },
+    { label: 'Profit', value: 135, type: 'total' as const },
+  ];
+  const [hovered, setHovered] = useState(-1);
+  const w = 260, h = 120, pad = 20;
+  const maxVal = 500;
+  const barW = (w - pad * 2) / data.length;
+
+  let running = 0;
+  const bars = data.map((d, i) => {
+    let top: number, barH: number, color: string;
+    if (d.type === 'total') {
+      top = h - (d.value / maxVal) * (h - pad * 2);
+      barH = (d.value / maxVal) * (h - pad * 2);
+      color = '#3b82f6';
+    } else if (d.type === 'pos') {
+      top = h - ((running + d.value) / maxVal) * (h - pad * 2);
+      barH = (d.value / maxVal) * (h - pad * 2);
+      color = '#10b981';
+    } else {
+      top = h - (running / maxVal) * (h - pad * 2);
+      barH = (Math.abs(d.value) / maxVal) * (h - pad * 2);
+      color = '#ef4444';
+    }
+    if (d.type !== 'total') running += d.value;
+    const x = pad + i * barW;
+    return createElement('g', { key: d.label,
+      onMouseEnter: () => setHovered(i),
+      onMouseLeave: () => setHovered(-1),
+      style: { cursor: 'pointer' },
+    },
+      createElement('rect', {
+        x: String(x + 4), y: String(top), width: String(barW - 8), height: String(barH),
+        fill: color, opacity: hovered === i ? '1' : '0.75', rx: '2',
+        style: { transition: 'opacity 0.15s' },
+      }),
+      createElement('text', { x: String(x + barW / 2), y: String(h + 12), textAnchor: 'middle', fontSize: '8', fill: '#64748b' }, d.label),
+      hovered === i
+        ? createElement('text', { x: String(x + barW / 2), y: String(top - 4), textAnchor: 'middle', fontSize: '10', fill: '#0f172a', fontWeight: '600' },
+            `${d.value > 0 ? '+' : ''}${d.value}`)
+        : null,
+    );
+  });
+
+  return createElement('svg', { width: String(w), height: String(h + 20), viewBox: `0 0 ${w} ${h + 20}`, style: { background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' } },
+    createElement('line', { x1: String(pad), y1: String(h), x2: String(w - pad), y2: String(h), stroke: '#d1d5db', strokeWidth: '1' }),
+    ...bars,
+  );
+}
+
+function FunnelDemo() {
+  const data = [
+    { label: 'Visitors', count: 10000 },
+    { label: 'Leads', count: 4200 },
+    { label: 'Trials', count: 1800 },
+    { label: 'Customers', count: 600 },
+  ];
+  const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
+  const [hovered, setHovered] = useState(-1);
+  const w = 260, segH = 28, pad = 20;
+  const maxCount = data[0]!.count;
+  const h = data.length * segH + pad;
+
+  return createElement('svg', { width: String(w), height: String(h), viewBox: `0 0 ${w} ${h}`, style: { background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' } },
+    ...data.map((d, i) => {
+      const thisW = (d.count / maxCount) * (w - pad * 2);
+      const nextW = i < data.length - 1 ? (data[i + 1]!.count / maxCount) * (w - pad * 2) : thisW * 0.7;
+      const x1 = (w - thisW) / 2, x2 = (w + thisW) / 2;
+      const x3 = (w + nextW) / 2, x4 = (w - nextW) / 2;
+      const y1 = i * segH + 5, y2 = y1 + segH - 2;
+      const path = `M${x1},${y1} L${x2},${y1} L${x3},${y2} L${x4},${y2} Z`;
+      const pct = Math.round((d.count / maxCount) * 100);
+      return createElement('g', { key: d.label,
+        onMouseEnter: () => setHovered(i),
+        onMouseLeave: () => setHovered(-1),
+        style: { cursor: 'pointer' },
+      },
+        createElement('path', {
+          d: path, fill: colors[i], opacity: hovered === i ? '1' : '0.75',
+          style: { transition: 'opacity 0.15s' },
+        }),
+        createElement('text', {
+          x: String(w / 2), y: String(y1 + segH / 2 + 3), textAnchor: 'middle',
+          fontSize: '10', fill: 'white', fontWeight: '600',
+        }, hovered === i ? `${d.label}: ${d.count.toLocaleString()} (${pct}%)` : d.label),
+      );
+    }),
+  );
+}
+
+function BigNumberDemo() {
+  const [hovered, setHovered] = useState(false);
+  const sparkline = [18, 22, 19, 28, 25, 32, 30, 38, 35, 42, 40, 48];
+  const w = 80, h = 24;
+  const max = Math.max(...sparkline), min = Math.min(...sparkline);
+  const step = w / (sparkline.length - 1);
+  const pathD = sparkline.map((v, i) => {
+    const x = i * step;
+    const y = h - ((v - min) / (max - min)) * h;
+    return `${i === 0 ? 'M' : 'L'}${x},${y}`;
+  }).join(' ');
+
+  return createElement('div', {
+    style: {
+      textAlign: 'center', padding: '16px', background: hovered ? '#f0f9ff' : '#f8fafc',
+      borderRadius: '8px', border: '1px solid #e2e8f0', transition: 'background 0.2s', cursor: 'pointer',
+    },
+    onMouseEnter: () => setHovered(true),
+    onMouseLeave: () => setHovered(false),
+  },
+    createElement('div', { style: { fontSize: '11px', color: '#64748b', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' } }, 'Revenue'),
+    createElement('div', { style: { fontSize: '28px', fontWeight: '700', color: '#0f172a' } }, '$1.2M'),
+    createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '4px' } },
+      createElement('span', { style: { fontSize: '13px', color: '#10b981', fontWeight: '600' } }, '\u25B2 12.5%'),
+      createElement('svg', { width: String(w), height: String(h), viewBox: `0 0 ${w} ${h}` },
+        createElement('path', { d: pathD, fill: 'none', stroke: '#10b981', strokeWidth: '1.5' }),
+      ),
+    ),
+  );
+}
+
+function GaugeDemo() {
+  const value = 72;
+  const [hovered, setHovered] = useState(false);
+  const cx = 100, cy = 90, r = 70;
+  const startAngle = Math.PI, endAngle = 2 * Math.PI;
+  const segments = [
+    { from: 0, to: 0.33, color: '#ef4444' },
+    { from: 0.33, to: 0.66, color: '#f59e0b' },
+    { from: 0.66, to: 1, color: '#10b981' },
+  ];
+
+  const arcPath = (fromPct: number, toPct: number) => {
+    const a1 = startAngle + fromPct * Math.PI;
+    const a2 = startAngle + toPct * Math.PI;
+    const x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
+    const x2 = cx + r * Math.cos(a2), y2 = cy + r * Math.sin(a2);
+    return `M${x1},${y1} A${r},${r} 0 0 1 ${x2},${y2}`;
+  };
+
+  const needleAngle = startAngle + (value / 100) * Math.PI;
+  const nx = cx + (r - 15) * Math.cos(needleAngle);
+  const ny = cy + (r - 15) * Math.sin(needleAngle);
+
+  return createElement('svg', {
+    width: '200', height: '110', viewBox: '0 0 200 110',
+    style: { background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0', cursor: 'pointer' },
+    onMouseEnter: () => setHovered(true),
+    onMouseLeave: () => setHovered(false),
+  },
+    ...segments.map(s =>
+      createElement('path', { key: String(s.from), d: arcPath(s.from, s.to), fill: 'none', stroke: s.color, strokeWidth: '12', strokeLinecap: 'round', opacity: hovered ? '1' : '0.7' }),
+    ),
+    createElement('line', { x1: String(cx), y1: String(cy), x2: String(nx), y2: String(ny), stroke: '#0f172a', strokeWidth: '2.5', strokeLinecap: 'round' }),
+    createElement('circle', { cx: String(cx), cy: String(cy), r: '4', fill: '#0f172a' }),
+    createElement('text', { x: String(cx), y: String(cy + (hovered ? 0 : 0)), textAnchor: 'middle', fontSize: hovered ? '16' : '14', fill: '#0f172a', fontWeight: '700', dy: '-8' }, `${value}%`),
+    hovered
+      ? createElement('text', { x: String(cx), y: String(cy + 6), textAnchor: 'middle', fontSize: '9', fill: '#64748b' }, 'System Health')
+      : null,
+  );
+}
+
+function RadarDemo() {
+  const axes = ['Speed', 'Power', 'Range', 'Efficiency', 'Durability'];
+  const values = [0.8, 0.65, 0.9, 0.7, 0.85];
+  const [hovered, setHovered] = useState(-1);
+  const cx = 100, cy = 90, r = 65;
+  const angleStep = (2 * Math.PI) / axes.length;
+  const startOff = -Math.PI / 2;
+
+  const gridLevels = [0.25, 0.5, 0.75, 1];
+  const grids = gridLevels.map(level => {
+    const pts = axes.map((_, i) => {
+      const a = startOff + i * angleStep;
+      return `${cx + r * level * Math.cos(a)},${cy + r * level * Math.sin(a)}`;
+    }).join(' ');
+    return createElement('polygon', { key: String(level), points: pts, fill: 'none', stroke: '#e2e8f0', strokeWidth: '0.5' });
+  });
+
+  const dataPoints = values.map((v, i) => {
+    const a = startOff + i * angleStep;
+    return { x: cx + r * v * Math.cos(a), y: cy + r * v * Math.sin(a) };
+  });
+  const polyPts = dataPoints.map(p => `${p.x},${p.y}`).join(' ');
+
+  const axisLines = axes.map((label, i) => {
+    const a = startOff + i * angleStep;
+    const ex = cx + r * Math.cos(a), ey = cy + r * Math.sin(a);
+    const lx = cx + (r + 14) * Math.cos(a), ly = cy + (r + 14) * Math.sin(a);
+    return createElement('g', { key: label },
+      createElement('line', { x1: String(cx), y1: String(cy), x2: String(ex), y2: String(ey), stroke: '#d1d5db', strokeWidth: '0.5' }),
+      createElement('text', { x: String(lx), y: String(ly + 3), textAnchor: 'middle', fontSize: '8', fill: hovered === i ? '#0f172a' : '#64748b', fontWeight: hovered === i ? '700' : '400' }, label),
+    );
+  });
+
+  return createElement('svg', { width: '200', height: '180', viewBox: '0 0 200 180', style: { background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' } },
+    ...grids,
+    ...axisLines,
+    createElement('polygon', { points: polyPts, fill: '#3b82f6', fillOpacity: '0.2', stroke: '#3b82f6', strokeWidth: '1.5' }),
+    ...dataPoints.map((p, i) =>
+      createElement('circle', {
+        key: String(i), cx: String(p.x), cy: String(p.y),
+        r: hovered === i ? '6' : '4', fill: '#3b82f6', opacity: hovered === i ? '1' : '0.8',
+        style: { cursor: 'pointer', transition: 'r 0.15s' },
+        onMouseEnter: () => setHovered(i),
+        onMouseLeave: () => setHovered(-1),
+      }),
+    ),
+    hovered >= 0
+      ? createElement('text', { x: String(dataPoints[hovered]!.x), y: String(dataPoints[hovered]!.y - 10), textAnchor: 'middle', fontSize: '10', fill: '#0f172a', fontWeight: '600' },
+          `${axes[hovered]}: ${Math.round(values[hovered]! * 100)}`)
+      : null,
+  );
+}
+
+function WordCloudDemo() {
+  const words = [
+    { text: 'TypeScript', size: 28, x: 60, y: 35, color: '#3b82f6', rotate: 0 },
+    { text: 'Components', size: 22, x: 170, y: 50, color: '#10b981', rotate: -10 },
+    { text: 'Hooks', size: 24, x: 40, y: 75, color: '#f59e0b', rotate: 5 },
+    { text: 'Virtual DOM', size: 18, x: 200, y: 90, color: '#ef4444', rotate: -5 },
+    { text: 'State', size: 20, x: 120, y: 25, color: '#8b5cf6', rotate: 8 },
+    { text: 'Rendering', size: 16, x: 100, y: 95, color: '#ec4899', rotate: -8 },
+    { text: 'Effects', size: 19, x: 230, y: 30, color: '#06b6d4', rotate: 12 },
+    { text: 'Context', size: 17, x: 160, y: 100, color: '#84cc16', rotate: -3 },
+    { text: 'JSX', size: 26, x: 30, y: 105, color: '#3b82f6', rotate: 0 },
+    { text: 'Refs', size: 15, x: 250, y: 65, color: '#10b981', rotate: 6 },
+  ];
+  const [hovered, setHovered] = useState(-1);
+
+  return createElement('svg', { width: '280', height: '120', viewBox: '0 0 280 120', style: { background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' } },
+    ...words.map((w, i) =>
+      createElement('text', {
+        key: w.text, x: String(w.x), y: String(w.y),
+        fontSize: String(hovered === i ? w.size + 4 : w.size),
+        fill: w.color,
+        opacity: hovered === i ? '1' : '0.7',
+        fontWeight: hovered === i ? '800' : '600',
+        transform: `rotate(${w.rotate}, ${w.x}, ${w.y})`,
+        style: { cursor: 'pointer', transition: 'font-size 0.15s, opacity 0.15s' },
+        onMouseEnter: () => setHovered(i),
+        onMouseLeave: () => setHovered(-1),
+      }, w.text),
+    ),
+  );
+}
+
+function HeatMapDemo() {
+  const [hover, setHover] = useState<string | null>(null);
+  const data = Array.from({ length: 30 }, (_, i) => Math.floor(Math.random() * 100));
+  const cols = 6, rows = 5, size = 36, gap = 2;
+  return createElement('svg', { width: (size + gap) * cols, height: (size + gap) * rows + 20 },
+    ...data.map((v, i) => {
+      const x = (i % cols) * (size + gap), y = Math.floor(i / cols) * (size + gap);
+      const intensity = Math.round((v / 100) * 255);
+      const key = `${Math.floor(i / cols)}-${i % cols}`;
+      return createElement('g', { key },
+        createElement('rect', {
+          x, y, width: size, height: size, rx: 4,
+          fill: `rgb(${255 - intensity},${255 - intensity},255)`,
+          stroke: hover === key ? '#1e40af' : 'none', strokeWidth: 2,
+          onMouseEnter: () => setHover(key), onMouseLeave: () => setHover(null),
+        }),
+        hover === key ? createElement('text', { x: x + size / 2, y: y + size / 2 + 4, textAnchor: 'middle', fontSize: 11, fill: v > 50 ? '#fff' : '#333' }, `${v}`) : null,
+      );
+    }),
+  );
+}
+
+function CalendarHeatMapDemo() {
+  const [hover, setHover] = useState<number | null>(null);
+  const cells = Array.from({ length: 84 }, (_, i) => Math.floor(Math.random() * 5));
+  const cols = 12, size = 14, gap = 2;
+  const greens = ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'];
+  return createElement('svg', { width: (size + gap) * cols + 4, height: (size + gap) * 7 + 20 },
+    ...cells.map((v, i) => {
+      const x = Math.floor(i / 7) * (size + gap) + 2, y = (i % 7) * (size + gap) + 2;
+      return createElement('g', { key: i },
+        createElement('rect', {
+          x, y, width: size, height: size, rx: 2, fill: greens[v],
+          stroke: hover === i ? '#333' : 'none', strokeWidth: 1,
+          onMouseEnter: () => setHover(i), onMouseLeave: () => setHover(null),
+        }),
+        hover === i ? createElement('text', { x: x + size / 2, y: y - 3, textAnchor: 'middle', fontSize: 9, fill: '#333' }, `W${Math.floor(i / 7) + 1}D${(i % 7) + 1}: ${v}`) : null,
+      );
+    }),
+  );
+}
+
+function PivotTableDemo() {
+  const [hover, setHover] = useState<string | null>(null);
+  const products = ['Widget', 'Gadget', 'Doohickey'];
+  const regions = ['North', 'South', 'East', 'West'];
+  const data: Record<string, Record<string, number>> = {
+    Widget: { North: 120, South: 95, East: 140, West: 80 },
+    Gadget: { North: 65, South: 110, East: 75, West: 130 },
+    Doohickey: { North: 90, South: 55, East: 100, West: 70 },
+  };
+  const cellStyle = (key: string) => ({
+    padding: '6px 12px', textAlign: 'right' as const, cursor: 'pointer',
+    backgroundColor: hover === key ? '#dbeafe' : 'transparent', transition: 'background-color 0.15s',
+  });
+  return createElement('table', { className: 'data-table', style: { fontSize: '13px', borderCollapse: 'collapse' as const, width: '100%' } },
+    createElement('thead', null,
+      createElement('tr', null,
+        createElement('th', { style: { padding: '6px 12px', textAlign: 'left' as const } }, 'Product'),
+        ...regions.map(r => createElement('th', { key: r, style: { padding: '6px 12px' } }, r)),
+        createElement('th', { style: { padding: '6px 12px' } }, 'Total'),
+      ),
+    ),
+    createElement('tbody', null,
+      ...products.map(p => {
+        const total = regions.reduce((s, r) => s + data[p][r], 0);
+        return createElement('tr', { key: p },
+          createElement('td', { style: { padding: '6px 12px', fontWeight: 600 } }, p),
+          ...regions.map(r => {
+            const key = `${p}-${r}`;
+            return createElement('td', { key, style: cellStyle(key), onMouseEnter: () => setHover(key), onMouseLeave: () => setHover(null) }, `${data[p][r]}`);
+          }),
+          createElement('td', { style: { padding: '6px 12px', fontWeight: 600 } }, `${total}`),
+        );
+      }),
+    ),
+  );
+}
+
+function MatrixDemo() {
+  const [hover, setHover] = useState<string | null>(null);
+  const labels = ['A', 'B', 'C', 'D', 'E'];
+  const n = labels.length, size = 40, r = 14;
+  const vals = [
+    [1, 0.8, -0.3, 0.5, -0.1],
+    [0.8, 1, -0.5, 0.3, 0.2],
+    [-0.3, -0.5, 1, -0.7, 0.6],
+    [0.5, 0.3, -0.7, 1, -0.4],
+    [-0.1, 0.2, 0.6, -0.4, 1],
+  ];
+  return createElement('svg', { width: size * n + 30, height: size * n + 30 },
+    ...labels.map((l, i) => createElement('text', { key: `lx${i}`, x: 25 + i * size + size / 2, y: 12, textAnchor: 'middle', fontSize: 11, fill: '#475569' }, l)),
+    ...labels.map((l, i) => createElement('text', { key: `ly${i}`, x: 12, y: 25 + i * size + size / 2 + 4, textAnchor: 'middle', fontSize: 11, fill: '#475569' }, l)),
+    ...vals.flatMap((row, i) => row.map((v, j) => {
+      const key = `${i}-${j}`;
+      const color = v >= 0 ? `rgba(59,130,246,${Math.abs(v)})` : `rgba(239,68,68,${Math.abs(v)})`;
+      return createElement('circle', {
+        key, cx: 25 + j * size + size / 2, cy: 25 + i * size + size / 2, r: hover === key ? r + 2 : r,
+        fill: color, stroke: hover === key ? '#1e293b' : 'none', strokeWidth: 1.5,
+        onMouseEnter: () => setHover(key), onMouseLeave: () => setHover(null),
+      });
+    })),
+    hover ? createElement('text', { x: size * n / 2 + 25, y: size * n + 28, textAnchor: 'middle', fontSize: 10, fill: '#334155' },
+      `r=${vals[+hover.split('-')[0]][+hover.split('-')[1]].toFixed(1)}`) : null,
+  );
+}
+
+function GanttDemo() {
+  const [hover, setHover] = useState<number | null>(null);
+  const tasks = [
+    { name: 'Design', start: 0, end: 3, color: '#3b82f6' },
+    { name: 'Backend', start: 2, end: 6, color: '#10b981' },
+    { name: 'Frontend', start: 4, end: 8, color: '#f59e0b' },
+    { name: 'Testing', start: 7, end: 10, color: '#ef4444' },
+    { name: 'Deploy', start: 9, end: 11, color: '#8b5cf6' },
+  ];
+  const w = 280, barH = 24, gap = 4, maxEnd = 11, scale = (w - 80) / maxEnd;
+  return createElement('svg', { width: w, height: tasks.length * (barH + gap) + 20 },
+    ...tasks.map((t, i) => {
+      const y = i * (barH + gap) + 4;
+      return createElement('g', { key: i, onMouseEnter: () => setHover(i), onMouseLeave: () => setHover(null) },
+        createElement('text', { x: 2, y: y + barH / 2 + 4, fontSize: 11, fill: '#475569' }, t.name),
+        createElement('rect', {
+          x: 70 + t.start * scale, y, width: (t.end - t.start) * scale, height: barH, rx: 4,
+          fill: t.color, opacity: hover === i ? 1 : 0.75,
+        }),
+        hover === i ? createElement('text', { x: 70 + t.end * scale + 4, y: y + barH / 2 + 4, fontSize: 10, fill: '#334155' },
+          `Day ${t.start}-${t.end}`) : null,
+      );
+    }),
+  );
+}
+
+function TreeMapDemo() {
+  const [hover, setHover] = useState<number | null>(null);
+  const items = [
+    { label: 'Sales', value: 40, color: '#3b82f6' },
+    { label: 'Marketing', value: 25, color: '#10b981' },
+    { label: 'Engineering', value: 20, color: '#f59e0b' },
+    { label: 'Support', value: 8, color: '#ef4444' },
+    { label: 'HR', value: 4, color: '#8b5cf6' },
+    { label: 'Legal', value: 3, color: '#ec4899' },
+  ];
+  const total = items.reduce((s, d) => s + d.value, 0);
+  const W = 260, H = 160;
+  let cx = 0;
+  const rects = items.map((d, i) => {
+    const rw = (d.value / total) * W;
+    const rect = { x: cx, w: rw, ...d, i };
+    cx += rw;
+    return rect;
+  });
+  return createElement('svg', { width: W, height: H + 20 },
+    ...rects.map(r => createElement('g', { key: r.i, onMouseEnter: () => setHover(r.i), onMouseLeave: () => setHover(null) },
+      createElement('rect', { x: r.x, y: 0, width: r.w, height: H, fill: r.color, opacity: hover === r.i ? 1 : 0.7, stroke: '#fff', strokeWidth: 2 }),
+      r.w > 30 ? createElement('text', { x: r.x + r.w / 2, y: H / 2, textAnchor: 'middle', fontSize: 10, fill: '#fff', fontWeight: 600 }, r.label) : null,
+      hover === r.i ? createElement('text', { x: r.x + r.w / 2, y: H + 14, textAnchor: 'middle', fontSize: 10, fill: '#334155' }, `${r.label}: ${r.value}`) : null,
+    )),
+  );
+}
+
+function SunburstDemo() {
+  const [hover, setHover] = useState<string | null>(null);
+  const cats = [
+    { name: 'Tech', angle: 0, span: 120, color: '#3b82f6', subs: [{ name: 'Web', span: 60 }, { name: 'Mobile', span: 60 }] },
+    { name: 'Sales', angle: 120, span: 120, color: '#10b981', subs: [{ name: 'Direct', span: 40 }, { name: 'Online', span: 40 }, { name: 'Partner', span: 40 }] },
+    { name: 'Ops', angle: 240, span: 120, color: '#f59e0b', subs: [{ name: 'Logistics', span: 50 }, { name: 'Support', span: 70 }] },
+  ];
+  const cx = 120, cy = 120, r1 = 40, r2 = 75, r3 = 105;
+  const arc = (r: number, a1: number, a2: number) => {
+    const rad = (d: number) => (d - 90) * Math.PI / 180;
+    const x1 = cx + r * Math.cos(rad(a1)), y1 = cy + r * Math.sin(rad(a1));
+    const x2 = cx + r * Math.cos(rad(a2)), y2 = cy + r * Math.sin(rad(a2));
+    const large = a2 - a1 > 180 ? 1 : 0;
+    return `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2} Z`;
+  };
+  const elems: ReturnType<typeof createElement>[] = [];
+  cats.forEach(c => {
+    elems.push(createElement('path', { key: c.name, d: arc(r2, c.angle, c.angle + c.span), fill: c.color, opacity: hover === c.name ? 1 : 0.7, stroke: '#fff', strokeWidth: 2, onMouseEnter: () => setHover(c.name), onMouseLeave: () => setHover(null) }));
+    let sa = c.angle;
+    c.subs.forEach((s, si) => {
+      const key = `${c.name}-${si}`;
+      elems.push(createElement('path', { key, d: arc(r3, sa, sa + s.span).replace(`M${cx},${cy}`, `M${cx + (r2 + 1) * Math.cos((sa + s.span / 2 - 90) * Math.PI / 180)},${cy + (r2 + 1) * Math.sin((sa + s.span / 2 - 90) * Math.PI / 180)}`).replace(/Z$/, ''),
+        fill: c.color, opacity: hover === key ? 0.9 : 0.45, stroke: '#fff', strokeWidth: 1, onMouseEnter: () => setHover(key), onMouseLeave: () => setHover(null) }));
+      sa += s.span;
+    });
+  });
+  return createElement('svg', { width: 240, height: 240 },
+    ...elems,
+    hover ? createElement('text', { x: cx, y: cy + 4, textAnchor: 'middle', fontSize: 11, fill: '#1e293b', fontWeight: 600 }, hover.replace('-', ' ')) : null,
+  );
+}
+
+function SankeyDemo() {
+  const [hover, setHover] = useState<number | null>(null);
+  const sources = [{ y: 10, h: 50, label: 'A', color: '#3b82f6' }, { y: 70, h: 40, label: 'B', color: '#10b981' }, { y: 120, h: 30, label: 'C', color: '#f59e0b' }];
+  const targets = [{ y: 5, h: 45, label: 'X', color: '#ef4444' }, { y: 60, h: 35, label: 'Y', color: '#8b5cf6' }, { y: 105, h: 50, label: 'Z', color: '#ec4899' }];
+  const flows = [
+    { si: 0, ti: 0, w: 20, sy: 10, ty: 5 }, { si: 0, ti: 1, w: 15, sy: 30, ty: 60 }, { si: 0, ti: 2, w: 15, sy: 45, ty: 105 },
+    { si: 1, ti: 0, w: 15, sy: 70, ty: 25 }, { si: 1, ti: 1, w: 15, sy: 85, ty: 75 }, { si: 1, ti: 2, w: 10, sy: 100, ty: 120 },
+    { si: 2, ti: 0, w: 10, sy: 120, ty: 40 }, { si: 2, ti: 1, w: 5, sy: 130, ty: 90 }, { si: 2, ti: 2, w: 15, sy: 135, ty: 130 },
+  ];
+  const sx = 10, tx = 230, W = 280;
+  return createElement('svg', { width: W, height: 170 },
+    ...sources.map((s, i) => createElement('rect', { key: `s${i}`, x: sx, y: s.y, width: 20, height: s.h, fill: s.color, rx: 3 })),
+    ...targets.map((t, i) => createElement('rect', { key: `t${i}`, x: tx, y: t.y, width: 20, height: t.h, fill: t.color, rx: 3 })),
+    ...flows.map((f, i) => createElement('path', {
+      key: `f${i}`, fill: 'none', stroke: sources[f.si].color, strokeWidth: f.w * 0.6, opacity: hover === i ? 0.7 : 0.2,
+      d: `M${sx + 20},${f.sy + f.w / 2} C${sx + 80},${f.sy + f.w / 2} ${tx - 60},${f.ty + f.w / 2} ${tx},${f.ty + f.w / 2}`,
+      onMouseEnter: () => setHover(i), onMouseLeave: () => setHover(null),
+    })),
+    ...sources.map((s, i) => createElement('text', { key: `sl${i}`, x: sx + 10, y: s.y + s.h / 2 + 4, textAnchor: 'middle', fontSize: 11, fill: '#fff', fontWeight: 600 }, s.label)),
+    ...targets.map((t, i) => createElement('text', { key: `tl${i}`, x: tx + 10, y: t.y + t.h / 2 + 4, textAnchor: 'middle', fontSize: 11, fill: '#fff', fontWeight: 600 }, t.label)),
+    hover !== null ? createElement('text', { x: W / 2, y: 165, textAnchor: 'middle', fontSize: 10, fill: '#334155' },
+      `${sources[flows[hover].si].label} → ${targets[flows[hover].ti].label}: ${flows[hover].w}`) : null,
+  );
+}
+
+function ChordDemo() {
+  const [hover, setHover] = useState<number | null>(null);
+  const entities = ['Alpha', 'Beta', 'Gamma', 'Delta'];
+  const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
+  const matrix = [[0, 25, 15, 10], [25, 0, 20, 5], [15, 20, 0, 30], [10, 5, 30, 0]];
+  const cx = 110, cy = 110, R = 90, arcW = 12;
+  const n = entities.length, segAngle = 360 / n;
+  const rad = (d: number) => (d - 90) * Math.PI / 180;
+  const arcPath = (r: number, a1: number, a2: number) => {
+    const x1 = cx + r * Math.cos(rad(a1)), y1 = cy + r * Math.sin(rad(a1));
+    const x2 = cx + r * Math.cos(rad(a2)), y2 = cy + r * Math.sin(rad(a2));
+    return `M${x1},${y1} A${r},${r} 0 0 1 ${x2},${y2}`;
+  };
+  const chords: ReturnType<typeof createElement>[] = [];
+  let idx = 0;
+  for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
+    const a1 = i * segAngle + segAngle / 2, a2 = j * segAngle + segAngle / 2;
+    const ci = idx++;
+    chords.push(createElement('path', {
+      key: `ch${ci}`, fill: 'none', stroke: colors[i], strokeWidth: matrix[i][j] * 0.15 + 1,
+      opacity: hover === ci ? 0.8 : 0.25,
+      d: `M${cx + (R - arcW) * Math.cos(rad(a1))},${cy + (R - arcW) * Math.sin(rad(a1))} Q${cx},${cy} ${cx + (R - arcW) * Math.cos(rad(a2))},${cy + (R - arcW) * Math.sin(rad(a2))}`,
+      onMouseEnter: () => setHover(ci), onMouseLeave: () => setHover(null),
+    }));
+  }
+  return createElement('svg', { width: 220, height: 240 },
+    ...entities.map((e, i) => createElement('path', { key: `a${i}`, d: arcPath(R, i * segAngle + 5, (i + 1) * segAngle - 5), fill: 'none', stroke: colors[i], strokeWidth: arcW, strokeLinecap: 'round' })),
+    ...entities.map((e, i) => {
+      const a = i * segAngle + segAngle / 2;
+      return createElement('text', { key: `l${i}`, x: cx + (R + 16) * Math.cos(rad(a)), y: cy + (R + 16) * Math.sin(rad(a)) + 4, textAnchor: 'middle', fontSize: 10, fill: '#475569' }, e);
+    }),
+    ...chords,
+    hover !== null ? createElement('text', { x: cx, y: 235, textAnchor: 'middle', fontSize: 10, fill: '#334155' }, 'Hover a ribbon for details') : null,
+  );
+}
+
+function PartitionDemo() {
+  const [hover, setHover] = useState<string | null>(null);
+  const W = 280, rowH = 30;
+  const tree = [
+    { id: 'root', label: 'Root', x: 0, w: W, level: 0, color: '#3b82f6' },
+    { id: 'a', label: 'Group A', x: 0, w: W * 0.6, level: 1, color: '#10b981' },
+    { id: 'b', label: 'Group B', x: W * 0.6, w: W * 0.4, level: 1, color: '#f59e0b' },
+    { id: 'a1', label: 'A-1', x: 0, w: W * 0.35, level: 2, color: '#06b6d4' },
+    { id: 'a2', label: 'A-2', x: W * 0.35, w: W * 0.25, level: 2, color: '#8b5cf6' },
+    { id: 'b1', label: 'B-1', x: W * 0.6, w: W * 0.2, level: 2, color: '#ef4444' },
+    { id: 'b2', label: 'B-2', x: W * 0.6 + W * 0.2, w: W * 0.2, level: 2, color: '#ec4899' },
+  ];
+  return createElement('svg', { width: W, height: rowH * 3 + 20 },
+    ...tree.map(n => createElement('g', { key: n.id, onMouseEnter: () => setHover(n.id), onMouseLeave: () => setHover(null) },
+      createElement('rect', { x: n.x + 1, y: n.level * rowH + 1, width: n.w - 2, height: rowH - 2, rx: 3, fill: n.color, opacity: hover === n.id ? 1 : 0.7, stroke: '#fff', strokeWidth: 1 }),
+      n.w > 40 ? createElement('text', { x: n.x + n.w / 2, y: n.level * rowH + rowH / 2 + 4, textAnchor: 'middle', fontSize: 10, fill: '#fff', fontWeight: 600 }, n.label) : null,
+    )),
+    hover ? createElement('text', { x: W / 2, y: rowH * 3 + 15, textAnchor: 'middle', fontSize: 10, fill: '#334155' }, `Node: ${hover}`) : null,
+  );
+}
+
+function DecompositionTreeDemo() {
+  const [hover, setHover] = useState<string | null>(null);
+  const nodes = [
+    { id: 'R', x: 20, y: 80, label: 'Revenue' },
+    { id: 'P', x: 110, y: 30, label: 'Product' }, { id: 'S', x: 110, y: 80, label: 'Service' }, { id: 'L', x: 110, y: 130, label: 'License' },
+    { id: 'P1', x: 210, y: 10, label: 'HW' }, { id: 'P2', x: 210, y: 50, label: 'SW' },
+    { id: 'S1', x: 210, y: 70, label: 'Consult' }, { id: 'S2', x: 210, y: 100, label: 'Support' },
+    { id: 'L1', x: 210, y: 120, label: 'Annual' }, { id: 'L2', x: 210, y: 150, label: 'Monthly' },
+  ];
+  const edges = [['R', 'P'], ['R', 'S'], ['R', 'L'], ['P', 'P1'], ['P', 'P2'], ['S', 'S1'], ['S', 'S2'], ['L', 'L1'], ['L', 'L2']];
+  const find = (id: string) => nodes.find(n => n.id === id)!;
+  const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4'];
+  const isOnPath = (id: string): boolean => {
+    if (!hover) return false;
+    if (id === hover) return true;
+    return edges.some(([a, b]) => (b === id && isOnPath(a)) || (a === id && isOnPath(b) && find(b).x > find(a).x && isOnPath(b)));
+  };
+  return createElement('svg', { width: 290, height: 170 },
+    ...edges.map(([a, b], i) => {
+      const na = find(a), nb = find(b);
+      return createElement('line', { key: `e${i}`, x1: na.x + 35, y1: na.y + 10, x2: nb.x, y2: nb.y + 10, stroke: hover && (hover === a || hover === b) ? '#1e293b' : '#cbd5e1', strokeWidth: 1.5 });
+    }),
+    ...nodes.map((n, i) => createElement('g', { key: n.id, onMouseEnter: () => setHover(n.id), onMouseLeave: () => setHover(null) },
+      createElement('rect', { x: n.x, y: n.y, width: n.x < 100 ? 55 : 50, height: 22, rx: 4, fill: colors[i % colors.length], opacity: hover === n.id ? 1 : 0.7 }),
+      createElement('text', { x: n.x + (n.x < 100 ? 27 : 25), y: n.y + 14, textAnchor: 'middle', fontSize: 9, fill: '#fff', fontWeight: 600 }, n.label),
+    )),
+  );
+}
+
+function GeoMapDemo() {
+  const [hover, setHover] = useState<string | null>(null);
+  const states = [
+    { id: 'WA', x: 20, y: 10, w: 40, h: 30, value: 85, color: '#3b82f6' },
+    { id: 'MT', x: 65, y: 10, w: 50, h: 25, value: 30, color: '#10b981' },
+    { id: 'NY', x: 200, y: 25, w: 35, h: 30, value: 95, color: '#ef4444' },
+    { id: 'CA', x: 15, y: 50, w: 30, h: 60, value: 100, color: '#f59e0b' },
+    { id: 'TX', x: 100, y: 80, w: 55, h: 45, value: 78, color: '#8b5cf6' },
+    { id: 'FL', x: 190, y: 90, w: 40, h: 35, value: 65, color: '#ec4899' },
+  ];
+  return createElement('svg', { width: 260, height: 150 },
+    createElement('rect', { x: 5, y: 5, width: 250, height: 130, rx: 8, fill: '#f1f5f9', stroke: '#e2e8f0' }),
+    ...states.map(s => createElement('g', { key: s.id, onMouseEnter: () => setHover(s.id), onMouseLeave: () => setHover(null) },
+      createElement('rect', { x: s.x, y: s.y, width: s.w, height: s.h, rx: 3, fill: s.color, opacity: hover === s.id ? 1 : 0.6, stroke: hover === s.id ? '#1e293b' : '#fff', strokeWidth: hover === s.id ? 2 : 1 }),
+      createElement('text', { x: s.x + s.w / 2, y: s.y + s.h / 2 + 4, textAnchor: 'middle', fontSize: 10, fill: '#fff', fontWeight: 600 }, s.id),
+    )),
+    hover ? createElement('text', { x: 130, y: 145, textAnchor: 'middle', fontSize: 10, fill: '#334155' },
+      `${hover}: value ${states.find(s => s.id === hover)!.value}`) : null,
+  );
+}
+
+function VectorFieldDemo() {
+  const [hover, setHover] = useState<string | null>(null);
+  const cols = 8, rows = 6, spacing = 32, pad = 20;
+  const arrows = Array.from({ length: cols * rows }, (_, i) => {
+    const col = i % cols, row = Math.floor(i / cols);
+    const angle = (col * 30 + row * 45) % 360;
+    const mag = 0.4 + ((col + row) % 4) * 0.2;
+    return { col, row, angle, mag };
+  });
+  return createElement('svg', { width: cols * spacing + pad * 2, height: rows * spacing + pad * 2 + 16 },
+    ...arrows.map((a, i) => {
+      const cx = pad + a.col * spacing + spacing / 2, cy = pad + a.row * spacing + spacing / 2;
+      const len = a.mag * 12;
+      const key = `${a.row}-${a.col}`;
+      return createElement('g', { key, transform: `translate(${cx},${cy}) rotate(${a.angle})`, onMouseEnter: () => setHover(key), onMouseLeave: () => setHover(null) },
+        createElement('line', { x1: -len, y1: 0, x2: len, y2: 0, stroke: hover === key ? '#1e293b' : '#3b82f6', strokeWidth: hover === key ? 2 : 1.5 }),
+        createElement('polygon', { points: `${len},0 ${len - 4},-3 ${len - 4},3`, fill: hover === key ? '#1e293b' : '#3b82f6' }),
+      );
+    }),
+    hover ? createElement('text', { x: (cols * spacing + pad * 2) / 2, y: rows * spacing + pad * 2 + 12, textAnchor: 'middle', fontSize: 10, fill: '#334155' },
+      `[${hover}] angle=${arrows[+hover.split('-')[0] * cols + +hover.split('-')[1]]?.angle}° mag=${arrows[+hover.split('-')[0] * cols + +hover.split('-')[1]]?.mag.toFixed(1)}`) : null,
+  );
+}
+
+function ThreeDLayersDemo() {
+  const [hover, setHover] = useState<number | null>(null);
+  const bars = [
+    { label: 'Q1', value: 60, color: '#3b82f6' }, { label: 'Q2', value: 85, color: '#10b981' },
+    { label: 'Q3', value: 45, color: '#f59e0b' }, { label: 'Q4', value: 70, color: '#ef4444' },
+    { label: 'Q5', value: 90, color: '#8b5cf6' }, { label: 'Q6', value: 55, color: '#ec4899' },
+  ];
+  const maxV = 100, barW = 30, gap = 12, baseY = 140, depth = 10;
+  return createElement('svg', { width: bars.length * (barW + gap) + 40, height: 170 },
+    ...bars.map((b, i) => {
+      const x = 20 + i * (barW + gap), h = (b.value / maxV) * 100, y = baseY - h;
+      return createElement('g', { key: i, onMouseEnter: () => setHover(i), onMouseLeave: () => setHover(null) },
+        createElement('polygon', { points: `${x},${y} ${x + depth},${y - depth} ${x + barW + depth},${y - depth} ${x + barW},${y}`, fill: b.color, opacity: hover === i ? 0.9 : 0.5 }),
+        createElement('polygon', { points: `${x + barW},${y} ${x + barW + depth},${y - depth} ${x + barW + depth},${baseY - depth} ${x + barW},${baseY}`, fill: b.color, opacity: hover === i ? 0.7 : 0.35 }),
+        createElement('rect', { x, y, width: barW, height: h, fill: b.color, opacity: hover === i ? 1 : 0.75 }),
+        createElement('text', { x: x + barW / 2, y: baseY + 14, textAnchor: 'middle', fontSize: 10, fill: '#475569' }, b.label),
+        hover === i ? createElement('text', { x: x + barW / 2, y: y - depth - 4, textAnchor: 'middle', fontSize: 10, fill: '#1e293b', fontWeight: 600 }, `${b.value}`) : null,
+      );
+    }),
   );
 }
