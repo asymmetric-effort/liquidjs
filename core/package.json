@@ -82,7 +82,7 @@
     "@vitest/coverage-istanbul": "^2.1.9",
     "@vitest/coverage-v8": "^2.1.9",
     "eslint": "^9.0.0",
-    "jsdom": "^25.0.0",
+    "jsdom": "^29.0.2",
     "prettier": "^3.0.0",
     "rollup": "^4.0.0",
     "rollup-plugin-dts": "^6.0.0",
