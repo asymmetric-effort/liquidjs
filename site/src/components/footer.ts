@@ -3,7 +3,7 @@
 
 import { createElement } from 'liquidjs';
 
-const VERSION = '0.2.0';
+const VERSION = '0.2.1';
 
 export function Footer() {
   const year = new Date().getFullYear();

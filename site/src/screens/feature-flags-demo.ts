@@ -104,14 +104,32 @@ export function FeatureFlagsDemo() {
 
       createElement(
         FeatureGate,
-        { flag: 'dark-mode', fallback: gatedOff('dark-mode') },
-        gatedOn('dark-mode', 'Dark mode UI is now active.'),
+        { flag: 'dashboard', fallback: gatedOff('dashboard') },
+        gatedOn('dashboard', 'Economic Dashboard is accessible.'),
       ),
 
       createElement(
         FeatureGate,
-        { flag: 'beta-analytics', fallback: gatedOff('beta-analytics') },
-        gatedOn('beta-analytics', 'Beta analytics dashboard is visible.'),
+        { flag: 'concurrent-rendering', fallback: gatedOff('concurrent-rendering') },
+        gatedOn('concurrent-rendering', 'Concurrent rendering demo is accessible.'),
+      ),
+
+      createElement(
+        FeatureGate,
+        { flag: 'component-reference', fallback: gatedOff('component-reference') },
+        gatedOn('component-reference', 'Component Reference page is accessible.'),
+      ),
+
+      createElement(
+        FeatureGate,
+        { flag: 'getting-started', fallback: gatedOff('getting-started') },
+        gatedOn('getting-started', 'Getting Started guide is accessible.'),
+      ),
+
+      createElement(
+        FeatureGate,
+        { flag: 'dark-mode', fallback: gatedOff('dark-mode') },
+        gatedOn('dark-mode', 'Dark mode toggle is visible in the nav bar.'),
       ),
 
       createElement(
@@ -122,10 +140,7 @@ export function FeatureFlagsDemo() {
 
       createElement(
         FeatureGate,
-        {
-          flag: 'feature-flags-demo',
-          fallback: gatedOff('feature-flags-demo'),
-        },
+        { flag: 'feature-flags-demo', fallback: gatedOff('feature-flags-demo') },
         gatedOn('feature-flags-demo', 'This demo page is enabled via its own flag.'),
       ),
     ),

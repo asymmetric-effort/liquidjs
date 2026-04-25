@@ -1,7 +1,7 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import { createElement, FeatureGate } from 'liquidjs';
+import { createElement, FeatureGate, useFeatureFlags } from 'liquidjs';
 import { Link } from 'liquidjs';
 import { useState } from 'liquidjs/hooks';
 
@@ -74,6 +74,34 @@ function DarkModeToggle() {
   );
 }
 
+const navItems: { to: string; label: string; flag?: string; exact?: boolean }[] = [
+  { to: '/', label: 'Home', exact: true },
+  { to: '/components', label: 'Components' },
+  { to: '/dashboard', label: 'Dashboard', flag: 'dashboard' },
+  { to: '/concurrent', label: 'Concurrent', flag: 'concurrent-rendering' },
+  { to: '/api', label: 'API' },
+  { to: '/reference', label: 'Reference', flag: 'component-reference' },
+  { to: '/getting-started', label: 'Get Started', flag: 'getting-started' },
+  { to: '/featureflags', label: 'Flags', flag: 'feature-flags-demo' },
+];
+
+function GatedNavLinks() {
+  const { isEnabled } = useFeatureFlags();
+  return createElement(
+    'div',
+    { className: 'nav-links' },
+    ...navItems
+      .filter((item) => !item.flag || isEnabled(item.flag))
+      .map((item) =>
+        createElement(
+          Link,
+          { to: item.to, className: 'nav-link', activeClassName: 'active', exact: item.exact },
+          item.label,
+        ),
+      ),
+  );
+}
+
 export function NavBar() {
   return createElement(
     'nav',
@@ -87,18 +115,7 @@ export function NavBar() {
         createElement(DropletLogo, null),
         'LiquidJS',
       ),
-      createElement(
-        'div',
-        { className: 'nav-links' },
-        createElement(Link, { to: '/', className: 'nav-link', activeClassName: 'active', exact: true }, 'Home'),
-        createElement(Link, { to: '/components', className: 'nav-link', activeClassName: 'active' }, 'Components'),
-        createElement(Link, { to: '/dashboard', className: 'nav-link', activeClassName: 'active' }, 'Dashboard'),
-        createElement(Link, { to: '/concurrent', className: 'nav-link', activeClassName: 'active' }, 'Concurrent'),
-        createElement(Link, { to: '/api', className: 'nav-link', activeClassName: 'active' }, 'API'),
-        createElement(Link, { to: '/reference', className: 'nav-link', activeClassName: 'active' }, 'Reference'),
-        createElement(Link, { to: '/getting-started', className: 'nav-link', activeClassName: 'active' }, 'Get Started'),
-        createElement(Link, { to: '/featureflags', className: 'nav-link', activeClassName: 'active' }, 'Flags'),
-      ),
+      createElement(GatedNavLinks, null),
       createElement(FeatureGate, { flag: 'dark-mode', fallback: null },
         createElement(DarkModeToggle, null),
       ),

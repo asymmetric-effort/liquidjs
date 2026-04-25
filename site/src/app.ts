@@ -27,7 +27,7 @@ function AppContent() {
     { path: '/components', title: 'Component Gallery', content: createElement(ComponentsGallery, null) },
     { path: '/dashboard', title: 'Economic Dashboard', content: createElement(EconomicDashboard, null), flag: 'dashboard' },
     { path: '/concurrent', title: 'Concurrent Rendering', content: createElement(ConcurrentDemo, null), flag: 'concurrent-rendering' },
-    { path: '/api', title: 'API Integration', content: createElement(ApiIntegration, null), flag: 'api-integration' },
+    { path: '/api', title: 'API Integration', content: createElement(ApiIntegration, null) },
     { path: '/reference', title: 'Component Reference', content: createElement(ComponentReference, null), flag: 'component-reference' },
     { path: '/getting-started', title: 'Getting Started', content: createElement(GettingStarted, null), flag: 'getting-started' },
     { path: '/featureflags', title: 'Feature Flags', content: createElement(FeatureFlagsDemo, null) },
