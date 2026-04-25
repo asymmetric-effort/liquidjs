@@ -141,7 +141,7 @@ const FEATURES: FeatureArticle[] = [
       },
       {
         heading: 'Supply Chain Integrity',
-        body: 'Zero dependencies means zero transitive dependencies. There is no node_modules tree to audit, no risk of a compromised upstream package injecting malicious code. The entire framework is contained in a single repository under your control.',
+        body: 'Zero dependencies means zero transitive dependencies. There is no node_modules tree to audit, no risk of a compromised upstream package injecting malicious code. The entire framework is contained in a single repository under your control. Our CI/CD pipelines are equally locked down — every GitHub Action is pinned to a full commit SHA, never a floating tag. We avoid third-party NPM packages entirely and remain committed to never pulling a left-pad.',
       },
       {
         heading: 'Why It Matters',
@@ -156,7 +156,7 @@ const FEATURES: FeatureArticle[] = [
     sections: [
       {
         heading: 'Supply Chain Integrity',
-        body: 'LiquidJS has zero runtime dependencies. Every algorithm is implemented from scratch — diffing, scheduling, event handling, path matching, HTML escaping. No transitive dependencies means no supply chain attack surface. One codebase to audit, not hundreds of packages.',
+        body: 'LiquidJS has zero runtime dependencies. Every algorithm is implemented from scratch — diffing, scheduling, event handling, path matching, HTML escaping. No transitive dependencies means no supply chain attack surface. One codebase to audit, not hundreds of packages. CI/CD pipelines pin every GitHub Action to a full commit SHA — no floating tags, no upstream tampering. We avoid third-party NPM packages entirely and remain committed to never pulling a left-pad.',
       },
       {
         heading: 'No Server-Side Execution',
