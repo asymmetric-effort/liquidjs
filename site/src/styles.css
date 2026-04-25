@@ -151,6 +151,34 @@ body {
 }
 .bar-chart-label { font-size: 11px; color: var(--color-text-muted); margin-top: 6px; text-align: center; flex-shrink: 0; }
 
+/* Accordion */
+.accordion { display: flex; flex-direction: column; gap: 2px; }
+.accordion-section {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.accordion-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: var(--color-bg-subtle);
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  text-align: left;
+  transition: background 0.15s;
+}
+.accordion-header:hover { background: var(--color-bg-muted); }
+.accordion-header--open { background: var(--color-bg-muted); }
+.accordion-header-left { display: flex; align-items: center; gap: 10px; }
+.accordion-chevron { font-size: 10px; color: var(--color-text-muted); width: 14px; }
+.accordion-title { font-weight: 600; color: var(--color-text); }
+.accordion-subtitle { font-size: 13px; color: var(--color-text-muted); font-weight: 400; }
+.accordion-body { padding: 16px 18px; }
+
 /* Component Preview */
 .preview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
 .preview-card {

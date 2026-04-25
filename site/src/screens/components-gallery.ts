@@ -11,11 +11,20 @@ function preview(title: string, comp: () => ReturnType<typeof createElement>) {
 }
 
 export function ComponentsGallery() {
+  const [openSection, setOpenSection] = useState<string | null>('Form Components');
+
+  const toggle = useCallback(
+    ((...args: unknown[]) => {
+      const name = args[0] as string;
+      setOpenSection((prev: string | null) => (prev === name ? null : name));
+    }) as (...args: unknown[]) => unknown,
+    [],
+  ) as (name: string) => void;
+
   return createElement(
     'div',
-    null,
-    // Form Components
-    section('Form Components', [
+    { className: 'accordion' },
+    accordionSection('Form Components', '7 components', openSection, toggle, [
       preview('Toggle', ToggleDemo),
       preview('Text Input', TextInputDemo),
       preview('Checkbox', CheckboxDemo),
@@ -24,40 +33,63 @@ export function ComponentsGallery() {
       preview('Slider', SliderDemo),
       preview('Number Spinner', NumberSpinnerDemo),
     ]),
-    // Data Display
-    section('Data Display', [
+    accordionSection('Data Display', '4 components', openSection, toggle, [
       preview('Badge', BadgeDemo),
       preview('Tag', TagDemo),
       preview('Data Table', DataTableDemo),
       preview('Avatar', AvatarDemo),
     ]),
-    // Feedback
-    section('Feedback', [
+    accordionSection('Feedback', '3 components', openSection, toggle, [
       preview('Alert', AlertDemo),
       preview('Progress Bar', ProgressBarDemo),
       preview('Spinner', SpinnerDemo),
     ]),
-    // Navigation
-    section('Navigation', [
+    accordionSection('Navigation', '3 components', openSection, toggle, [
       preview('Tabs', TabsDemo),
       preview('Breadcrumb', BreadcrumbDemo),
       preview('Pagination', PaginationDemo),
     ]),
-    // Layout
-    section('Layout', [
+    accordionSection('Layout', '3 components', openSection, toggle, [
       preview('Card', CardDemo),
       preview('Counter', CounterDemo),
       preview('List with Filter', FilterListDemo),
     ]),
+    accordionSection('Visualization', '3 components', openSection, toggle, [
+      preview('Bar Graph', BarGraphDemo),
+      preview('Line Graph', LineGraphDemo),
+      preview('Pie Chart', PieChartDemo),
+    ]),
   );
 }
 
-function section(title: string, children: ReturnType<typeof createElement>[]) {
+function accordionSection(
+  title: string,
+  subtitle: string,
+  openSection: string | null,
+  toggle: (name: string) => void,
+  children: ReturnType<typeof createElement>[],
+) {
+  const isOpen = openSection === title;
   return createElement(
     'div',
-    { className: 'section' },
-    createElement('h3', { style: { fontSize: '18px', fontWeight: '600', marginBottom: '16px', color: '#3b82f6' } }, title),
-    createElement('div', { className: 'preview-grid' }, ...children),
+    { className: 'accordion-section' },
+    createElement(
+      'button',
+      {
+        className: `accordion-header ${isOpen ? 'accordion-header--open' : ''}`,
+        onClick: () => toggle(title),
+      },
+      createElement(
+        'div',
+        { className: 'accordion-header-left' },
+        createElement('span', { className: 'accordion-chevron' }, isOpen ? '\u25bc' : '\u25b6'),
+        createElement('span', { className: 'accordion-title' }, title),
+        createElement('span', { className: 'accordion-subtitle' }, subtitle),
+      ),
+    ),
+    isOpen
+      ? createElement('div', { className: 'accordion-body' }, createElement('div', { className: 'preview-grid' }, ...children))
+      : null,
   );
 }
 
@@ -284,5 +316,86 @@ function FilterListDemo() {
       ...filtered.map(item => createElement('li', { key: item, style: { padding: '4px 0', borderBottom: '1px solid #f1f5f9' } }, item)),
     ),
     filtered.length === 0 ? createElement('p', { style: { fontSize: '13px', color: '#94a3b8' } }, 'No matches') : null,
+  );
+}
+
+// ─── Visualization ────────────────────────────────────────────────────
+function BarGraphDemo() {
+  const data = [
+    { label: 'Q1', value: 42, color: '#3b82f6' },
+    { label: 'Q2', value: 67, color: '#10b981' },
+    { label: 'Q3', value: 35, color: '#f59e0b' },
+    { label: 'Q4', value: 89, color: '#ef4444' },
+  ];
+  const max = Math.max(...data.map(d => d.value));
+  return createElement('div', null,
+    createElement('div', { style: { display: 'flex', alignItems: 'flex-end', gap: '8px', height: '120px' } },
+      ...data.map(d =>
+        createElement('div', { key: d.label, style: { flex: '1', display: 'flex', flexDirection: 'column', alignItems: 'center' } },
+          createElement('span', { style: { fontSize: '11px', fontWeight: '600', marginBottom: '4px' } }, String(d.value)),
+          createElement('div', { style: { width: '100%', height: `${Math.round((d.value / max) * 100)}px`, backgroundColor: d.color, borderRadius: '4px 4px 0 0' } }),
+          createElement('span', { style: { fontSize: '11px', color: '#64748b', marginTop: '4px' } }, d.label),
+        ),
+      ),
+    ),
+  );
+}
+
+function LineGraphDemo() {
+  const points = [20, 45, 30, 65, 50, 80, 55];
+  const max = Math.max(...points);
+  const width = 240;
+  const height = 100;
+  const step = width / (points.length - 1);
+  const pathD = points.map((p, i) => {
+    const x = i * step;
+    const y = height - (p / max) * height;
+    return `${i === 0 ? 'M' : 'L'}${x},${y}`;
+  }).join(' ');
+
+  return createElement('div', { style: { padding: '8px 0' } },
+    createElement('svg', { width: String(width), height: String(height + 10), viewBox: `0 0 ${width} ${height + 10}` },
+      createElement('path', { d: pathD, fill: 'none', stroke: '#3b82f6', strokeWidth: '2' }),
+      ...points.map((p, i) =>
+        createElement('circle', { key: String(i), cx: String(i * step), cy: String(height - (p / max) * height), r: '3', fill: '#3b82f6' }),
+      ),
+    ),
+  );
+}
+
+function PieChartDemo() {
+  const data = [
+    { label: 'TypeScript', value: 60, color: '#3b82f6' },
+    { label: 'Go', value: 25, color: '#10b981' },
+    { label: 'Other', value: 15, color: '#f59e0b' },
+  ];
+  const total = data.reduce((s, d) => s + d.value, 0);
+  const r = 50;
+  const cx = 60;
+  const cy = 60;
+  let startAngle = 0;
+
+  const slices = data.map(d => {
+    const angle = (d.value / total) * 2 * Math.PI;
+    const x1 = cx + r * Math.cos(startAngle);
+    const y1 = cy + r * Math.sin(startAngle);
+    const x2 = cx + r * Math.cos(startAngle + angle);
+    const y2 = cy + r * Math.sin(startAngle + angle);
+    const largeArc = angle > Math.PI ? 1 : 0;
+    const path = `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${largeArc} 1 ${x2},${y2} Z`;
+    startAngle += angle;
+    return createElement('path', { key: d.label, d: path, fill: d.color });
+  });
+
+  return createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '16px' } },
+    createElement('svg', { width: '120', height: '120', viewBox: '0 0 120 120' }, ...slices),
+    createElement('div', { style: { fontSize: '13px' } },
+      ...data.map(d =>
+        createElement('div', { key: d.label, style: { display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' } },
+          createElement('div', { style: { width: '10px', height: '10px', borderRadius: '2px', backgroundColor: d.color } }),
+          createElement('span', null, `${d.label} (${d.value}%)`),
+        ),
+      ),
+    ),
   );
 }
