@@ -1,8 +1,15 @@
 import { createElement } from 'liquidjs';
-import { useState, useCallback } from 'liquidjs/hooks';
+import { useState, useCallback, useHead } from 'liquidjs/hooks';
 import { useFetch } from '../hooks/use-fetch';
 
 export function ApiIntegration() {
+  useHead({
+    title: 'API Integration — LiquidJS',
+    description: 'REST, GraphQL, and gRPC client integration patterns with LiquidJS hooks.',
+    keywords: 'liquidjs, rest api, graphql, grpc, useFetch, data fetching',
+    author: 'Asymmetric Effort, LLC',
+  });
+
   return createElement('div', null,
     createElement('div', { className: 'section' },
       createElement('h2', null, 'API Integration'),

@@ -1,6 +1,14 @@
 import { createElement } from 'liquidjs';
+import { useHead } from 'liquidjs/hooks';
 
 export function GettingStarted() {
+  useHead({
+    title: 'Getting Started — LiquidJS',
+    description: 'Get up and running with LiquidJS in minutes. Install, Hello World, routing, data fetching, meta tags, and production builds.',
+    keywords: 'liquidjs, getting started, tutorial, install, hello world, routing',
+    author: 'Asymmetric Effort, LLC',
+  });
+
   return createElement(
     'div',
     null,

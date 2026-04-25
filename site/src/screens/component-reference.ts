@@ -1,5 +1,5 @@
 import { createElement } from 'liquidjs';
-import { useState } from 'liquidjs/hooks';
+import { useState, useHead } from 'liquidjs/hooks';
 
 interface ComponentInfo {
   name: string;
@@ -51,6 +51,13 @@ const COMPONENTS: ComponentInfo[] = [
 ];
 
 export function ComponentReference() {
+  useHead({
+    title: 'Component Reference — LiquidJS',
+    description: 'Complete API reference for LiquidJS: 30+ APIs across Core, Hooks, Router, DOM, and Pre-rendering.',
+    keywords: 'liquidjs, api reference, components, hooks, router, documentation',
+    author: 'Asymmetric Effort, LLC',
+  });
+
   const categories = [...new Set(COMPONENTS.map(c => c.category))];
   const [filter, setFilter] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');

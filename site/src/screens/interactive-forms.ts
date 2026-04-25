@@ -1,7 +1,14 @@
 import { createElement } from 'liquidjs';
-import { useState, useCallback } from 'liquidjs/hooks';
+import { useState, useCallback, useHead } from 'liquidjs/hooks';
 
 export function InteractiveForms() {
+  useHead({
+    title: 'Interactive Forms — LiquidJS',
+    description: 'Form components with live validation and state management.',
+    keywords: 'liquidjs, forms, validation, state management',
+    author: 'Asymmetric Effort, LLC',
+  });
+
   return createElement('div', null,
     createElement('div', { className: 'section' },
       createElement('h2', null, 'Interactive Forms'),

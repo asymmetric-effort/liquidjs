@@ -1,4 +1,5 @@
 import { createElement } from 'liquidjs';
+import { useHead } from 'liquidjs/hooks';
 import { useFetch } from '../hooks/use-fetch';
 
 interface President {
@@ -31,6 +32,13 @@ interface EconomicData {
 }
 
 export function EconomicDashboard() {
+  useHead({
+    title: 'Economic Dashboard — LiquidJS',
+    description: 'Presidential economic data visualized with LiquidJS: SVG bar charts, line graphs, box plots, and data tables.',
+    keywords: 'liquidjs, dashboard, economics, visualization, charts, data',
+    author: 'Asymmetric Effort, LLC',
+  });
+
   const presidents = useFetch<PresidentialData>('./data/presidential-economies.json');
   const indicators = useFetch<EconomicData>('./data/economic-indicators.json');
 

@@ -1,7 +1,14 @@
 import { createElement } from 'liquidjs';
-import { useState, useTransition, useDeferredValue, useMemo, useCallback } from 'liquidjs/hooks';
+import { useState, useTransition, useDeferredValue, useMemo, useCallback, useHead } from 'liquidjs/hooks';
 
 export function ConcurrentDemo() {
+  useHead({
+    title: 'Concurrent Rendering — LiquidJS',
+    description: 'Lane-based concurrent rendering with useTransition, useDeferredValue, and time-slicing demos.',
+    keywords: 'liquidjs, concurrent rendering, useTransition, useDeferredValue, time slicing',
+    author: 'Asymmetric Effort, LLC',
+  });
+
   return createElement('div', null,
     createElement('div', { className: 'section' },
       createElement('h2', null, 'Concurrent Rendering'),

@@ -1,5 +1,5 @@
 import { createElement } from 'liquidjs';
-import { useState, useCallback, useEffect, useRef } from 'liquidjs/hooks';
+import { useState, useCallback, useEffect, useRef, useHead } from 'liquidjs/hooks';
 
 function preview(title: string, comp: () => ReturnType<typeof createElement>) {
   return createElement(
@@ -11,6 +11,13 @@ function preview(title: string, comp: () => ReturnType<typeof createElement>) {
 }
 
 export function ComponentsGallery() {
+  useHead({
+    title: 'Component Gallery — LiquidJS',
+    description: 'Live interactive previews of 80+ LiquidJS components: forms, data display, charts, visualizations.',
+    keywords: 'liquidjs, components, gallery, visualization, charts, forms, interactive',
+    author: 'Asymmetric Effort, LLC',
+  });
+
   const [openSection, setOpenSection] = useState<string | null>('Form Components');
 
   const toggle = useCallback(
