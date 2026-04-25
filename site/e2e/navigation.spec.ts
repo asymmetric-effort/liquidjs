@@ -19,15 +19,6 @@ test.describe('Navigation', () => {
     expect(errors).toEqual([]);
   });
 
-  test('navigates to Forms via nav link', async ({ page }) => {
-    const errors: string[] = [];
-    page.on('pageerror', (err) => errors.push(err.message));
-    await page.goto('/');
-    await page.click('.nav-links >> text=Forms');
-    await expect(page.locator('.dialog-title')).toContainText('Interactive Forms');
-    expect(page.url()).toContain('#/forms');
-    expect(errors).toEqual([]);
-  });
 
   test('navigates to Dashboard via nav link', async ({ page }) => {
     const errors: string[] = [];
@@ -88,15 +79,15 @@ test.describe('Navigation', () => {
   });
 
   test('active nav link is highlighted', async ({ page }) => {
-    await page.goto('/#/forms');
+    await page.goto('/#/components');
     const activeLinks = page.locator('.nav-link.active');
     await expect(activeLinks).toHaveCount(1);
-    await expect(activeLinks).toContainText('Forms');
+    await expect(activeLinks).toContainText('Components');
   });
 
   test('all nav links are visible', async ({ page }) => {
     await page.goto('/');
     const links = page.locator('.nav-links .nav-link');
-    await expect(links).toHaveCount(8);
+    await expect(links).toHaveCount(7);
   });
 });

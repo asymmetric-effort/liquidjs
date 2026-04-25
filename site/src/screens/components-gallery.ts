@@ -1,5 +1,5 @@
 import { createElement } from 'liquidjs';
-import { useState, useCallback } from 'liquidjs/hooks';
+import { useState, useCallback, useEffect, useRef } from 'liquidjs/hooks';
 
 function preview(title: string, comp: () => ReturnType<typeof createElement>) {
   return createElement(
@@ -24,7 +24,7 @@ export function ComponentsGallery() {
   return createElement(
     'div',
     { className: 'accordion' },
-    accordionSection('Form Components', '13 components', openSection, toggle, [
+    accordionSection('Form Components', '17 components', openSection, toggle, [
       preview('Toggle', ToggleDemo),
       preview('Text Input', TextInputDemo),
       preview('Checkbox', CheckboxDemo),
@@ -38,6 +38,10 @@ export function ComponentsGallery() {
       preview('File Upload', FileUploadDemo),
       preview('Multiline', MultilineDemo),
       preview('Text Editor', TextEditorDemo),
+      preview('Sign Up Form', SignUpFormDemo),
+      preview('Settings Panel', SettingsPanelDemo),
+      preview('Search Suggestions', SearchSuggestionsDemo),
+      preview('Multi-Step Wizard', MultiStepWizardDemo),
     ]),
     accordionSection('Data Display', '6 components', openSection, toggle, [
       preview('Badge', BadgeDemo),
@@ -639,18 +643,28 @@ function TimePickerDemo() {
 }
 
 function FileUploadDemo() {
-  const [files, setFiles] = useState<string[]>(['document.pdf', 'photo.png']);
-  const mockNames = ['report.xlsx', 'notes.txt', 'image.jpg', 'data.csv'];
-  const [idx, setIdx] = useState(0);
-  const addFile = () => {
-    setFiles((prev: string[]) => [...prev, mockNames[idx % mockNames.length]!]);
-    setIdx((i: number) => i + 1);
+  const [files, setFiles] = useState<string[]>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const handleFiles = (e: Event) => {
+    const input = e.target as HTMLInputElement;
+    if (input.files) {
+      const names = Array.from(input.files).map((f: File) => f.name);
+      setFiles((prev: string[]) => [...prev, ...names]);
+    }
+    input.value = '';
   };
   return createElement('div', null,
+    createElement('input', {
+      ref: inputRef,
+      type: 'file',
+      multiple: true,
+      onChange: handleFiles,
+      style: { display: 'none' },
+    }),
     createElement('div', {
-      onClick: addFile,
+      onClick: () => inputRef.current?.click(),
       style: { border: '2px dashed #d1d5db', borderRadius: '8px', padding: '24px', textAlign: 'center', cursor: 'pointer', color: '#64748b', fontSize: '14px', background: '#f8fafc' },
-    }, 'Click to upload'),
+    }, files.length === 0 ? 'Click to select files' : 'Click to add more files'),
     files.length > 0
       ? createElement('ul', { style: { listStyle: 'none', padding: '0', marginTop: '8px', fontSize: '13px' } },
           ...files.map((f, i) =>
@@ -682,26 +696,28 @@ function MultilineDemo() {
 }
 
 function TextEditorDemo() {
-  const [text, setText] = useState('');
-  const [bold, setBold] = useState(false);
-  const [italic, setItalic] = useState(false);
-  const [underline, setUnderline] = useState(false);
-  const tbtn = (label: string, active: boolean, toggle: () => void) =>
+  const editorRef = useRef<HTMLDivElement>(null);
+  const execCmd = (cmd: string) => {
+    document.execCommand(cmd, false);
+    editorRef.current?.focus();
+  };
+  const tbtn = (label: string, cmd: string) =>
     createElement('button', {
-      onClick: toggle,
-      style: { padding: '4px 10px', border: '1px solid #d1d5db', borderRadius: '4px', cursor: 'pointer', fontSize: '13px', fontWeight: label === 'B' ? '700' : '400', fontStyle: label === 'I' ? 'italic' : 'normal', textDecoration: label === 'U' ? 'underline' : 'none', background: active ? '#3b82f6' : '#f8fafc', color: active ? 'white' : '#0f172a' },
+      onMouseDown: (e: Event) => e.preventDefault(),
+      onClick: () => execCmd(cmd),
+      style: { padding: '4px 10px', border: '1px solid #d1d5db', borderRadius: '4px', cursor: 'pointer', fontSize: '13px', fontWeight: label === 'B' ? '700' : '400', fontStyle: label === 'I' ? 'italic' : 'normal', textDecoration: label === 'U' ? 'underline' : 'none', background: '#f8fafc', color: '#0f172a' },
     }, label);
   return createElement('div', null,
     createElement('div', { style: { display: 'flex', gap: '4px', marginBottom: '6px', padding: '4px', background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' } },
-      tbtn('B', bold, () => setBold(!bold)),
-      tbtn('I', italic, () => setItalic(!italic)),
-      tbtn('U', underline, () => setUnderline(!underline)),
+      tbtn('B', 'bold'),
+      tbtn('I', 'italic'),
+      tbtn('U', 'underline'),
     ),
-    createElement('textarea', {
-      value: text,
-      onInput: (e: Event) => setText((e.target as HTMLTextAreaElement).value),
-      placeholder: 'Start typing...',
-      style: { width: '100%', minHeight: '64px', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '14px', fontWeight: bold ? '700' : '400', fontStyle: italic ? 'italic' : 'normal', textDecoration: underline ? 'underline' : 'none', resize: 'vertical' },
+    createElement('div', {
+      ref: editorRef,
+      contentEditable: 'true',
+      dangerouslySetInnerHTML: { __html: 'Select <b>some text</b> and click <i>B</i>, <i>I</i>, or <i>U</i> to format it.' },
+      style: { width: '100%', minHeight: '64px', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '14px', outline: 'none', lineHeight: '1.6' },
     }),
   );
 }
@@ -1101,5 +1117,171 @@ function PolarRoseDemo() {
       ),
     ),
     createElement('p', { style: { fontSize: '11px', color: '#94a3b8', marginTop: '4px' } }, 'r = cos(3\u03b8) — 3-leaf rose, polar coordinates'),
+  );
+}
+
+// ─── Interactive Forms (copied from interactive-forms.ts) ─────────────
+
+function formInputStyle() {
+  return { padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '14px', width: '100%', outline: 'none', boxSizing: 'border-box' as const };
+}
+
+function formBtnStyle() {
+  return { padding: '8px 16px', border: '1px solid #d1d5db', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', backgroundColor: '#f8fafc' };
+}
+
+function formField(label: string, value: string, onChange: (v: string) => void, error: string | undefined, type: string, placeholder: string) {
+  return createElement('div', null,
+    createElement('label', { style: { fontSize: '13px', fontWeight: '500', display: 'block', marginBottom: '4px' } }, label),
+    createElement('input', {
+      type, value, placeholder,
+      onInput: (e: Event) => onChange((e.target as HTMLInputElement).value),
+      style: { ...formInputStyle(), borderColor: error ? '#ef4444' : '#d1d5db' },
+    }),
+    error ? createElement('p', { style: { fontSize: '12px', color: '#ef4444', marginTop: '2px' } }, error) : null,
+  );
+}
+
+function formToggleRow(label: string, on: boolean, onClick: () => void) {
+  return createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
+    createElement('span', { style: { fontSize: '14px' } }, label),
+    createElement('div', { className: 'demo-toggle', onClick },
+      createElement('div', { className: `demo-toggle-track ${on ? 'on' : ''}` },
+        createElement('div', { className: 'demo-toggle-thumb' }),
+      ),
+    ),
+  );
+}
+
+function SignUpFormDemo() {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = useCallback(() => {
+    const e: Record<string, string> = {};
+    if (!name.trim()) e.name = 'Name is required';
+    if (!email.includes('@')) e.email = 'Valid email required';
+    return e;
+  }, [name, email]);
+
+  const handleSubmit = useCallback(() => {
+    const e = validate();
+    setErrors(e);
+    if (Object.keys(e).length === 0) setSubmitted(true);
+  }, [validate]);
+
+  if (submitted) {
+    return createElement('div', { style: { textAlign: 'center', padding: '20px' } },
+      createElement('div', { style: { fontSize: '24px', marginBottom: '8px' } }, '\u2705'),
+      createElement('p', { style: { fontWeight: '600' } }, `Welcome, ${name}!`),
+      createElement('button', {
+        onClick: () => { setSubmitted(false); setName(''); setEmail(''); },
+        style: formBtnStyle(),
+      }, 'Reset'),
+    );
+  }
+
+  return createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '12px' } },
+    formField('Name', name, (v: string) => setName(v), errors.name, 'text', 'Your name'),
+    formField('Email', email, (v: string) => setEmail(v), errors.email, 'email', 'you@example.com'),
+    createElement('button', { onClick: handleSubmit, style: { ...formBtnStyle(), backgroundColor: '#3b82f6', color: 'white', border: 'none' } }, 'Sign Up'),
+  );
+}
+
+function SettingsPanelDemo() {
+  const [dark, setDark] = useState(false);
+  const [notifications, setNotifications] = useState(true);
+  const [fontSize, setFontSize] = useState(14);
+
+  return createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '14px' } },
+    formToggleRow('Dark Mode', dark, () => setDark(!dark)),
+    formToggleRow('Notifications', notifications, () => setNotifications(!notifications)),
+    createElement('div', null,
+      createElement('label', { style: { fontSize: '13px', fontWeight: '500', display: 'block', marginBottom: '4px' } }, `Font Size: ${fontSize}px`),
+      createElement('input', {
+        type: 'range', min: '10', max: '24', value: String(fontSize),
+        onInput: (e: Event) => setFontSize(Number((e.target as HTMLInputElement).value)),
+        style: { width: '100%' },
+      }),
+    ),
+    createElement('div', {
+      style: {
+        padding: '12px',
+        borderRadius: '6px',
+        fontSize: `${fontSize}px`,
+        background: dark ? '#1e293b' : '#f8fafc',
+        color: dark ? '#e2e8f0' : '#0f172a',
+        border: '1px solid #e2e8f0',
+      },
+    }, `Preview text at ${fontSize}px`),
+  );
+}
+
+function SearchSuggestionsDemo() {
+  const items = ['React', 'LiquidJS', 'Vue', 'Angular', 'Svelte', 'Solid', 'Preact', 'Lit', 'Qwik', 'Astro'];
+  const [query, setQuery] = useState('');
+  const [selected, setSelected] = useState('');
+
+  const matches = query.length > 0
+    ? items.filter(i => i.toLowerCase().includes(query.toLowerCase()))
+    : [];
+
+  return createElement('div', null,
+    createElement('input', {
+      type: 'text', value: query, placeholder: 'Search frameworks...',
+      onInput: (e: Event) => { setQuery((e.target as HTMLInputElement).value); setSelected(''); },
+      style: formInputStyle(),
+    }),
+    matches.length > 0 && !selected
+      ? createElement('ul', { style: { listStyle: 'none', border: '1px solid #e2e8f0', borderRadius: '0 0 6px 6px', borderTop: 'none', maxHeight: '120px', overflowY: 'auto' } },
+          ...matches.map(m =>
+            createElement('li', {
+              key: m,
+              onClick: () => { setSelected(m); setQuery(m); },
+              style: { padding: '6px 12px', cursor: 'pointer', fontSize: '13px', borderBottom: '1px solid #f1f5f9' },
+            }, m),
+          ),
+        )
+      : null,
+    selected
+      ? createElement('p', { style: { fontSize: '13px', color: '#16a34a', marginTop: '8px' } }, `Selected: ${selected}`)
+      : null,
+  );
+}
+
+function MultiStepWizardDemo() {
+  const [step, setStep] = useState(0);
+  const steps = ['Account', 'Profile', 'Confirm'];
+
+  const stepIndicator = createElement('div', { style: { display: 'flex', gap: '4px', marginBottom: '16px' } },
+    ...steps.map((s, i) =>
+      createElement('div', {
+        key: s,
+        style: {
+          flex: '1', height: '4px', borderRadius: '2px',
+          backgroundColor: i <= step ? '#3b82f6' : '#e2e8f0',
+          transition: 'background-color 0.2s',
+        },
+      }),
+    ),
+  );
+
+  const content = createElement('div', { style: { textAlign: 'center', padding: '16px 0', fontSize: '14px', color: '#64748b' } },
+    `Step ${step + 1}: ${steps[step]}`,
+  );
+
+  return createElement('div', null,
+    stepIndicator,
+    content,
+    createElement('div', { style: { display: 'flex', gap: '8px', justifyContent: 'center' } },
+      step > 0
+        ? createElement('button', { onClick: () => setStep(step - 1), style: formBtnStyle() }, 'Back')
+        : null,
+      step < steps.length - 1
+        ? createElement('button', { onClick: () => setStep(step + 1), style: { ...formBtnStyle(), backgroundColor: '#3b82f6', color: 'white', border: 'none' } }, 'Next')
+        : createElement('button', { onClick: () => setStep(0), style: { ...formBtnStyle(), backgroundColor: '#16a34a', color: 'white', border: 'none' } }, 'Finish'),
+    ),
   );
 }

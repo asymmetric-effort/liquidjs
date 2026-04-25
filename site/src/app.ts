@@ -5,7 +5,6 @@ import { Footer } from './components/footer';
 import { HomeScreen } from './screens/home';
 import { ComponentsGallery } from './screens/components-gallery';
 import { EconomicDashboard } from './screens/economic-dashboard';
-import { InteractiveForms } from './screens/interactive-forms';
 import { ConcurrentDemo } from './screens/concurrent-demo';
 import { ApiIntegration } from './screens/api-integration';
 import { ComponentReference } from './screens/component-reference';
@@ -26,9 +25,6 @@ function AppContent() {
   } else if (pathname.startsWith('/dashboard')) {
     dialogTitle = 'Economic Dashboard';
     dialogContent = createElement(EconomicDashboard, null);
-  } else if (pathname.startsWith('/forms')) {
-    dialogTitle = 'Interactive Forms';
-    dialogContent = createElement(InteractiveForms, null);
   } else if (pathname.startsWith('/concurrent')) {
     dialogTitle = 'Concurrent Rendering';
     dialogContent = createElement(ConcurrentDemo, null);

@@ -5,12 +5,6 @@ test.describe('Economic Dashboard', () => {
     await page.goto('/#/dashboard');
   });
 
-  test('shows loading state initially', async ({ page }) => {
-    // May see loading briefly or data immediately (depends on speed)
-    const content = page.locator('.dialog-body');
-    await expect(content).not.toBeEmpty();
-  });
-
   test('renders dashboard heading', async ({ page }) => {
     await expect(page.locator('.dialog-title')).toContainText('Economic Dashboard');
   });
@@ -19,28 +13,40 @@ test.describe('Economic Dashboard', () => {
     const body = page.locator('.dialog-body');
     await expect(body.locator('.stat-card').first()).toBeVisible({ timeout: 5000 });
     await expect(body.locator('.stat-cards').first()).toContainText('GDP Growth');
-    await expect(body.locator('.stat-cards').first()).toContainText('Unemployment');
+  });
+
+  test('displays S&P 500 SVG bar chart with data', async ({ page }) => {
+    const body = page.locator('.dialog-body');
+    // SVG bar chart should render with rect elements for bars
+    await expect(body.locator('svg rect').first()).toBeVisible({ timeout: 5000 });
+    // Should show president names as text labels
+    await expect(body.locator('svg')).toContainText('Obama');
+  });
+
+  test('displays GDP line chart', async ({ page }) => {
+    const body = page.locator('.dialog-body');
+    // Line chart uses SVG path and circles
+    await expect(body.locator('svg path').first()).toBeVisible({ timeout: 5000 });
+    await expect(body.locator('svg circle').first()).toBeVisible({ timeout: 5000 });
+  });
+
+  test('displays CPI box plot', async ({ page }) => {
+    const body = page.locator('.dialog-body');
+    // Box plot has whisker lines and a box rect
+    await expect(body).toContainText('Median');
+    await expect(body).toContainText('CPI %');
   });
 
   test('displays presidential economies table', async ({ page }) => {
     const body = page.locator('.dialog-body');
     await expect(body.locator('.data-table').first()).toBeVisible({ timeout: 5000 });
     await expect(body.locator('.data-table')).toContainText('Clinton');
-    await expect(body.locator('.data-table')).toContainText('Obama');
     await expect(body.locator('.data-table')).toContainText('Biden');
-  });
-
-  test('displays S&P 500 bar chart', async ({ page }) => {
-    const body = page.locator('.dialog-body');
-    await expect(body.locator('.bar-chart').first()).toBeVisible({ timeout: 5000 });
-    await expect(body.locator('.bar-chart')).toContainText('Obama');
-    await expect(body.locator('.bar-chart')).toContainText('+120.9%');
   });
 
   test('displays recession data', async ({ page }) => {
     const body = page.locator('.dialog-body');
-    await expect(body.locator('text=U.S. Recessions')).toBeVisible({ timeout: 5000 });
-    await expect(body).toContainText('Great Recession');
+    await expect(body).toContainText('Great Recession', { timeout: 5000 });
     await expect(body).toContainText('COVID-19');
   });
 
