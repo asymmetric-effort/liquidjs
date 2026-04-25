@@ -1,3 +1,6 @@
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
+
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { HypercubeGraph } from '../src/index';
 import { installMockDispatcher, teardownMockDispatcher } from '../../../_test-helpers/mock-dispatcher';

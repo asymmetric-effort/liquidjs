@@ -1,3 +1,6 @@
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
+
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createToaster } from '../src/index';
 import type { Toaster, ToastItem } from '../src/index';

@@ -25,8 +25,18 @@ echo "[4/5] Running coverage..."
 bun run test:coverage
 echo "  ✓ coverage thresholds met"
 
-# 5. Security review (requires claude CLI)
-echo "[5/5] Security review..."
+# 5. FOSSA license scan
+echo "[5/6] FOSSA license scan..."
+if command -v fossa &>/dev/null && [ -n "${FOSSA_API_KEY:-}" ]; then
+  cd "$(git rev-parse --show-toplevel)"
+  fossa analyze 2>&1 | tail -5
+  echo "  ✓ FOSSA scan complete"
+else
+  echo "  ⊘ skipped (fossa CLI not installed or FOSSA_API_KEY not set)"
+fi
+
+# 6. Security review (requires claude CLI)
+echo "[6/6] Security review..."
 if command -v claude &>/dev/null; then
   cd "$(git rev-parse --show-toplevel)"
   DIFF=$(git diff HEAD~1 --name-only -- '*.ts' '*.js' '*.tsx' '*.jsx' 2>/dev/null || true)
@@ -41,4 +51,4 @@ else
   echo "  ⊘ skipped (claude CLI not installed)"
 fi
 
-echo "=== pre-push: all CI checks passed ==="
+echo "=== pre-push: all checks passed ==="

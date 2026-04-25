@@ -1,3 +1,6 @@
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
+
 /**
  * ColorWheel — Reusable color picker component with visual color input.
  *

@@ -1,3 +1,6 @@
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
+
 import type { LiquidNode } from '../shared/types';
 import { createFiberRoot, performSyncWork, fiberRoots } from './work-loop';
 

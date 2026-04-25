@@ -1,3 +1,6 @@
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
+
 /**
  * HypercubeGraph — A LiquidJS component that renders an N-dimensional
  * hypercube as an SVG with colored vertex balls and heavy black edges.

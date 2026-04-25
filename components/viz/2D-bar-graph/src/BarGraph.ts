@@ -1,3 +1,6 @@
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
+
 /**
  * BarGraph — A LiquidJS component that renders 2D bar charts as SVG.
  *

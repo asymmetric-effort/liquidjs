@@ -1,3 +1,6 @@
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
+
 /**
  * FormFieldWrapper — Base container for all data-entry / form components.
  *

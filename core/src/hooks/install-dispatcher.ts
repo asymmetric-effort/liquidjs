@@ -1,3 +1,6 @@
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
+
 /**
  * Installs the concrete hook implementations as the active dispatcher.
  * Called by the work loop before rendering a function component.

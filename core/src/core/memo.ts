@@ -1,3 +1,6 @@
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
+
 import { LIQUID_MEMO_TYPE, type Props, type ComponentType } from '../shared/types';
 
 export interface MemoComponent<P extends Props = Props> {

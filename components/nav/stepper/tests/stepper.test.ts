@@ -1,3 +1,6 @@
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
+
 import { describe, it, expect, vi } from 'vitest';
 import { Stepper } from '../src/index';
 import type { StepperProps, StepItem } from '../src/index';

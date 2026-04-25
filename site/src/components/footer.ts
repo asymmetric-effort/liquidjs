@@ -1,3 +1,6 @@
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
+
 import { createElement } from 'liquidjs';
 
 const VERSION = '0.2.0';

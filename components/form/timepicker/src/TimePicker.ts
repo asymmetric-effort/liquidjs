@@ -1,3 +1,6 @@
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
+
 /**
  * TimePicker — Time selection component with hour/minute selectors
  * and AM/PM toggle for 12-hour format.

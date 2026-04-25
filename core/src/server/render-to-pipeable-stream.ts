@@ -1,3 +1,6 @@
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
+
 import type { LiquidNode } from '../shared/types';
 import type { Writable } from 'stream';
 import { renderToString } from './render-to-string';

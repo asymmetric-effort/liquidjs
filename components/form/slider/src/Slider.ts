@@ -1,3 +1,6 @@
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
+
 /**
  * Slider — Custom range slider with support for single and dual handles,
  * marks/ticks, and value display.

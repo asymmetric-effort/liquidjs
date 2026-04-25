@@ -2,6 +2,8 @@
 // LiquidJS — 2D Cartesian Graph (Raw SVG, Interactive)
 // Zero-dependency interactive cartesian graph with pan, zoom, and point events.
 // ============================================================================
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
 import { createElement } from '../../../../core/src/index';
 import { useState, useCallback, useRef } from '../../../../core/src/hooks/index';
 

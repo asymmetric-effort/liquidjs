@@ -2,6 +2,8 @@
 // LiquidJS Telemetry — Metrics (OpenTelemetry-compatible)
 // Zero third-party dependencies — OTEL protocols implemented from scratch.
 // ============================================================================
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
 
 import type { Span } from './tracing';
 

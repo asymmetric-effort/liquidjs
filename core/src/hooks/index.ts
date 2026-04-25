@@ -1,6 +1,8 @@
 // ============================================================================
 // LiquidJS Hooks
 // ============================================================================
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
 
 import type { LiquidContext } from '../shared/types';
 

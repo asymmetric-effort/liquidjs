@@ -1,3 +1,6 @@
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
+
 /**
  * DataGrid — Full-featured data table/grid with sorting, pagination,
  * selection, filtering, and sticky header support.

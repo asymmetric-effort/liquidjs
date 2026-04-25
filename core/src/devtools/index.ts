@@ -1,3 +1,6 @@
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
+
 /**
  * DevTools integration hooks.
  * Allows browser extensions to inspect the LiquidJS component tree.

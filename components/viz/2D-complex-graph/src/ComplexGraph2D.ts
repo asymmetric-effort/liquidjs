@@ -2,6 +2,8 @@
 // LiquidJS — 2D Complex Graph (Canvas-based Mandelbrot / Complex Plane)
 // Zero-dependency canvas visualization via createElement calls.
 // ============================================================================
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
 
 import { createElement } from '../../../../core/src/index';
 import { useState, useRef, useEffect, useCallback } from '../../../../core/src/hooks/index';

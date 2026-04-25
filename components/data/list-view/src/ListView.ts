@@ -1,3 +1,6 @@
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
+
 /**
  * ListView — Styled list with configurable item rendering, dividers,
  * selection, hover effects, and optional header/footer.

@@ -1,3 +1,6 @@
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
+
 /**
  * VirtualScroll — Renders only visible items from a large list plus an
  * overscan buffer. Uses a spacer div for correct scrollbar sizing and

@@ -1,3 +1,6 @@
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
+
 /**
  * Minimal scheduler for batching updates and scheduling work.
  * This is the internal engine that drives re-renders.

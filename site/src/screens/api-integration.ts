@@ -1,3 +1,6 @@
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
+
 import { createElement } from 'liquidjs';
 import { useState, useCallback, useHead } from 'liquidjs/hooks';
 import { useFetch } from '../hooks/use-fetch';

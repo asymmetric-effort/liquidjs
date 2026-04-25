@@ -1,6 +1,8 @@
 // ============================================================================
 // LiquidJS Core Types
 // ============================================================================
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
 
 /** Unique symbol to identify LiquidJS elements */
 export const LIQUID_ELEMENT_TYPE = Symbol.for('liquid.element');

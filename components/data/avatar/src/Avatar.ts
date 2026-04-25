@@ -1,3 +1,6 @@
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
+
 /**
  * Avatar — User avatar with image, initials fallback, colored circle,
  * and optional online/offline status indicator dot.

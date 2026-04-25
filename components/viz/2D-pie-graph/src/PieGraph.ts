@@ -2,6 +2,8 @@
 // LiquidJS — 2D Pie/Donut Chart SVG Component
 // Zero-dependency pie and donut chart renderer using LiquidJS createElement.
 // ============================================================================
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
 
 import { createElement, type LiquidElement } from '../../../../core/src/index';
 import { useMemo } from '../../../../core/src/hooks/index';

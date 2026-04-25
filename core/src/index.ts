@@ -1,6 +1,8 @@
 // ============================================================================
 // LiquidJS — Core Public API
 // ============================================================================
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
 
 export { createElement, createElement as h, createFactory } from './core/create-element';
 export { Fragment } from './core/fragment';

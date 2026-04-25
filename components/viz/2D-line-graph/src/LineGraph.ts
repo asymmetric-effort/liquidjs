@@ -2,6 +2,8 @@
 // LiquidJS — 2D Line Graph SVG Component
 // Zero-dependency line graph rendered entirely via createElement calls.
 // ============================================================================
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
 
 import { createElement } from '../../../../core/src/index';
 import { useMemo } from '../../../../core/src/hooks/index';

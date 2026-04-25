@@ -8,6 +8,8 @@
 // For dynamic content, use client-side rendering with data fetched
 // via HTTPS from API endpoints.
 // ============================================================================
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
 
 export { renderToString, renderToStaticMarkup } from './render-to-string';
 export { renderToPipeableStream } from './render-to-pipeable-stream';

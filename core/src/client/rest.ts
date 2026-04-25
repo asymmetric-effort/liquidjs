@@ -2,6 +2,8 @@
 // LiquidJS REST Client
 // Zero-dependency REST client built on the browser Fetch API
 // ============================================================================
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
 
 import { useState, useEffect, useCallback, useRef } from '../hooks/index';
 

@@ -1,3 +1,6 @@
+// (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
+// SPDX-License-Identifier: MIT
+
 /**
  * Badge — Count or dot indicator, positioned as an overlay on top-right
  * of children, or rendered inline when no children are provided.
