@@ -2,11 +2,25 @@ import { createElement } from 'liquidjs';
 import { useState, useCallback, useEffect, useRef, useHead } from 'liquidjs/hooks';
 
 function preview(title: string, comp: () => ReturnType<typeof createElement>) {
+  return createElement(PreviewCard, { title, component: comp });
+}
+
+function PreviewCard(props: { title: string; component: () => ReturnType<typeof createElement> }) {
+  const [collapsed, setCollapsed] = useState(false);
   return createElement(
     'div',
     { className: 'preview-card' },
-    createElement('div', { className: 'preview-header' }, title),
-    createElement('div', { className: 'preview-body' }, createElement(comp, null)),
+    createElement(
+      'div',
+      {
+        className: 'preview-header',
+        onDblClick: () => setCollapsed(!collapsed),
+        style: { cursor: 'pointer', userSelect: 'none' },
+      },
+      props.title,
+      createElement('span', { style: { float: 'right', fontSize: '10px', color: '#94a3b8' } }, collapsed ? '\u25b6' : '\u25bc'),
+    ),
+    collapsed ? null : createElement('div', { className: 'preview-body' }, createElement(props.component, null)),
   );
 }
 
@@ -769,27 +783,39 @@ function MultilineDemo() {
 
 function TextEditorDemo() {
   const editorRef = useRef<HTMLDivElement>(null);
-  const execCmd = (cmd: string) => {
-    document.execCommand(cmd, false);
+  const execCmd = (cmd: string, val?: string) => {
+    document.execCommand(cmd, false, val);
     editorRef.current?.focus();
   };
-  const tbtn = (label: string, cmd: string) =>
+  const tbtn = (label: string, cmd: string, extra?: Record<string, string>) =>
     createElement('button', {
       onMouseDown: (e: Event) => e.preventDefault(),
       onClick: () => execCmd(cmd),
-      style: { padding: '4px 10px', border: '1px solid #d1d5db', borderRadius: '4px', cursor: 'pointer', fontSize: '13px', fontWeight: label === 'B' ? '700' : '400', fontStyle: label === 'I' ? 'italic' : 'normal', textDecoration: label === 'U' ? 'underline' : 'none', background: '#f8fafc', color: '#0f172a' },
+      style: { padding: '3px 8px', border: '1px solid #d1d5db', borderRadius: '3px', cursor: 'pointer', fontSize: '12px', fontWeight: label === 'B' ? '700' : '400', fontStyle: label === 'I' ? 'italic' : 'normal', textDecoration: label === 'U' ? 'underline' : label === 'S' ? 'line-through' : 'none', background: '#f8fafc', color: '#0f172a', ...extra },
     }, label);
+  const sep = () => createElement('div', { style: { width: '1px', background: '#d1d5db', margin: '0 2px' } });
   return createElement('div', null,
-    createElement('div', { style: { display: 'flex', gap: '4px', marginBottom: '6px', padding: '4px', background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' } },
+    createElement('div', { style: { display: 'flex', gap: '3px', marginBottom: '6px', padding: '4px', background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0', flexWrap: 'wrap', alignItems: 'center' } },
       tbtn('B', 'bold'),
       tbtn('I', 'italic'),
       tbtn('U', 'underline'),
+      tbtn('S', 'strikeThrough'),
+      sep(),
+      createElement('select', { onMouseDown: (e: Event) => e.preventDefault(), onChange: (e: Event) => execCmd('fontSize', (e.target as HTMLSelectElement).value), style: { padding: '2px 4px', border: '1px solid #d1d5db', borderRadius: '3px', fontSize: '11px', cursor: 'pointer' } },
+        ...['1', '2', '3', '4', '5', '6', '7'].map(s => createElement('option', { key: s, value: s }, `${s}`)),
+      ),
+      createElement('select', { onMouseDown: (e: Event) => e.preventDefault(), onChange: (e: Event) => execCmd('fontName', (e.target as HTMLSelectElement).value), style: { padding: '2px 4px', border: '1px solid #d1d5db', borderRadius: '3px', fontSize: '11px', cursor: 'pointer' } },
+        ...['Sans-serif', 'Serif', 'Monospace', 'Georgia', 'Arial'].map(f => createElement('option', { key: f, value: f }, f)),
+      ),
+      sep(),
+      createElement('input', { type: 'color', value: '#000000', onInput: (e: Event) => execCmd('foreColor', (e.target as HTMLInputElement).value), title: 'Text color', style: { width: '24px', height: '22px', border: 'none', cursor: 'pointer', padding: '0' } }),
+      createElement('input', { type: 'color', value: '#ffff00', onInput: (e: Event) => execCmd('hiliteColor', (e.target as HTMLInputElement).value), title: 'Highlight', style: { width: '24px', height: '22px', border: 'none', cursor: 'pointer', padding: '0' } }),
     ),
     createElement('div', {
       ref: editorRef,
       contentEditable: 'true',
-      dangerouslySetInnerHTML: { __html: 'Select <b>some text</b> and click <i>B</i>, <i>I</i>, or <i>U</i> to format it.' },
-      style: { width: '100%', minHeight: '64px', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '14px', outline: 'none', lineHeight: '1.6' },
+      dangerouslySetInnerHTML: { __html: 'Select <b>some text</b> and use the toolbar to format it. Try <i>font size</i>, <span style="color:red">colors</span>, and <s>strikethrough</s>.' },
+      style: { width: '100%', minHeight: '80px', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '14px', outline: 'none', lineHeight: '1.6' },
     }),
   );
 }
@@ -818,15 +844,33 @@ function DropdownMenuDemo() {
 }
 
 function MenuBarDemo() {
-  const [active, setActive] = useState<string | null>(null);
-  const menus = ['File', 'Edit', 'View', 'Help'];
-  return createElement('div', { style: { display: 'flex', gap: '0', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', overflow: 'hidden' } },
-    ...menus.map(m =>
-      createElement('button', {
-        key: m,
-        onClick: () => setActive(active === m ? null : m),
-        style: { padding: '8px 16px', border: 'none', borderRight: '1px solid #e2e8f0', cursor: 'pointer', fontSize: '14px', background: active === m ? '#3b82f6' : 'transparent', color: active === m ? 'white' : '#0f172a', fontWeight: active === m ? '600' : '400' },
-      }, m),
+  const [open, setOpen] = useState<string | null>(null);
+  const menus: Record<string, string[]> = {
+    File: ['New', 'Open', 'Save', 'Export'],
+    Edit: ['Undo', 'Redo', 'Cut', 'Copy', 'Paste'],
+    View: ['Zoom In', 'Zoom Out', 'Full Screen'],
+    Help: ['Documentation', 'About'],
+  };
+  return createElement('div', { style: { position: 'relative', display: 'flex', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', overflow: 'visible' } },
+    ...Object.keys(menus).map(m =>
+      createElement('div', { key: m, style: { position: 'relative' },
+        onMouseEnter: () => setOpen(m),
+        onMouseLeave: () => setOpen(null),
+      },
+        createElement('button', {
+          style: { padding: '8px 16px', border: 'none', borderRight: '1px solid #e2e8f0', cursor: 'pointer', fontSize: '14px', background: open === m ? '#3b82f6' : 'transparent', color: open === m ? 'white' : '#0f172a', fontWeight: open === m ? '600' : '400' },
+        }, m),
+        open === m ? createElement('div', {
+          style: { position: 'absolute', top: '100%', left: '0', background: 'white', border: '1px solid #e2e8f0', borderRadius: '0 0 6px 6px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: '10', minWidth: '120px' },
+        },
+          ...menus[m]!.map(item =>
+            createElement('div', { key: item, style: { padding: '6px 14px', fontSize: '13px', cursor: 'pointer', borderBottom: '1px solid #f1f5f9' },
+              onMouseEnter: (e: Event) => { (e.target as HTMLElement).style.background = '#f1f5f9'; },
+              onMouseLeave: (e: Event) => { (e.target as HTMLElement).style.background = 'transparent'; },
+            }, item),
+          ),
+        ) : null,
+      ),
     ),
   );
 }
@@ -879,27 +923,44 @@ function StepperDemo() {
 
 function ToolbarDemo() {
   const [active, setActive] = useState<string[]>([]);
+  const [hovered, setHovered] = useState<string | null>(null);
   const toggle = (id: string) => setActive((prev: string[]) => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
-  const items = [
-    { id: 'bold', label: 'B', fontWeight: '700' },
-    { id: 'italic', label: 'I', fontStyle: 'italic' },
-    { id: 'underline', label: 'U', textDecoration: 'underline' },
+  const icons: { id: string; icon: string; tooltip: string }[] = [
+    { id: 'home', icon: '\u2302', tooltip: 'Home' },
+    { id: 'search', icon: '\ud83d\udd0d', tooltip: 'Search' },
+    { id: 'save', icon: '\ud83d\udcbe', tooltip: 'Save' },
+    { id: 'undo', icon: '\u21a9', tooltip: 'Undo' },
+    { id: 'redo', icon: '\u21aa', tooltip: 'Redo' },
+    { id: 'copy', icon: '\ud83d\udccb', tooltip: 'Copy' },
+    { id: 'delete', icon: '\ud83d\uddd1', tooltip: 'Delete' },
+    { id: 'settings', icon: '\u2699', tooltip: 'Settings' },
   ];
-  return createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '2px', padding: '4px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px' } },
-    ...items.map(item =>
-      createElement('button', {
-        key: item.id,
-        onClick: () => toggle(item.id),
-        style: { padding: '6px 10px', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontWeight: item.fontWeight || '400', fontStyle: item.fontStyle || 'normal', textDecoration: item.textDecoration || 'none', background: active.includes(item.id) ? '#3b82f6' : 'transparent', color: active.includes(item.id) ? 'white' : '#0f172a' },
-      }, item.label),
+  const ibtn = (item: typeof icons[0]) =>
+    createElement('button', {
+      key: item.id, onClick: () => toggle(item.id),
+      onMouseEnter: () => setHovered(item.id),
+      onMouseLeave: () => setHovered(null),
+      title: item.tooltip,
+      style: { padding: '6px 8px', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '16px', background: active.includes(item.id) ? '#3b82f6' : hovered === item.id ? '#e2e8f0' : 'transparent', color: active.includes(item.id) ? 'white' : '#0f172a', transition: 'background 0.1s', lineHeight: '1' },
+    }, item.icon);
+  const sep = () => createElement('div', { style: { width: '1px', height: '24px', background: '#e2e8f0', margin: '0 4px' } });
+  return createElement('div', null,
+    createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '2px', padding: '4px 6px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px' } },
+      ibtn(icons[0]!), ibtn(icons[1]!), ibtn(icons[2]!),
+      sep(),
+      ibtn(icons[3]!), ibtn(icons[4]!), ibtn(icons[5]!),
+      sep(),
+      ibtn(icons[6]!), ibtn(icons[7]!),
     ),
-    createElement('div', { style: { width: '1px', height: '20px', background: '#e2e8f0', margin: '0 4px' } }),
-    createElement('button', { style: { padding: '6px 10px', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', background: 'transparent', color: '#3b82f6', textDecoration: 'underline' } }, 'Link'),
+    createElement('p', { style: { fontSize: '11px', color: '#94a3b8', marginTop: '6px' } },
+      hovered ? `${icons.find(i => i.id === hovered)?.tooltip}` : 'Hover for tooltip — click to toggle',
+    ),
   );
 }
 
 function TreeNavDemo() {
   const [expanded, setExpanded] = useState<string[]>(['src']);
+  const [event, setEvent] = useState('');
   const toggle = (id: string) => setExpanded((prev: string[]) => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
 
   const treeItem = (id: string, label: string, depth: number, children?: ReturnType<typeof createElement>[]) => {
@@ -907,12 +968,15 @@ function TreeNavDemo() {
     const isOpen = expanded.includes(id);
     return createElement('div', { key: id },
       createElement('div', {
-        onClick: hasChildren ? () => toggle(id) : undefined,
-        style: { display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 8px', paddingLeft: `${8 + depth * 16}px`, cursor: hasChildren ? 'pointer' : 'default', fontSize: '14px', borderRadius: '4px' },
+        onClick: () => { if (hasChildren) toggle(id); setEvent(`click: ${label}`); },
+        onDblClick: () => setEvent(`dblclick: ${label}`),
+        onContextMenu: (e: Event) => { e.preventDefault(); setEvent(`right-click: ${label}`); },
+        onMouseEnter: () => setEvent(`hover: ${label}`),
+        style: { display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 8px', paddingLeft: `${8 + depth * 16}px`, cursor: 'pointer', fontSize: '14px', borderRadius: '4px' },
       },
         hasChildren
           ? createElement('span', { style: { fontSize: '10px', color: '#64748b', width: '12px' } }, isOpen ? '\u25bc' : '\u25b6')
-          : createElement('span', { style: { width: '12px' } }),
+          : createElement('span', { style: { width: '12px', fontSize: '10px', color: '#94a3b8' } }, '\u25cf'),
         createElement('span', { style: { color: hasChildren ? '#0f172a' : '#64748b' } }, label),
       ),
       hasChildren && isOpen
@@ -938,6 +1002,7 @@ function TreeNavDemo() {
         treeItem('test1', 'Button.test.ts', 2),
       ]),
     ]),
+    event ? createElement('p', { style: { fontSize: '11px', color: '#3b82f6', marginTop: '6px', padding: '0 8px' } }, `Event: ${event}`) : null,
   );
 }
 
