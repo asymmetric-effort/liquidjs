@@ -53,6 +53,30 @@ export function Footer() {
           'GitHub Repository',
         ),
       ),
+      createElement(
+        'div',
+        { style: { marginTop: '12px', display: 'flex', justifyContent: 'center', gap: '8px' } },
+        createElement(
+          'a',
+          {
+            href: 'https://app.fossa.com/projects/custom%2B61980%2Fgit%40github.com%3Aasymmetric-effort%2Fliquidjs.git?ref=badge_shield&issueType=license',
+          },
+          createElement('img', {
+            src: 'https://app.fossa.com/api/projects/custom%2B61980%2Fgit%40github.com%3Aasymmetric-effort%2Fliquidjs.git.svg?type=shield&issueType=license',
+            alt: 'FOSSA Status',
+          }),
+        ),
+        createElement(
+          'a',
+          {
+            href: 'https://app.fossa.com/projects/custom%2B61980%2Fgit%40github.com%3Aasymmetric-effort%2Fliquidjs.git?ref=badge_shield&issueType=security',
+          },
+          createElement('img', {
+            src: 'https://app.fossa.com/api/projects/custom%2B61980%2Fgit%40github.com%3Aasymmetric-effort%2Fliquidjs.git.svg?type=shield&issueType=security',
+            alt: 'FOSSA Status',
+          }),
+        ),
+      ),
     ),
   );
 }
