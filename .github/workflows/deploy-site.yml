@@ -22,11 +22,11 @@ jobs:
     name: Build Site
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@de0fac25514ed1b867c1f36070283ac3a3f2ffb0 # v6.0.2
         with:
           fetch-depth: 2
 
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: actions/setup-node@48b55a068e5ee264b836c3e5ea9a0c3b74b294fb # v6.4.0
         with:
           node-version: '20'
 
@@ -48,7 +48,7 @@ jobs:
           echo "Copyright banners verified"
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: site/dist
 
@@ -62,18 +62,18 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
 
   verify:
     name: Post-Deployment Verification
     needs: deploy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@de0fac25514ed1b867c1f36070283ac3a3f2ffb0 # v6.0.2
         with:
           fetch-depth: 2
 
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: actions/setup-node@48b55a068e5ee264b836c3e5ea9a0c3b74b294fb # v6.4.0
         with:
           node-version: '20'
 
@@ -93,7 +93,7 @@ jobs:
 
       - name: Upload test report
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: deployment-verification-report
           path: site/playwright-report/
