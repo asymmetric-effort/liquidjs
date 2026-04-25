@@ -9,7 +9,7 @@ on:
       - '.github/workflows/deploy-site.yml'
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -23,6 +23,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - uses: actions/setup-node@v4
         with:
@@ -35,6 +37,15 @@ jobs:
       - name: Build site
         working-directory: site
         run: npx vite build
+
+      - name: Verify copyright banners
+        working-directory: site/dist
+        run: |
+          JS_FILE=$(ls assets/*.js | head -1)
+          CSS_FILE=$(ls assets/*.css | head -1)
+          head -1 "$JS_FILE" | grep -q "Asymmetric Effort" || (echo "Missing JS banner" && exit 1)
+          head -1 "$CSS_FILE" | grep -q "Asymmetric Effort" || (echo "Missing CSS banner" && exit 1)
+          echo "Copyright banners verified"
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
@@ -59,6 +70,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - uses: actions/setup-node@v4
         with:
@@ -74,6 +87,7 @@ jobs:
         run: sleep 15
 
       - name: Run post-deployment E2E tests
+        id: e2e
         working-directory: site
         run: npx playwright test --config=playwright.deploy.config.ts
 
@@ -84,3 +98,12 @@ jobs:
           name: deployment-verification-report
           path: site/playwright-report/
           retention-days: 7
+
+      - name: Rollback on verification failure
+        if: failure() && steps.e2e.outcome == 'failure'
+        run: |
+          echo "Post-deployment verification failed. Rolling back to previous deployment."
+          echo "To rollback: re-run the deploy-site workflow from the previous commit."
+          echo "Previous commit: $(git rev-parse HEAD~1)"
+          echo "::error::Post-deployment E2E tests failed. Site may be broken. Review the test report artifact."
+          exit 1

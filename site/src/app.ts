@@ -1,6 +1,7 @@
 import { createElement } from 'liquidjs';
 import { Router, Route } from 'liquidjs';
 import { NavBar } from './components/nav-bar';
+import { Footer } from './components/footer';
 import { HomeScreen } from './screens/home';
 import { ComponentsGallery } from './screens/components-gallery';
 import { EconomicDashboard } from './screens/economic-dashboard';
@@ -10,9 +11,13 @@ import { ApiIntegration } from './screens/api-integration';
 import { ComponentReference } from './screens/component-reference';
 
 export function App() {
-  return createElement(Router, null,
+  return createElement(
+    Router,
+    null,
     createElement(NavBar, null),
-    createElement('main', { className: 'main-content' },
+    createElement(
+      'main',
+      { className: 'main-content' },
       createElement(Route, { path: '/', component: HomeScreen, exact: true }),
       createElement(Route, { path: '/components', component: ComponentsGallery }),
       createElement(Route, { path: '/dashboard', component: EconomicDashboard }),
@@ -21,5 +26,6 @@ export function App() {
       createElement(Route, { path: '/api', component: ApiIntegration }),
       createElement(Route, { path: '/reference', component: ComponentReference }),
     ),
+    createElement(Footer, null),
   );
 }

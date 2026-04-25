@@ -22,20 +22,25 @@ export interface RouteProps {
 export function Route(props: RouteProps): LiquidNode {
   const router = useContext(RouterContext);
   const fullPattern = router.basePath + props.path;
-  const match = matchPath(fullPattern, router.pathname, { exact: props.exact ?? false });
+  const match = matchPath(fullPattern, router.pathname, {
+    exact: props.exact ?? false,
+  });
 
-  if (!match) return null;
-
-  // Build nested context with updated params and basePath
+  // useMemo must be called unconditionally (rules of hooks)
   const nestedValue: RouterContextValue = useMemo(
     () => ({
       pathname: router.pathname,
-      params: { ...router.params, ...match.params },
+      params: {
+        ...router.params,
+        ...(match ? match.params : {}),
+      },
       navigate: router.navigate,
-      basePath: match.url,
+      basePath: match ? match.url : router.basePath,
     }),
-    [router.pathname, router.navigate, match.url],
+    [router.pathname, router.navigate, router.params, router.basePath, match],
   );
+
+  if (!match) return null;
 
   // Merge parent params
   for (const key of Object.keys(router.params)) {
