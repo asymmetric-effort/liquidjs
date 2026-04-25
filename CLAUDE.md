@@ -5,11 +5,11 @@ A declarative TypeScript UI framework built for performance, browser compatibili
 ## Monorepo Layout
 
 - `core/` — LiquidJS framework (TypeScript: src, tests, examples, build configs)
-- `tools/` — Ecosystem tooling (Go: liquidjs-debug CLI)
 - `components/` — Community-contributed reusable components
+- `demos/` — Demo applications with TypeScript API servers
 - `docs/` — Full documentation tree (see [docs/README.md](docs/README.md))
 - `skills/` — Claude skills for LiquidJS developers
-- `.github/workflows/` — CI/CD (5 jobs: lint, test, build, e2e, go-tools)
+- `.github/workflows/` — CI/CD (4 jobs: lint, test, build, e2e)
 - `scripts/` — Repository-wide automation (act-run.sh)
 
 ---

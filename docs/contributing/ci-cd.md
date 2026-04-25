@@ -12,7 +12,6 @@ The CI pipeline (`.github/workflows/ci.yml`) runs on every push and PR to `main`
 | **test** | 465 Vitest tests with coverage thresholds | ~15s |
 | **build** | Rollup build + verify outputs + bundle size check (< 512KB) | ~15s |
 | **e2e** | Install Playwright + run 27 browser tests | ~30s |
-| **go-tools** | go vet + go test + go build | ~15s |
 
 ### Coverage Thresholds
 
@@ -42,7 +41,7 @@ curl -sSL https://github.com/nektos/act/releases/latest/download/act_Linux_x86_6
 
 ### Container Image
 
-The `.actrc` file maps `ubuntu-latest` to `catthehacker/ubuntu:act-latest`, which includes Node.js, Go, and system dependencies needed for Playwright.
+The `.actrc` file maps `ubuntu-latest` to `catthehacker/ubuntu:act-latest`, which includes Node.js and system dependencies needed for Playwright.
 
 ### Artifact Uploads
 

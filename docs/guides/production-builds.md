@@ -42,14 +42,3 @@ Vite automatically:
 3. Use `lazy` for code splitting large components
 4. Minimize component depth — flatter trees diff faster
 
-## Debugging Production Bundles
-
-Use the `liquidjs-debug` CLI tool:
-
-```bash
-liquidjs-debug analyze dist/bundle.js     # Bundle statistics
-liquidjs-debug deminify dist/bundle.js    # Pretty-print minified code
-liquidjs-debug sourcemap info bundle.map  # Inspect source map
-```
-
-See [Debug Tools](../tools/liquidjs-debug.md) for full documentation.

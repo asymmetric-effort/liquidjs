@@ -10,20 +10,38 @@ function preview(title: string, comp: () => ReturnType<typeof createElement>) {
 
 function PreviewCard(props: { title: string; component: () => ReturnType<typeof createElement> }) {
   const [collapsed, setCollapsed] = useState(false);
+  const [maximized, setMaximized] = useState(false);
+
+  const cardStyle: Record<string, string> = maximized
+    ? { position: 'fixed', inset: '0', zIndex: '200', background: 'var(--color-bg)', borderRadius: '0', display: 'flex', flexDirection: 'column', overflow: 'auto' }
+    : {};
+  const bodyStyle: Record<string, string> = maximized
+    ? { flex: '1', overflow: 'auto', padding: '20px' }
+    : {};
+
   return createElement(
     'div',
-    { className: 'preview-card' },
+    { className: 'preview-card', style: cardStyle },
     createElement(
       'div',
       {
         className: 'preview-header',
         onDblClick: () => setCollapsed(!collapsed),
-        style: { cursor: 'pointer', userSelect: 'none' },
+        style: { cursor: 'pointer', userSelect: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
       },
       props.title,
-      createElement('span', { style: { float: 'right', fontSize: '10px', color: '#94a3b8' } }, collapsed ? '\u25b6' : '\u25bc'),
+      createElement('span', { style: { display: 'flex', gap: '8px', alignItems: 'center' } },
+        createElement('span', {
+          onClick: (e: Event) => { e.stopPropagation(); setMaximized(!maximized); },
+          style: { fontSize: '12px', color: '#94a3b8', cursor: 'pointer', padding: '0 4px' },
+          title: maximized ? 'Minimize' : 'Maximize',
+        }, maximized ? '\u2716' : '\u26f6'),
+        createElement('span', { style: { fontSize: '10px', color: '#94a3b8' } }, collapsed ? '\u25b6' : '\u25bc'),
+      ),
     ),
-    collapsed ? null : createElement('div', { className: 'preview-body' }, createElement(props.component, null)),
+    collapsed
+      ? null
+      : createElement('div', { className: 'preview-body', style: bodyStyle }, createElement(props.component, null)),
   );
 }
 
@@ -67,13 +85,15 @@ export function ComponentsGallery() {
       preview('Search Suggestions', SearchSuggestionsDemo),
       preview('Multi-Step Wizard', MultiStepWizardDemo),
     ]),
-    accordionSection('Data Display', '6 components', openSection, toggle, [
+    accordionSection('Data Display', '8 components', openSection, toggle, [
       preview('Badge', BadgeDemo),
       preview('Tag', TagDemo),
       preview('Data Table', DataTableDemo),
       preview('Avatar', AvatarDemo),
       preview('List View', ListViewDemo),
       preview('Virtual Scroll', VirtualScrollDemo),
+      preview('Digital Clock', DigitalClockDemo),
+      preview('Analog Clock', AnalogClockDemo),
     ]),
     accordionSection('Feedback', '3 components', openSection, toggle, [
       preview('Alert', AlertDemo),
@@ -729,24 +749,45 @@ function DatePickerDemo() {
 }
 
 function TimePickerDemo() {
-  const [hour, setHour] = useState(9);
-  const [minute, setMinute] = useState(30);
-  const [ampm, setAmpm] = useState<'AM' | 'PM'>('AM');
-  const sel = { padding: '6px 8px', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '14px', background: '#f8fafc' };
-  const toggleStyle = (active: boolean) => ({ padding: '6px 10px', border: '1px solid #d1d5db', borderRadius: '4px', cursor: 'pointer', fontSize: '13px', background: active ? '#3b82f6' : '#f8fafc', color: active ? 'white' : '#0f172a' });
-  return createElement('div', null,
-    createElement('div', { style: { display: 'flex', gap: '6px', alignItems: 'center', marginBottom: '8px' } },
-      createElement('select', { value: String(hour), onChange: (e: Event) => setHour(Number((e.target as HTMLSelectElement).value)), style: sel },
-        ...Array.from({ length: 12 }, (_, i) => createElement('option', { key: String(i + 1), value: String(i + 1) }, String(i + 1).padStart(2, '0'))),
+  const [time12, setTime12] = useState('09:30');
+  const [time24, setTime24] = useState('14:30');
+  const [timeTz, setTimeTz] = useState('10:15:00');
+  const [tz, setTz] = useState('America/New_York');
+  const label = { fontSize: '12px', fontWeight: '600', color: '#374151', marginBottom: '4px' };
+  return createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '16px' } },
+    createElement('div', null,
+      createElement('p', { style: label }, '12-hour (AM/PM)'),
+      createElement('div', { style: { display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '6px 10px', border: '1px solid #d1d5db', borderRadius: '6px', background: '#f8fafc', fontFamily: 'monospace', fontSize: '14px' } },
+        time12, ' ',
+        createElement('span', { style: { fontSize: '11px', color: '#6b7280' } }, Number(time12.split(':')[0]) >= 12 ? 'PM' : 'AM'),
       ),
-      createElement('span', { style: { fontWeight: '600' } }, ':'),
-      createElement('select', { value: String(minute), onChange: (e: Event) => setMinute(Number((e.target as HTMLSelectElement).value)), style: sel },
-        ...Array.from({ length: 60 }, (_, i) => createElement('option', { key: String(i), value: String(i) }, String(i).padStart(2, '0'))),
+      createElement('div', { style: { marginTop: '4px' } },
+        createElement('input', { type: 'text', value: time12, onChange: (e: Event) => setTime12((e.target as HTMLInputElement).value), style: { padding: '4px 8px', border: '1px solid #d1d5db', borderRadius: '4px', fontSize: '13px', fontFamily: 'monospace', width: '80px' }, placeholder: 'HH:MM' }),
       ),
-      createElement('button', { onClick: () => setAmpm('AM'), style: toggleStyle(ampm === 'AM') }, 'AM'),
-      createElement('button', { onClick: () => setAmpm('PM'), style: toggleStyle(ampm === 'PM') }, 'PM'),
     ),
-    createElement('p', { style: { fontSize: '13px', color: '#64748b' } }, `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')} ${ampm}`),
+    createElement('div', null,
+      createElement('p', { style: label }, '24-hour clock'),
+      createElement('div', { style: { display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '6px 10px', border: '1px solid #d1d5db', borderRadius: '6px', background: '#f8fafc', fontFamily: 'monospace', fontSize: '14px' } },
+        time24,
+      ),
+      createElement('div', { style: { marginTop: '4px' } },
+        createElement('input', { type: 'text', value: time24, onChange: (e: Event) => setTime24((e.target as HTMLInputElement).value), style: { padding: '4px 8px', border: '1px solid #d1d5db', borderRadius: '4px', fontSize: '13px', fontFamily: 'monospace', width: '80px' }, placeholder: 'HH:MM' }),
+      ),
+    ),
+    createElement('div', null,
+      createElement('p', { style: label }, 'With seconds + timezone'),
+      createElement('div', { style: { display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 10px', border: '1px solid #d1d5db', borderRadius: '6px', background: '#f8fafc', fontFamily: 'monospace', fontSize: '14px' } },
+        timeTz, ' ',
+        createElement('select', { value: tz, onChange: (e: Event) => setTz((e.target as HTMLSelectElement).value), style: { fontSize: '11px', border: '1px solid #d1d5db', borderRadius: '4px', padding: '2px 4px' } },
+          ...['UTC', 'America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles', 'Europe/London', 'Asia/Tokyo'].map(t =>
+            createElement('option', { key: t, value: t }, t),
+          ),
+        ),
+      ),
+      createElement('div', { style: { marginTop: '4px' } },
+        createElement('input', { type: 'text', value: timeTz, onChange: (e: Event) => setTimeTz((e.target as HTMLInputElement).value), style: { padding: '4px 8px', border: '1px solid #d1d5db', borderRadius: '4px', fontSize: '13px', fontFamily: 'monospace', width: '100px' }, placeholder: 'HH:MM:SS' }),
+      ),
+    ),
   );
 }
 
@@ -1109,6 +1150,117 @@ function VirtualScrollDemo() {
   );
 }
 
+// ─── Clock Components ─────────────────────────────────────────────────
+
+function DigitalClockDemo() {
+  const [format, setFormat] = useState<'12h' | '24h'>('12h');
+  const [showDate, setShowDate] = useState(true);
+  const [dateFormat, setDateFormat] = useState<'short' | 'long' | 'iso'>('short');
+  const [now, setNow] = useState(new Date());
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  const seconds = now.getSeconds();
+  const pad = (n: number) => String(n).padStart(2, '0');
+  let displayH = hours;
+  let period = '';
+  if (format === '12h') {
+    period = hours >= 12 ? ' PM' : ' AM';
+    displayH = hours % 12 || 12;
+  }
+  const timeStr = `${pad(displayH)}:${pad(minutes)}:${pad(seconds)}${period}`;
+
+  const fmtDate = (f: string) => {
+    if (f === 'long') return new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(now);
+    if (f === 'iso') return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+    return `${pad(now.getMonth() + 1)}/${pad(now.getDate())}/${now.getFullYear()}`;
+  };
+
+  const btnStyle = (active: boolean) => ({ padding: '3px 10px', border: '1px solid #d1d5db', borderRadius: '4px', cursor: 'pointer', fontSize: '11px', background: active ? '#3b82f6' : '#f8fafc', color: active ? 'white' : '#0f172a' });
+  return createElement('div', null,
+    createElement('div', { style: { display: 'flex', gap: '6px', marginBottom: '10px', flexWrap: 'wrap' } },
+      createElement('button', { onClick: () => setFormat('12h'), style: btnStyle(format === '12h') }, '12h'),
+      createElement('button', { onClick: () => setFormat('24h'), style: btnStyle(format === '24h') }, '24h'),
+      createElement('button', { onClick: () => setShowDate(!showDate), style: btnStyle(showDate) }, 'Date'),
+      createElement('button', { onClick: () => setDateFormat('short'), style: btnStyle(dateFormat === 'short') }, 'Short'),
+      createElement('button', { onClick: () => setDateFormat('long'), style: btnStyle(dateFormat === 'long') }, 'Long'),
+      createElement('button', { onClick: () => setDateFormat('iso'), style: btnStyle(dateFormat === 'iso') }, 'ISO'),
+    ),
+    createElement('div', {
+      style: { fontFamily: '"SF Mono", monospace', backgroundColor: '#1e293b', color: '#e2e8f0', padding: '16px 24px', borderRadius: '8px', display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: '4px' },
+    },
+      createElement('span', { style: { fontSize: '2rem', fontWeight: '600', letterSpacing: '2px' } }, timeStr),
+      showDate ? createElement('span', { style: { fontSize: '0.75rem', color: '#94a3b8' } }, fmtDate(dateFormat)) : null,
+    ),
+  );
+}
+
+function AnalogClockDemo() {
+  const [format, setFormat] = useState<'12h' | '24h'>('12h');
+  const [showDate, setShowDate] = useState(false);
+  const [showSeconds, setShowSeconds] = useState(true);
+  const [now, setNow] = useState(new Date());
+  const size = 180;
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  const seconds = now.getSeconds();
+  const pad = (n: number) => String(n).padStart(2, '0');
+
+  const hourAngle = format === '24h' ? (hours % 24) * 15 + minutes * 0.25 : (hours % 12) * 30 + minutes * 0.5;
+  const minuteAngle = minutes * 6 + seconds * 0.1;
+  const secondAngle = seconds * 6;
+  const cx = size / 2;
+  const cy = size / 2;
+  const radius = size / 2 - 10;
+  const totalMarkers = format === '24h' ? 24 : 12;
+
+  const hand = (angle: number, len: number, width: string, color: string) => {
+    const rad = ((angle - 90) * Math.PI) / 180;
+    return createElement('line', { x1: String(cx), y1: String(cy), x2: String(cx + len * Math.cos(rad)), y2: String(cy + len * Math.sin(rad)), stroke: color, strokeWidth: width, strokeLinecap: 'round' });
+  };
+
+  const btnStyle = (active: boolean) => ({ padding: '3px 10px', border: '1px solid #d1d5db', borderRadius: '4px', cursor: 'pointer', fontSize: '11px', background: active ? '#3b82f6' : '#f8fafc', color: active ? 'white' : '#0f172a' });
+  return createElement('div', null,
+    createElement('div', { style: { display: 'flex', gap: '6px', marginBottom: '10px', flexWrap: 'wrap' } },
+      createElement('button', { onClick: () => setFormat('12h'), style: btnStyle(format === '12h') }, '12h'),
+      createElement('button', { onClick: () => setFormat('24h'), style: btnStyle(format === '24h') }, '24h'),
+      createElement('button', { onClick: () => setShowSeconds(!showSeconds), style: btnStyle(showSeconds) }, 'Seconds'),
+      createElement('button', { onClick: () => setShowDate(!showDate), style: btnStyle(showDate) }, 'Date'),
+    ),
+    createElement('svg', { width: String(size), height: String(size), viewBox: `0 0 ${size} ${size}` },
+      createElement('circle', { cx: String(cx), cy: String(cy), r: String(radius), fill: '#f8fafc', stroke: '#334155', strokeWidth: '3' }),
+      ...Array.from({ length: totalMarkers }, (_, i) => {
+        const angle = (i * 360 / totalMarkers - 90) * Math.PI / 180;
+        const tickR = radius - 4;
+        const innerR = tickR - (format === '24h' ? 4 : 6);
+        const numR = radius - 22;
+        const lbl = format === '24h' ? String(i) : String(i === 0 ? 12 : i);
+        const fs = format === '24h' ? size * 0.055 : size * 0.08;
+        return createElement('g', { key: String(i) },
+          createElement('line', { x1: String(cx + innerR * Math.cos(angle)), y1: String(cy + innerR * Math.sin(angle)), x2: String(cx + tickR * Math.cos(angle)), y2: String(cy + tickR * Math.sin(angle)), stroke: '#334155', strokeWidth: '2' }),
+          createElement('text', { x: String(cx + numR * Math.cos(angle)), y: String(cy + numR * Math.sin(angle)), textAnchor: 'middle', dominantBaseline: 'central', fill: '#374151', style: { fontSize: `${fs}px`, fontFamily: 'sans-serif' } }, lbl),
+        );
+      }),
+      hand(hourAngle, radius * 0.5, '4', '#1e293b'),
+      hand(minuteAngle, radius * 0.75, '3', '#1e293b'),
+      showSeconds ? hand(secondAngle, radius * 0.85, '1.5', '#ef4444') : null,
+      createElement('circle', { cx: String(cx), cy: String(cy), r: '4', fill: '#1e293b' }),
+    ),
+    showDate ? createElement('p', { style: { textAlign: 'center', fontSize: '13px', color: '#374151', marginTop: '6px' } }, `${pad(now.getMonth() + 1)}/${pad(now.getDate())}/${now.getFullYear()}`) : null,
+  );
+}
+
 // ─── Layout (additional) ──────────────────────────────────────────────
 function FlexContainerDemo() {
   const [direction, setDirection] = useState<'row' | 'column'>('row');
@@ -1182,6 +1334,7 @@ function TabsLayoutDemo() {
 function CartesianRoseDemo() {
   // 4-leaf rose: r = cos(2θ) in Cartesian coords
   const [hovered, setHovered] = useState<number | null>(null);
+  const [lastEvent, setLastEvent] = useState('');
   const samples = 300;
   const points: { x: number; y: number }[] = [];
   for (let i = 0; i <= samples; i++) {
@@ -1196,38 +1349,53 @@ function CartesianRoseDemo() {
   const cy = h / 2;
   const toSvg = (p: { x: number; y: number }) => ({ sx: cx + p.x * scale, sy: cy - p.y * scale });
   const pathD = points.map((p, i) => { const s = toSvg(p); return `${i === 0 ? 'M' : 'L'}${s.sx.toFixed(1)},${s.sy.toFixed(1)}`; }).join(' ');
+  const samplePoints = points.filter((_, i) => i % 15 === 0);
 
   return createElement('div', null,
     createElement('svg', { width: String(w), height: String(h), viewBox: `0 0 ${w} ${h}`, style: { background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' } },
       createElement('line', { x1: '0', y1: String(cy), x2: String(w), y2: String(cy), stroke: '#d1d5db', strokeWidth: '1' }),
       createElement('line', { x1: String(cx), y1: '0', x2: String(cx), y2: String(h), stroke: '#d1d5db', strokeWidth: '1' }),
       createElement('path', { d: pathD, fill: 'none', stroke: '#3b82f6', strokeWidth: '2' }),
-      ...points.filter((_, i) => i % 15 === 0).map((p, i) => {
+      ...samplePoints.map((p, i) => {
         const s = toSvg(p);
-        return createElement('circle', {
-          key: String(i), cx: String(s.sx), cy: String(s.sy), r: hovered === i ? '5' : '3',
-          fill: '#3b82f6', style: { cursor: 'pointer' },
-          onMouseEnter: () => setHovered(i),
-          onMouseLeave: () => setHovered(null),
-        });
+        const coord = `(${p.x.toFixed(2)}, ${p.y.toFixed(2)})`;
+        return createElement('g', { key: String(i) },
+          createElement('circle', {
+            cx: String(s.sx), cy: String(s.sy), r: hovered === i ? '6' : '3',
+            fill: '#3b82f6', style: { cursor: 'pointer' },
+            onMouseEnter: () => setHovered(i),
+            onMouseLeave: () => setHovered(null),
+            onClick: () => setLastEvent(`click: ${coord}`),
+            onDblClick: () => setLastEvent(`dblclick: ${coord}`),
+            onContextMenu: (e: Event) => { e.preventDefault(); setLastEvent(`right-click: ${coord}`); },
+          }),
+          hovered === i ? createElement('text', {
+            x: String(s.sx), y: String(s.sy - 10), textAnchor: 'middle',
+            style: { fontSize: '9px', fill: '#1e293b', fontFamily: 'monospace', pointerEvents: 'none' },
+          }, coord) : null,
+        );
       }),
     ),
-    createElement('p', { style: { fontSize: '11px', color: '#94a3b8', marginTop: '4px' } }, 'r = cos(2\u03b8) — 4-leaf rose, pan/zoom supported'),
+    createElement('p', { style: { fontSize: '11px', color: '#94a3b8', marginTop: '4px' } }, 'r = cos(2\u03b8) — hover for coords, click/dblclick/right-click supported'),
+    lastEvent ? createElement('p', { style: { fontSize: '11px', color: '#3b82f6', marginTop: '2px', fontFamily: 'monospace' } }, lastEvent) : null,
   );
 }
 
 function MandelbrotDemo() {
-  const [info, setInfo] = useState('Hover to see coordinates');
-  const w = 220;
-  const h = 160;
-  const reMin = -2.2;
-  const reMax = 0.8;
-  const imMin = -1.2;
-  const imMax = 1.2;
-  const maxIter = 50;
+  const [info, setInfo] = useState('Hover to see coordinates. Click to zoom in, right-click to zoom out.');
+  const [center, setCenter] = useState({ re: -0.7, im: 0 });
+  const [zoom, setZoom] = useState(1);
+  const w = 260;
+  const h = 200;
+  const maxIter = 80 + Math.floor(zoom * 40);
 
-  // Generate pixel data as colored divs (canvas not available in createElement)
-  const resolution = 4;
+  const span = 1.5 / zoom;
+  const reMin = center.re - span * (w / h);
+  const reMax = center.re + span * (w / h);
+  const imMin = center.im - span;
+  const imMax = center.im + span;
+
+  const resolution = 2;
   const cols = Math.floor(w / resolution);
   const rows = Math.floor(h / resolution);
   const pixels: { x: number; y: number; color: string; re: number; im: number }[] = [];
@@ -1245,30 +1413,46 @@ function MandelbrotDemo() {
         zr = tmp;
         iter++;
       }
-      const hue = iter === maxIter ? 0 : Math.round((iter / maxIter) * 270);
-      const color = iter === maxIter ? '#000' : `hsl(${hue}, 80%, 50%)`;
+      const t = iter / maxIter;
+      const color = iter === maxIter ? '#000' : `hsl(${Math.round(t * 270)}, 85%, ${30 + Math.round(t * 40)}%)`;
       pixels.push({ x: px * resolution, y: py * resolution, color, re, im });
     }
   }
 
+  const handleClick = (re: number, im: number) => {
+    setCenter({ re, im });
+    setZoom((z: number) => z * 2);
+  };
+
+  const handleRightClick = (e: Event) => {
+    e.preventDefault();
+    setZoom((z: number) => Math.max(1, z / 2));
+  };
+
   return createElement('div', null,
     createElement('div', {
-      style: { width: `${w}px`, height: `${h}px`, position: 'relative', borderRadius: '6px', overflow: 'hidden', border: '1px solid #e2e8f0' },
+      style: { width: `${w}px`, height: `${h}px`, position: 'relative', borderRadius: '6px', overflow: 'hidden', border: '1px solid #e2e8f0', cursor: 'crosshair' },
+      onContextMenu: handleRightClick,
     },
       ...pixels.map((p, i) =>
         createElement('div', {
           key: String(i),
           style: { position: 'absolute', left: `${p.x}px`, top: `${p.y}px`, width: `${resolution}px`, height: `${resolution}px`, backgroundColor: p.color },
-          onMouseEnter: () => setInfo(`z = ${p.re.toFixed(3)} + ${p.im.toFixed(3)}i`),
+          onMouseEnter: () => setInfo(`z = ${p.re.toFixed(4)} + ${p.im.toFixed(4)}i`),
+          onClick: () => handleClick(p.re, p.im),
         }),
       ),
     ),
-    createElement('p', { style: { fontSize: '11px', color: '#94a3b8', marginTop: '4px' } }, info),
+    createElement('div', { style: { display: 'flex', justifyContent: 'space-between', marginTop: '4px' } },
+      createElement('p', { style: { fontSize: '11px', color: '#94a3b8' } }, info),
+      createElement('p', { style: { fontSize: '11px', color: '#64748b', fontFamily: 'monospace' } }, `zoom: ${zoom}x`),
+    ),
   );
 }
 
 function PolarRoseDemo() {
   const [hovered, setHovered] = useState<number | null>(null);
+  const [lastEvent, setLastEvent] = useState('');
   const samples = 270;
   const w = 220;
   const h = 200;
@@ -1284,32 +1468,38 @@ function PolarRoseDemo() {
   }
 
   const pathD = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
-
-  // Concentric circles
   const circles = [0.25, 0.5, 0.75, 1.0];
+  const samplePoints = points.filter((_, i) => i % 13 === 0);
 
   return createElement('div', null,
     createElement('svg', { width: String(w), height: String(h), viewBox: `0 0 ${w} ${h}`, style: { background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' } },
-      // Grid circles
       ...circles.map(r =>
         createElement('circle', { key: String(r), cx: String(cx), cy: String(cy), r: String(r * scale), fill: 'none', stroke: '#e2e8f0', strokeWidth: '1' }),
       ),
-      // Axis lines
       createElement('line', { x1: '0', y1: String(cy), x2: String(w), y2: String(cy), stroke: '#d1d5db', strokeWidth: '1' }),
       createElement('line', { x1: String(cx), y1: '0', x2: String(cx), y2: String(h), stroke: '#d1d5db', strokeWidth: '1' }),
-      // Curve
       createElement('path', { d: pathD, fill: 'none', stroke: '#8b5cf6', strokeWidth: '2' }),
-      // Sample points
-      ...points.filter((_, i) => i % 13 === 0).map((p, i) =>
-        createElement('circle', {
-          key: `p${i}`, cx: String(p.x), cy: String(p.y), r: hovered === i ? '5' : '3',
-          fill: '#8b5cf6', style: { cursor: 'pointer' },
-          onMouseEnter: () => setHovered(i),
-          onMouseLeave: () => setHovered(null),
-        }),
-      ),
+      ...samplePoints.map((p, i) => {
+        const coord = `(r=${p.r.toFixed(2)}, \u03b8=${(p.theta * 180 / Math.PI).toFixed(1)}\u00b0)`;
+        return createElement('g', { key: `p${i}` },
+          createElement('circle', {
+            cx: String(p.x), cy: String(p.y), r: hovered === i ? '6' : '3',
+            fill: '#8b5cf6', style: { cursor: 'pointer' },
+            onMouseEnter: () => setHovered(i),
+            onMouseLeave: () => setHovered(null),
+            onClick: () => setLastEvent(`click: ${coord}`),
+            onDblClick: () => setLastEvent(`dblclick: ${coord}`),
+            onContextMenu: (e: Event) => { e.preventDefault(); setLastEvent(`right-click: ${coord}`); },
+          }),
+          hovered === i ? createElement('text', {
+            x: String(p.x), y: String(p.y - 10), textAnchor: 'middle',
+            style: { fontSize: '9px', fill: '#1e293b', fontFamily: 'monospace', pointerEvents: 'none' },
+          }, coord) : null,
+        );
+      }),
     ),
-    createElement('p', { style: { fontSize: '11px', color: '#94a3b8', marginTop: '4px' } }, 'r = cos(3\u03b8) — 3-leaf rose, polar coordinates'),
+    createElement('p', { style: { fontSize: '11px', color: '#94a3b8', marginTop: '4px' } }, 'r = cos(3\u03b8) — hover for coords, click/dblclick/right-click supported'),
+    lastEvent ? createElement('p', { style: { fontSize: '11px', color: '#8b5cf6', marginTop: '2px', fontFamily: 'monospace' } }, lastEvent) : null,
   );
 }
 

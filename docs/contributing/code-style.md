@@ -24,14 +24,6 @@ chore: update playwright to v1.60
 perf: reduce allocation in reconciler hot path
 ```
 
-## Go (tools/)
-
-- **`gofmt`** — Standard formatting
-- **`go vet`** — Must pass clean
-- **Error handling** — Always check and wrap with `fmt.Errorf("context: %w", err)`
-- **Package names** — Short, lowercase, no underscores
-- **Test files** — `*_test.go` alongside source
-
 ## Documentation (docs/)
 
 - Markdown with GitHub-flavored extensions

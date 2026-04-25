@@ -11,7 +11,6 @@
 | DOM API | [api/dom.md](api/dom.md) | createRoot, hydrate, portals, events |
 | Static Pre-rendering | [api/server.md](api/server.md) | renderToString, build-time HTML generation |
 | Architecture | [architecture/README.md](architecture/README.md) | Virtual DOM, fiber, reconciler, scheduler |
-| Debug Tools | [tools/liquidjs-debug.md](tools/liquidjs-debug.md) | Deminify, deobfuscate, analyze bundles |
 | Contributing | [contributing/README.md](contributing/README.md) | Development setup, code style, PR process |
 
 ## Guides
@@ -37,10 +36,6 @@
 - [Fiber & Reconciler](architecture/fiber-reconciler.md) — Fiber tree, work loop, keyed reconciliation
 - [Hooks Internals](architecture/hooks-internals.md) — Hook state, dispatcher, effect system
 - [Event System](architecture/event-system.md) — Synthetic events, delegation, normalization
-
-## Tools
-
-- [liquidjs-debug CLI](tools/liquidjs-debug.md) — Bundle debugging and reverse-engineering
 
 ## Contributing
 

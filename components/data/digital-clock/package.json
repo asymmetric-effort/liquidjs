@@ -1,0 +1,8 @@
+{
+  "name": "@liquidjs/data-digital-clock",
+  "version": "0.0.1",
+  "description": "Digital clock component for LiquidJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "liquidjs": "*" }
+}

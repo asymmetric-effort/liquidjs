@@ -1,6 +1,6 @@
 {
   "name": "liquidjs-framework",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A declarative TypeScript UI framework built for performance and simplicity",
   "type": "module",
   "main": "dist/liquidjs.cjs.js",

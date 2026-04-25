@@ -7,7 +7,6 @@
 #   ./scripts/act-run.sh test         # Run only the test job
 #   ./scripts/act-run.sh build        # Run only the build job
 #   ./scripts/act-run.sh e2e          # Run only the e2e job
-#   ./scripts/act-run.sh go-tools     # Run only the Go tools job
 #   ./scripts/act-run.sh --list       # List available jobs
 #
 set -euo pipefail
@@ -37,7 +36,7 @@ case "$JOB" in
     echo "Available jobs in .github/workflows/ci.yml:"
     act --list
     ;;
-  lint|test|build|e2e|go-tools)
+  lint|test|build|e2e)
     echo "=== Running job: $JOB ==="
     act -j "$JOB" --container-architecture linux/amd64 --env ACT=true
     ;;
@@ -47,7 +46,7 @@ case "$JOB" in
     ;;
   *)
     echo "Unknown job: $JOB"
-    echo "Available: lint, test, build, e2e, go-tools, --list"
+    echo "Available: lint, test, build, e2e, --list"
     exit 1
     ;;
 esac

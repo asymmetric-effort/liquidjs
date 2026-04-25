@@ -16,12 +16,18 @@ if [ -f "$CERT_DIR/cert.pem" ] && [ -f "$CERT_DIR/key.pem" ]; then
   exit 0
 fi
 
-echo "Building liquidjs-cert tool..."
-cd "$ROOT_DIR/tools/liquidjs-cert"
-go build -o liquidjs-cert .
+mkdir -p "$CERT_DIR"
 
-echo "Generating certificates..."
-./liquidjs-cert -out "$CERT_DIR" -cn localhost -sans "localhost,127.0.0.1,::1" -days 365
+echo "Generating certificates with openssl..."
+openssl req -x509 -newkey rsa:2048 -nodes \
+  -keyout "$CERT_DIR/key.pem" \
+  -out "$CERT_DIR/cert.pem" \
+  -days 365 \
+  -subj "/CN=localhost" \
+  -addext "subjectAltName=DNS:localhost,IP:127.0.0.1,IP:::1"
+
+# Copy cert as CA for convenience
+cp "$CERT_DIR/cert.pem" "$CERT_DIR/ca.pem"
 
 echo ""
 echo "Done. Certificates are in .certs/"
