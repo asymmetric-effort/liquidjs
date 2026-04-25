@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math"
 	"net/http"
 	"strconv"
 	"strings"
@@ -207,7 +208,7 @@ func handleProtoTasks(w http.ResponseWriter, r *http.Request) {
 func handleProtoTask(w http.ResponseWriter, r *http.Request) {
 	parts := strings.Split(strings.TrimPrefix(r.URL.Path, "/proto/tasks/"), "/")
 	id, err := strconv.Atoi(parts[0])
-	if err != nil {
+	if err != nil || id < 0 || id > math.MaxInt32 {
 		http.Error(w, "invalid id", http.StatusBadRequest)
 		return
 	}
@@ -286,7 +287,7 @@ func handleJSONTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	parts := strings.Split(strings.TrimPrefix(r.URL.Path, "/api/tasks/"), "/")
 	id, err := strconv.Atoi(parts[0])
-	if err != nil {
+	if err != nil || id < 0 || id > math.MaxInt32 {
 		http.Error(w, `{"error":"invalid id"}`, http.StatusBadRequest)
 		return
 	}
