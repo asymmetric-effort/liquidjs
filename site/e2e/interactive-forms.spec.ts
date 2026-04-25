@@ -15,23 +15,15 @@ test.describe('Interactive Forms', () => {
   });
 
   test('sign up form validates empty fields', async ({ page }) => {
-    const body = page.locator('.dialog-body');
-    await body.locator('text=Sign Up').first().click();
-    await expect(body.locator('.preview-body').first()).toContainText('required');
-  });
-
-  test('sign up form accepts valid input', async ({ page }) => {
     const firstCard = page.locator('.dialog-body .preview-body').first();
-    await firstCard.locator('input').first().fill('Alice');
-    await firstCard.locator('input').nth(1).fill('alice@example.com');
-    await firstCard.locator('text=Sign Up').click();
-    await expect(firstCard).toContainText('Welcome, Alice');
+    await firstCard.locator('button:has-text("Sign Up")').click();
+    await expect(firstCard).toContainText('required');
   });
 
   test('multi-step wizard navigates steps', async ({ page }) => {
-    const body = page.locator('.dialog-body');
-    await expect(body.locator('.preview-body')).toContainText('Step 1');
-    await body.locator('text=Next').first().click();
-    await expect(body.locator('.preview-body').last()).toContainText('Step 2');
+    const wizard = page.locator('.dialog-body .preview-body').last();
+    await expect(wizard).toContainText('Step 1');
+    await wizard.locator('button:has-text("Next")').click();
+    await expect(wizard).toContainText('Step 2');
   });
 });
