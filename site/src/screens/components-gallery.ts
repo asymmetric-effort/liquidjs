@@ -1,43 +1,67 @@
 import { createElement } from 'liquidjs';
 import { useState, useCallback } from 'liquidjs/hooks';
 
-export function ComponentsGallery() {
-  return createElement('div', null,
-    createElement('div', { className: 'section' },
-      createElement('h2', null, 'Component Gallery'),
-      createElement('p', { style: { color: '#64748b', marginBottom: '24px' } },
-        'Live previews of LiquidJS components — all rendered by the framework in real time.',
-      ),
-      createElement('div', { className: 'preview-grid' },
-        createElement('div', { className: 'preview-card' },
-          createElement('div', { className: 'preview-header' }, 'Toggle'),
-          createElement('div', { className: 'preview-body' }, createElement(ToggleDemo, null)),
-        ),
-        createElement('div', { className: 'preview-card' },
-          createElement('div', { className: 'preview-header' }, 'Counter'),
-          createElement('div', { className: 'preview-body' }, createElement(CounterDemo, null)),
-        ),
-        createElement('div', { className: 'preview-card' },
-          createElement('div', { className: 'preview-header' }, 'Text Input'),
-          createElement('div', { className: 'preview-body' }, createElement(TextInputDemo, null)),
-        ),
-        createElement('div', { className: 'preview-card' },
-          createElement('div', { className: 'preview-header' }, 'List with Filter'),
-          createElement('div', { className: 'preview-body' }, createElement(FilterListDemo, null)),
-        ),
-        createElement('div', { className: 'preview-card' },
-          createElement('div', { className: 'preview-header' }, 'Tabs'),
-          createElement('div', { className: 'preview-body' }, createElement(TabsDemo, null)),
-        ),
-        createElement('div', { className: 'preview-card' },
-          createElement('div', { className: 'preview-header' }, 'Alert'),
-          createElement('div', { className: 'preview-body' }, createElement(AlertDemo, null)),
-        ),
-      ),
-    ),
+function preview(title: string, comp: () => ReturnType<typeof createElement>) {
+  return createElement(
+    'div',
+    { className: 'preview-card' },
+    createElement('div', { className: 'preview-header' }, title),
+    createElement('div', { className: 'preview-body' }, createElement(comp, null)),
   );
 }
 
+export function ComponentsGallery() {
+  return createElement(
+    'div',
+    null,
+    // Form Components
+    section('Form Components', [
+      preview('Toggle', ToggleDemo),
+      preview('Text Input', TextInputDemo),
+      preview('Checkbox', CheckboxDemo),
+      preview('Radio Group', RadioGroupDemo),
+      preview('Select', SelectDemo),
+      preview('Slider', SliderDemo),
+      preview('Number Spinner', NumberSpinnerDemo),
+    ]),
+    // Data Display
+    section('Data Display', [
+      preview('Badge', BadgeDemo),
+      preview('Tag', TagDemo),
+      preview('Data Table', DataTableDemo),
+      preview('Avatar', AvatarDemo),
+    ]),
+    // Feedback
+    section('Feedback', [
+      preview('Alert', AlertDemo),
+      preview('Progress Bar', ProgressBarDemo),
+      preview('Spinner', SpinnerDemo),
+    ]),
+    // Navigation
+    section('Navigation', [
+      preview('Tabs', TabsDemo),
+      preview('Breadcrumb', BreadcrumbDemo),
+      preview('Pagination', PaginationDemo),
+    ]),
+    // Layout
+    section('Layout', [
+      preview('Card', CardDemo),
+      preview('Counter', CounterDemo),
+      preview('List with Filter', FilterListDemo),
+    ]),
+  );
+}
+
+function section(title: string, children: ReturnType<typeof createElement>[]) {
+  return createElement(
+    'div',
+    { className: 'section' },
+    createElement('h3', { style: { fontSize: '18px', fontWeight: '600', marginBottom: '16px', color: '#3b82f6' } }, title),
+    createElement('div', { className: 'preview-grid' }, ...children),
+  );
+}
+
+// ─── Form ─────────────────────────────────────────────────────────────
 function ToggleDemo() {
   const [on, setOn] = useState(false);
   return createElement('div', { className: 'demo-toggle', onClick: () => setOn(!on) },
@@ -48,46 +72,205 @@ function ToggleDemo() {
   );
 }
 
-function CounterDemo() {
-  const [count, setCount] = useState(0);
-  const btnStyle = {
-    padding: '6px 16px',
-    border: '1px solid #d1d5db',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontSize: '14px',
-    backgroundColor: '#f8fafc',
-  };
-  return createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '12px' } },
-    createElement('button', { style: btnStyle, onClick: () => setCount(c => c - 1) }, '-'),
-    createElement('span', { style: { fontSize: '24px', fontWeight: '700', minWidth: '40px', textAlign: 'center' } }, String(count)),
-    createElement('button', { style: btnStyle, onClick: () => setCount(c => c + 1) }, '+'),
+function TextInputDemo() {
+  const [value, setValue] = useState('');
+  return createElement('div', null,
+    createElement('input', {
+      type: 'text', placeholder: 'Type something...', value,
+      onInput: (e: Event) => setValue((e.target as HTMLInputElement).value),
+      style: { padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '14px', width: '100%' },
+    }),
+    value ? createElement('p', { style: { fontSize: '13px', color: '#64748b', marginTop: '8px' } }, `"${value}" (${value.length} chars)`) : null,
   );
 }
 
-function TextInputDemo() {
+function CheckboxDemo() {
+  const [checked, setChecked] = useState(false);
+  return createElement('label', { style: { display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14px' } },
+    createElement('input', { type: 'checkbox', checked, onChange: () => setChecked(!checked) }),
+    checked ? 'Checked' : 'Unchecked',
+  );
+}
+
+function RadioGroupDemo() {
+  const [selected, setSelected] = useState('small');
+  const options = ['small', 'medium', 'large'];
+  return createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '6px' } },
+    ...options.map(opt =>
+      createElement('label', { key: opt, style: { display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', cursor: 'pointer' } },
+        createElement('input', { type: 'radio', name: 'size-demo', checked: selected === opt, onChange: () => setSelected(opt) }),
+        opt.charAt(0).toUpperCase() + opt.slice(1),
+      ),
+    ),
+  );
+}
+
+function SelectDemo() {
   const [value, setValue] = useState('');
-  const inputStyle = {
-    padding: '8px 12px',
-    border: '1px solid #d1d5db',
-    borderRadius: '6px',
-    fontSize: '14px',
-    width: '100%',
-    outline: 'none',
-  };
+  const [open, setOpen] = useState(false);
+  const items = ['Apple', 'Banana', 'Cherry', 'Date'];
+  return createElement('div', { style: { position: 'relative' } },
+    createElement('div', {
+      onClick: () => setOpen(!open),
+      style: { padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px', cursor: 'pointer', fontSize: '14px', display: 'flex', justifyContent: 'space-between' },
+    }, value || 'Select a fruit...', createElement('span', null, open ? '\u25b2' : '\u25bc')),
+    open ? createElement('div', { style: { position: 'absolute', top: '100%', left: '0', right: '0', border: '1px solid #d1d5db', borderRadius: '0 0 6px 6px', background: 'white', zIndex: '10' } },
+      ...items.map(item =>
+        createElement('div', { key: item, onClick: () => { setValue(item); setOpen(false); }, style: { padding: '6px 12px', cursor: 'pointer', fontSize: '14px' } }, item),
+      ),
+    ) : null,
+  );
+}
+
+function SliderDemo() {
+  const [value, setValue] = useState(50);
   return createElement('div', null,
-    createElement('input', {
-      type: 'text',
-      placeholder: 'Type something...',
-      value,
-      onInput: (e: Event) => setValue((e.target as HTMLInputElement).value),
-      style: inputStyle,
-    }),
-    value
-      ? createElement('p', { style: { fontSize: '13px', color: '#64748b', marginTop: '8px' } },
-          `You typed: "${value}" (${value.length} chars)`,
-        )
-      : null,
+    createElement('input', { type: 'range', min: '0', max: '100', value: String(value), onInput: (e: Event) => setValue(Number((e.target as HTMLInputElement).value)), style: { width: '100%' } }),
+    createElement('p', { style: { fontSize: '13px', color: '#64748b', marginTop: '4px' } }, `Value: ${value}`),
+  );
+}
+
+function NumberSpinnerDemo() {
+  const [n, setN] = useState(0);
+  const btn = { padding: '4px 12px', border: '1px solid #d1d5db', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', background: '#f8fafc' };
+  return createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '8px' } },
+    createElement('button', { style: btn, onClick: () => setN(n - 1) }, '-'),
+    createElement('span', { style: { fontSize: '18px', fontWeight: '700', minWidth: '32px', textAlign: 'center' } }, String(n)),
+    createElement('button', { style: btn, onClick: () => setN(n + 1) }, '+'),
+  );
+}
+
+// ─── Data Display ─────────────────────────────────────────────────────
+function BadgeDemo() {
+  const [count, setCount] = useState(3);
+  return createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '16px' } },
+    createElement('div', { style: { position: 'relative', display: 'inline-block' } },
+      createElement('span', { style: { fontSize: '20px' } }, '\ud83d\udce8'),
+      createElement('span', { style: { position: 'absolute', top: '-6px', right: '-10px', background: '#ef4444', color: 'white', borderRadius: '10px', padding: '0 6px', fontSize: '11px', fontWeight: '700' } }, String(count)),
+    ),
+    createElement('button', { onClick: () => setCount(count + 1), style: { fontSize: '12px', padding: '2px 8px', border: '1px solid #d1d5db', borderRadius: '4px', cursor: 'pointer' } }, '+1'),
+    createElement('button', { onClick: () => setCount(0), style: { fontSize: '12px', padding: '2px 8px', border: '1px solid #d1d5db', borderRadius: '4px', cursor: 'pointer' } }, 'Clear'),
+  );
+}
+
+function TagDemo() {
+  const [tags, setTags] = useState(['LiquidJS', 'TypeScript', 'SPA']);
+  return createElement('div', { style: { display: 'flex', gap: '6px', flexWrap: 'wrap' } },
+    ...tags.map(tag =>
+      createElement('span', { key: tag, style: { padding: '4px 10px', background: '#eff6ff', color: '#3b82f6', borderRadius: '12px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '4px' } },
+        tag,
+        createElement('span', { onClick: () => setTags(tags.filter(t => t !== tag)), style: { cursor: 'pointer', opacity: '0.6' } }, '\u00d7'),
+      ),
+    ),
+  );
+}
+
+function DataTableDemo() {
+  const rows = [['Alice', '28', 'Engineer'], ['Bob', '34', 'Designer'], ['Carol', '25', 'Manager']];
+  return createElement('table', { className: 'data-table' },
+    createElement('thead', null, createElement('tr', null, ...['Name', 'Age', 'Role'].map(h => createElement('th', { key: h }, h)))),
+    createElement('tbody', null, ...rows.map((r, i) => createElement('tr', { key: String(i) }, ...r.map((c, j) => createElement('td', { key: String(j) }, c))))),
+  );
+}
+
+function AvatarDemo() {
+  const initials = ['SC', 'AE', 'LJ'];
+  const colors = ['#3b82f6', '#10b981', '#f59e0b'];
+  return createElement('div', { style: { display: 'flex', gap: '8px' } },
+    ...initials.map((init, i) =>
+      createElement('div', { key: init, style: { width: '40px', height: '40px', borderRadius: '50%', background: colors[i % colors.length], color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: '700' } }, init),
+    ),
+  );
+}
+
+// ─── Feedback ─────────────────────────────────────────────────────────
+function AlertDemo() {
+  const [visible, setVisible] = useState(true);
+  if (!visible) return createElement('button', { onClick: () => setVisible(true), style: { padding: '6px 14px', border: '1px solid #d1d5db', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' } }, 'Show Alert');
+  return createElement('div', { style: { padding: '12px 16px', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '14px', color: '#1e40af' } },
+    createElement('span', null, 'Informational alert built with LiquidJS.'),
+    createElement('button', { onClick: () => setVisible(false), style: { background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', color: '#1e40af' } }, '\u00d7'),
+  );
+}
+
+function ProgressBarDemo() {
+  const [value, setValue] = useState(60);
+  return createElement('div', null,
+    createElement('div', { style: { height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' } },
+      createElement('div', { style: { width: `${value}%`, height: '100%', background: '#3b82f6', borderRadius: '4px', transition: 'width 0.3s' } }),
+    ),
+    createElement('div', { style: { display: 'flex', gap: '8px', marginTop: '8px' } },
+      createElement('button', { onClick: () => setValue(Math.max(0, value - 10)), style: { fontSize: '12px', padding: '2px 8px', border: '1px solid #d1d5db', borderRadius: '4px', cursor: 'pointer' } }, '-10'),
+      createElement('span', { style: { fontSize: '13px', color: '#64748b' } }, `${value}%`),
+      createElement('button', { onClick: () => setValue(Math.min(100, value + 10)), style: { fontSize: '12px', padding: '2px 8px', border: '1px solid #d1d5db', borderRadius: '4px', cursor: 'pointer' } }, '+10'),
+    ),
+  );
+}
+
+function SpinnerDemo() {
+  return createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '12px' } },
+    createElement('div', { style: { width: '24px', height: '24px', border: '3px solid #e2e8f0', borderTopColor: '#3b82f6', borderRadius: '50%', animation: 'spin 0.8s linear infinite' } }),
+    createElement('span', { style: { fontSize: '14px', color: '#64748b' } }, 'Loading...'),
+    createElement('style', null, '@keyframes spin { to { transform: rotate(360deg); } }'),
+  );
+}
+
+// ─── Navigation ───────────────────────────────────────────────────────
+function TabsDemo() {
+  const tabs = ['Overview', 'Details', 'Settings'];
+  const [active, setActive] = useState(0);
+  return createElement('div', null,
+    createElement('div', { style: { display: 'flex', borderBottom: '1px solid #e2e8f0', marginBottom: '12px' } },
+      ...tabs.map((tab, i) =>
+        createElement('button', { key: tab, style: { padding: '6px 14px', border: 'none', borderBottom: i === active ? '2px solid #3b82f6' : '2px solid transparent', background: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: i === active ? '600' : '400', color: i === active ? '#3b82f6' : '#64748b' }, onClick: () => setActive(i) }, tab),
+      ),
+    ),
+    createElement('div', { style: { fontSize: '14px', color: '#64748b' } }, `Content for ${tabs[active]} tab.`),
+  );
+}
+
+function BreadcrumbDemo() {
+  const items = ['Home', 'Products', 'Electronics', 'Phones'];
+  return createElement('div', { style: { display: 'flex', gap: '4px', fontSize: '14px' } },
+    ...items.map((item, i) =>
+      createElement('span', { key: item },
+        i > 0 ? createElement('span', { style: { color: '#94a3b8', margin: '0 4px' } }, '/') : null,
+        createElement('span', { style: { color: i === items.length - 1 ? '#0f172a' : '#3b82f6', fontWeight: i === items.length - 1 ? '600' : '400' } }, item),
+      ),
+    ),
+  );
+}
+
+function PaginationDemo() {
+  const [page, setPage] = useState(1);
+  const total = 5;
+  const btn = (label: string, p: number, active: boolean) =>
+    createElement('button', { key: label, onClick: () => setPage(p), style: { padding: '4px 10px', border: '1px solid #d1d5db', borderRadius: '4px', cursor: 'pointer', fontSize: '13px', background: active ? '#3b82f6' : '#f8fafc', color: active ? 'white' : '#0f172a' } }, label);
+  return createElement('div', { style: { display: 'flex', gap: '4px', alignItems: 'center' } },
+    btn('\u2190', Math.max(1, page - 1), false),
+    ...Array.from({ length: total }, (_, i) => btn(String(i + 1), i + 1, page === i + 1)),
+    btn('\u2192', Math.min(total, page + 1), false),
+  );
+}
+
+// ─── Layout ───────────────────────────────────────────────────────────
+function CardDemo() {
+  return createElement('div', { style: { border: '1px solid #e2e8f0', borderRadius: '8px', overflow: 'hidden' } },
+    createElement('div', { style: { height: '80px', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)' } }),
+    createElement('div', { style: { padding: '12px 16px' } },
+      createElement('h4', { style: { fontSize: '15px', fontWeight: '600', marginBottom: '4px' } }, 'Card Title'),
+      createElement('p', { style: { fontSize: '13px', color: '#64748b' } }, 'A simple card with header gradient and body content.'),
+    ),
+  );
+}
+
+function CounterDemo() {
+  const [count, setCount] = useState(0);
+  const btn = { padding: '6px 16px', border: '1px solid #d1d5db', borderRadius: '6px', cursor: 'pointer', fontSize: '14px', backgroundColor: '#f8fafc' };
+  return createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '12px' } },
+    createElement('button', { style: btn, onClick: () => setCount(c => c - 1) }, '-'),
+    createElement('span', { style: { fontSize: '24px', fontWeight: '700', minWidth: '40px', textAlign: 'center' } }, String(count)),
+    createElement('button', { style: btn, onClick: () => setCount(c => c + 1) }, '+'),
   );
 }
 
@@ -95,77 +278,11 @@ function FilterListDemo() {
   const items = ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry', 'Fig', 'Grape'];
   const [filter, setFilter] = useState('');
   const filtered = items.filter(i => i.toLowerCase().includes(filter.toLowerCase()));
-
   return createElement('div', null,
-    createElement('input', {
-      type: 'text',
-      placeholder: 'Filter fruits...',
-      value: filter,
-      onInput: (e: Event) => setFilter((e.target as HTMLInputElement).value),
-      style: { padding: '6px 10px', border: '1px solid #d1d5db', borderRadius: '4px', fontSize: '13px', width: '100%', marginBottom: '8px' },
-    }),
+    createElement('input', { type: 'text', placeholder: 'Filter fruits...', value: filter, onInput: (e: Event) => setFilter((e.target as HTMLInputElement).value), style: { padding: '6px 10px', border: '1px solid #d1d5db', borderRadius: '4px', fontSize: '13px', width: '100%', marginBottom: '8px' } }),
     createElement('ul', { style: { listStyle: 'none', fontSize: '14px' } },
-      ...filtered.map(item =>
-        createElement('li', { key: item, style: { padding: '4px 0', borderBottom: '1px solid #f1f5f9' } }, item),
-      ),
+      ...filtered.map(item => createElement('li', { key: item, style: { padding: '4px 0', borderBottom: '1px solid #f1f5f9' } }, item)),
     ),
-    filtered.length === 0
-      ? createElement('p', { style: { fontSize: '13px', color: '#94a3b8' } }, 'No matches')
-      : null,
-  );
-}
-
-function TabsDemo() {
-  const tabs = ['Overview', 'Details', 'Settings'];
-  const [active, setActive] = useState(0);
-  const tabStyle = (isActive: boolean) => ({
-    padding: '6px 14px',
-    border: 'none',
-    borderBottom: isActive ? '2px solid #3b82f6' : '2px solid transparent',
-    background: 'none',
-    cursor: 'pointer',
-    fontSize: '14px',
-    fontWeight: isActive ? '600' : '400',
-    color: isActive ? '#3b82f6' : '#64748b',
-  });
-
-  return createElement('div', null,
-    createElement('div', { style: { display: 'flex', borderBottom: '1px solid #e2e8f0', marginBottom: '12px' } },
-      ...tabs.map((tab, i) =>
-        createElement('button', { key: tab, style: tabStyle(i === active), onClick: () => setActive(i) }, tab),
-      ),
-    ),
-    createElement('div', { style: { fontSize: '14px', color: '#64748b' } },
-      `Content for ${tabs[active]} tab.`,
-    ),
-  );
-}
-
-function AlertDemo() {
-  const [visible, setVisible] = useState(true);
-  if (!visible) {
-    return createElement('button', {
-      onClick: () => setVisible(true),
-      style: { padding: '6px 14px', border: '1px solid #d1d5db', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' },
-    }, 'Show Alert');
-  }
-  return createElement('div', {
-    style: {
-      padding: '12px 16px',
-      background: '#eff6ff',
-      border: '1px solid #bfdbfe',
-      borderRadius: '6px',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      fontSize: '14px',
-      color: '#1e40af',
-    },
-  },
-    createElement('span', null, 'This is an informational alert built with LiquidJS.'),
-    createElement('button', {
-      onClick: () => setVisible(false),
-      style: { background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', color: '#1e40af' },
-    }, '\u00d7'),
+    filtered.length === 0 ? createElement('p', { style: { fontSize: '13px', color: '#94a3b8' } }, 'No matches') : null,
   );
 }

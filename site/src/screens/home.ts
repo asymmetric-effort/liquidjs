@@ -1,6 +1,19 @@
 import { createElement } from 'liquidjs';
+import { useHead } from 'liquidjs/hooks';
 
 export function HomeScreen() {
+  useHead({
+    title: 'LiquidJS — Declarative TypeScript UI Framework',
+    description: 'A declarative TypeScript UI framework built for performance, browser compatibility, and developer simplicity. Zero dependencies, 4KB gzipped.',
+    keywords: 'liquidjs, typescript, ui framework, spa, single page application, declarative, components',
+    author: 'Asymmetric Effort, LLC',
+    og: {
+      title: 'LiquidJS',
+      description: 'A declarative TypeScript UI framework built for performance.',
+      type: 'website',
+      url: 'https://liquidjs.asymmetric-effort.com',
+    },
+  });
   return createElement('div', null,
     // Hero
     createElement('div', { className: 'hero' },
@@ -35,6 +48,10 @@ export function HomeScreen() {
           'hydrateRoot reuses existing pre-rendered DOM nodes — no flash of re-rendered content.'),
         featureCard('Zero Dependencies',
           'Every algorithm implemented from scratch. No runtime dependencies. 4KB gzipped core.'),
+        featureCard('Security Focused',
+          'No server-side code execution. Client-server interaction limited to data exchange via HTTPS. CodeQL analysis and Dependabot on every commit. Automatic HTML escaping prevents XSS.'),
+        featureCard('useHead — Meta Tags',
+          'Declaratively set page title, description, keywords, Open Graph, and Twitter Card meta tags from within any component.'),
       ),
     ),
 

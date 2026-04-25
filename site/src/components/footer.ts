@@ -1,5 +1,7 @@
 import { createElement } from 'liquidjs';
 
+const VERSION = '0.1.0';
+
 export function Footer() {
   const year = new Date().getFullYear();
   return createElement(
@@ -20,6 +22,11 @@ export function Footer() {
       createElement(
         'p',
         null,
+        `LiquidJS v${VERSION}`,
+      ),
+      createElement(
+        'p',
+        { style: { marginTop: '6px' } },
         `\u00a9 2025-${year} `,
         createElement(
           'a',
@@ -33,7 +40,7 @@ export function Footer() {
       ),
       createElement(
         'p',
-        { style: { marginTop: '8px' } },
+        { style: { marginTop: '6px' } },
         createElement(
           'a',
           {

@@ -32,6 +32,7 @@ export {
   useTransition,
   useSyncExternalStore,
   useInsertionEffect,
+  useHead,
 } from './hooks/index';
 
 // Special component types

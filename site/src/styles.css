@@ -46,6 +46,9 @@ body {
   font-weight: 700;
   color: var(--color-primary);
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .nav-links { display: flex; gap: 8px; }
 .nav-link {

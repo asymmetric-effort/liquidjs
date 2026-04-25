@@ -127,3 +127,7 @@ export function useInsertionEffect(
 ): void {
   return resolveDispatcher().useInsertionEffect(create, deps);
 }
+
+// Custom hooks (not dispatcher-based)
+export { useHead } from './use-head';
+export type { HeadMeta } from './use-head';
