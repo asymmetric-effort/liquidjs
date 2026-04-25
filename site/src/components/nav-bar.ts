@@ -73,6 +73,7 @@ export function NavBar() {
         createElement(Link, { to: '/api', className: 'nav-link', activeClassName: 'active' }, 'API'),
         createElement(Link, { to: '/reference', className: 'nav-link', activeClassName: 'active' }, 'Reference'),
         createElement(Link, { to: '/getting-started', className: 'nav-link', activeClassName: 'active' }, 'Get Started'),
+        createElement(Link, { to: '/featureflags', className: 'nav-link', activeClassName: 'active' }, 'Flags'),
       ),
     ),
   );

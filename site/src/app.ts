@@ -1,5 +1,5 @@
 import { createElement } from 'liquidjs';
-import { Router, useRouter } from 'liquidjs';
+import { Router, useRouter, FeatureFlagProvider } from 'liquidjs';
 import { NavBar } from './components/nav-bar';
 import { Footer } from './components/footer';
 import { HomeScreen } from './screens/home';
@@ -9,6 +9,7 @@ import { ConcurrentDemo } from './screens/concurrent-demo';
 import { ApiIntegration } from './screens/api-integration';
 import { ComponentReference } from './screens/component-reference';
 import { GettingStarted } from './screens/getting-started';
+import { FeatureFlagsDemo } from './screens/feature-flags-demo';
 
 function AppContent() {
   const { pathname, navigate } = useRouter();
@@ -37,6 +38,9 @@ function AppContent() {
   } else if (pathname.startsWith('/getting-started')) {
     dialogTitle = 'Getting Started';
     dialogContent = createElement(GettingStarted, null);
+  } else if (pathname.startsWith('/featureflags')) {
+    dialogTitle = 'Feature Flags';
+    dialogContent = createElement(FeatureFlagsDemo, null);
   }
 
   const handleClose = () => navigate('/');
@@ -94,9 +98,13 @@ function AppContent() {
 
 export function App() {
   return createElement(
-    Router,
-    null,
-    createElement(NavBar, null),
-    createElement(AppContent, null),
+    FeatureFlagProvider,
+    { url: './features.json', defaults: { charts: true, dashboard: true } },
+    createElement(
+      Router,
+      null,
+      createElement(NavBar, null),
+      createElement(AppContent, null),
+    ),
   );
 }

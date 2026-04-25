@@ -1,0 +1,12 @@
+{
+  "charts": true,
+  "dashboard": true,
+  "concurrent-rendering": true,
+  "api-integration": true,
+  "component-reference": true,
+  "getting-started": true,
+  "feature-flags-demo": true,
+  "dark-mode": false,
+  "experimental-3d": true,
+  "beta-analytics": false
+}

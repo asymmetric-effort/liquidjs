@@ -48,6 +48,9 @@ export { startTransition } from './core/transitions';
 export { act } from './shared/act';
 export { secureFetch, assertSecureUrl } from './shared/secure-fetch';
 
+// Feature Flags
+export { FeatureFlagProvider, FeatureGate, useFeatureFlags } from './features/index';
+
 // Types
 export type {
   LiquidElement,
