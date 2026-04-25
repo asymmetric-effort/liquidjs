@@ -5,7 +5,6 @@ test.describe('Components Gallery', () => {
     const errors: string[] = [];
     page.on('pageerror', (err) => errors.push(err.message));
     await page.goto('/#/components');
-    // Verify no JS errors on load
     expect(errors).toEqual([]);
   });
 
@@ -13,9 +12,9 @@ test.describe('Components Gallery', () => {
     await expect(page.locator('.dialog-title')).toContainText('Component Gallery');
   });
 
-  test('displays accordion sections', async ({ page }) => {
+  test('displays all accordion sections', async ({ page }) => {
     const sections = page.locator('.dialog-body .accordion-section');
-    await expect(sections).toHaveCount(6);
+    await expect(sections).toHaveCount(10);
   });
 
   test('toggle component responds to clicks', async ({ page }) => {
@@ -25,18 +24,21 @@ test.describe('Components Gallery', () => {
     await expect(toggle).toContainText('On');
   });
 
-  test('text input captures typed text', async ({ page }) => {
+  test('Charts & Graphs section renders SVG', async ({ page }) => {
     const body = page.locator('.dialog-body');
-    const input = body.locator('.accordion-body input[type="text"]').first();
-    await input.fill('hello');
-    await expect(body).toContainText('hello');
+    await body.locator('.accordion-header:has-text("Charts & Graphs")').click();
+    await expect(body.locator('.accordion-body svg').first()).toBeVisible({ timeout: 5000 });
   });
 
-  test('visualization section renders SVG charts', async ({ page }) => {
+  test('Data & Analytics section renders content', async ({ page }) => {
     const body = page.locator('.dialog-body');
-    // Click on Visualization accordion to open it
-    await body.locator('.accordion-header:has-text("Visualization")').click();
-    // Should see SVG elements from the chart demos
+    await body.locator('.accordion-header:has-text("Data & Analytics")').click();
+    await expect(body.locator('.accordion-body').last()).not.toBeEmpty();
+  });
+
+  test('Hierarchical & Relational section renders SVG', async ({ page }) => {
+    const body = page.locator('.dialog-body');
+    await body.locator('.accordion-header:has-text("Hierarchical")').click();
     await expect(body.locator('.accordion-body svg').first()).toBeVisible({ timeout: 5000 });
   });
 });
