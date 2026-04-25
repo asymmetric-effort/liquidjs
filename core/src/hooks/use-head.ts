@@ -8,6 +8,21 @@
 
 import { useEffect } from './index';
 
+export interface HeadHttpEquiv {
+  /** Content-Security-Policy */
+  csp?: string;
+  /** Referrer-Policy */
+  referrer?: string;
+  /** X-Content-Type-Options */
+  contentType?: string;
+  /** X-Frame-Options (via Content-Security-Policy frame-ancestors) */
+  frameOptions?: string;
+  /** Cache-Control */
+  cacheControl?: string;
+  /** Arbitrary http-equiv tags */
+  [key: string]: string | undefined;
+}
+
 export interface HeadMeta {
   /** Document title */
   title?: string;
@@ -23,6 +38,8 @@ export interface HeadMeta {
   og?: Record<string, string>;
   /** Twitter card tags */
   twitter?: Record<string, string>;
+  /** HTTP-equiv meta tags (security headers, caching, etc.) */
+  httpEquiv?: HeadHttpEquiv;
   /** Arbitrary meta tags: [{ name, content }] or [{ property, content }] */
   meta?: Array<{ name?: string; property?: string; content: string }>;
 }
@@ -89,6 +106,22 @@ export function useHead(head: HeadMeta): void {
       }
     }
 
+    // HTTP-equiv meta tags (security headers)
+    if (head.httpEquiv) {
+      const httpEquivMap: Record<string, string> = {
+        csp: 'Content-Security-Policy',
+        referrer: 'Referrer-Policy',
+        contentType: 'X-Content-Type-Options',
+        frameOptions: 'X-Frame-Options',
+        cacheControl: 'Cache-Control',
+      };
+      for (const [key, value] of Object.entries(head.httpEquiv)) {
+        if (value === undefined) continue;
+        const httpEquivName = httpEquivMap[key] ?? key;
+        cleanup.push(setHttpEquivMeta(httpEquivName, value));
+      }
+    }
+
     // Arbitrary meta tags
     if (head.meta) {
       for (const tag of head.meta) {
@@ -111,6 +144,7 @@ export function useHead(head: HeadMeta): void {
     head.canonical,
     head.og,
     head.twitter,
+    head.httpEquiv,
     head.meta,
   ]);
 }
@@ -127,6 +161,31 @@ function setMeta(attr: 'name' | 'property', key: string, content: string): () =>
   if (!el) {
     el = document.createElement('meta');
     el.setAttribute(attr, key);
+    document.head.appendChild(el);
+  }
+  el.content = content;
+
+  return () => {
+    if (existed && prevContent !== undefined) {
+      el!.content = prevContent;
+    } else if (!existed) {
+      el!.remove();
+    }
+  };
+}
+
+/**
+ * Set or update an http-equiv meta tag and return a cleanup function.
+ */
+function setHttpEquivMeta(httpEquiv: string, content: string): () => void {
+  const selector = `meta[http-equiv="${httpEquiv}"]`;
+  let el = document.querySelector(selector) as HTMLMetaElement | null;
+  const existed = el !== null;
+  const prevContent = el?.content;
+
+  if (!el) {
+    el = document.createElement('meta');
+    el.setAttribute('http-equiv', httpEquiv);
     document.head.appendChild(el);
   }
   el.content = content;

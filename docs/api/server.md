@@ -74,7 +74,7 @@ These APIs execute component code (including any side effects in component funct
 
 - **Code injection** — Malicious components could access server resources (filesystem, environment variables, databases)
 - **Denial of service** — Expensive component trees could block the server event loop
-- **Data leakage** — Server-side state could leak into rendered HTML
+- **Data leakage** — Build-time state could leak into rendered HTML
 
 By restricting these APIs to build-time usage, component code only runs in the build environment (which is already trusted), and the output is static HTML served by a simple file server with no execution context.
 

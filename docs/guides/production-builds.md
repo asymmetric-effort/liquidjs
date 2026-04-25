@@ -13,7 +13,7 @@ Outputs:
 - `dist/liquidjs.esm.js` — ES module (14KB)
 - `dist/liquidjs.cjs.js` — CommonJS (15KB)
 - `dist/liquidjs-dom.esm.js` — DOM renderer (40KB)
-- `dist/liquidjs-server.esm.js` — SSR (11KB)
+- `dist/liquidjs-server.esm.js` — Pre-rendering (11KB)
 - `dist/liquidjs.d.ts` — TypeScript declarations
 
 ## Application Build

@@ -351,29 +351,6 @@ export function HomeScreen() {
         )
       : null,
 
-    // Getting Started
-    createElement(
-      'div',
-      { className: 'section' },
-      createElement('h2', null, 'Getting Started'),
-      createElement(
-        'pre',
-        { className: 'code-block' },
-        `import { createElement, useState } from 'liquidjs';
-import { createRoot } from 'liquidjs/dom';
-
-function Counter() {
-  const [count, setCount] = useState(0);
-  return createElement('button',
-    { onClick: () => setCount(c => c + 1) },
-    \`Clicks: \${count}\`
-  );
-}
-
-createRoot(document.getElementById('root'))
-  .render(createElement(Counter, null));`,
-      ),
-    ),
   );
 }
 

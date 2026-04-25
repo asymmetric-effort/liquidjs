@@ -6,7 +6,7 @@ A declarative TypeScript UI framework built for performance, browser compatibili
 
 ```
 liquidjs/
-  core/           LiquidJS framework — virtual DOM, reconciler, hooks, renderer, SSR
+  core/           LiquidJS framework — virtual DOM, reconciler, hooks, renderer, static pre-rendering
   tools/          Ecosystem tooling — debug CLI, deobfuscation, analysis
   components/     Community-contributed reusable components
   docs/           Documentation (you are here)

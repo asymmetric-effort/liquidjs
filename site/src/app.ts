@@ -9,6 +9,7 @@ import { InteractiveForms } from './screens/interactive-forms';
 import { ConcurrentDemo } from './screens/concurrent-demo';
 import { ApiIntegration } from './screens/api-integration';
 import { ComponentReference } from './screens/component-reference';
+import { GettingStarted } from './screens/getting-started';
 
 function AppContent() {
   const { pathname, navigate } = useRouter();
@@ -37,6 +38,9 @@ function AppContent() {
   } else if (pathname.startsWith('/reference')) {
     dialogTitle = 'Component Reference';
     dialogContent = createElement(ComponentReference, null);
+  } else if (pathname.startsWith('/getting-started')) {
+    dialogTitle = 'Getting Started';
+    dialogContent = createElement(GettingStarted, null);
   }
 
   const handleClose = () => navigate('/');

@@ -130,4 +130,4 @@ export function useInsertionEffect(
 
 // Custom hooks (not dispatcher-based)
 export { useHead } from './use-head';
-export type { HeadMeta } from './use-head';
+export type { HeadMeta, HeadHttpEquiv } from './use-head';

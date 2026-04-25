@@ -157,7 +157,7 @@ liquidjs/
 
 1. **Unit tests** — Isolate individual functions and hooks
 2. **Integration tests** — Test component trees, reconciliation, event handling with jsdom
-3. **E2E tests (Playwright)** — Full browser rendering, user interaction flows, SSR validation
+3. **E2E tests (Playwright)** — Full browser rendering, user interaction flows, pre-rendering validation
 
 ### Test-Driven Development Process
 - Write failing tests before implementation

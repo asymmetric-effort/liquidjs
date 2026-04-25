@@ -36,7 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **StrictMode double-render detection** on mount
 - **DevTools integration** via `notifyDevToolsOfCommit`
 
-#### Server-Side Rendering
+#### Static Pre-rendering
 - `renderToString` with hydration support
 - `renderToStaticMarkup` for static HTML
 - `renderToPipeableStream` with progressive chunked output and backpressure handling

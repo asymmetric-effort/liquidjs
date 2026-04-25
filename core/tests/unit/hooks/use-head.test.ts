@@ -158,4 +158,63 @@ describe('useHead', () => {
     expect(() => root.render(createElement(Comp, null))).not.toThrow();
     root.unmount();
   });
+
+  it('sets Content-Security-Policy via httpEquiv.csp', () => {
+    function Comp() {
+      useHead({
+        httpEquiv: {
+          csp: "default-src 'self'; script-src 'self'",
+        },
+      });
+      return createElement('div', null, 'secure');
+    }
+    const root = createRoot(container);
+    root.render(createElement(Comp, null));
+    const meta = document.querySelector(
+      'meta[http-equiv="Content-Security-Policy"]',
+    ) as HTMLMetaElement;
+    expect(meta).toBeTruthy();
+    expect(meta.content).toBe("default-src 'self'; script-src 'self'");
+    root.unmount();
+  });
+
+  it('sets Referrer-Policy via httpEquiv.referrer', () => {
+    function Comp() {
+      useHead({ httpEquiv: { referrer: 'no-referrer' } });
+      return createElement('div', null, 'content');
+    }
+    const root = createRoot(container);
+    root.render(createElement(Comp, null));
+    const meta = document.querySelector('meta[http-equiv="Referrer-Policy"]') as HTMLMetaElement;
+    expect(meta).toBeTruthy();
+    expect(meta.content).toBe('no-referrer');
+    root.unmount();
+  });
+
+  it('sets arbitrary http-equiv tags', () => {
+    function Comp() {
+      useHead({ httpEquiv: { 'X-Custom-Header': 'custom-value' } });
+      return createElement('div', null, 'content');
+    }
+    const root = createRoot(container);
+    root.render(createElement(Comp, null));
+    const meta = document.querySelector('meta[http-equiv="X-Custom-Header"]') as HTMLMetaElement;
+    expect(meta).toBeTruthy();
+    expect(meta.content).toBe('custom-value');
+    root.unmount();
+  });
+
+  it('cleans up http-equiv tags on unmount', () => {
+    function Comp() {
+      useHead({
+        httpEquiv: { csp: "default-src 'self'" },
+      });
+      return createElement('div', null, 'content');
+    }
+    const root = createRoot(container);
+    root.render(createElement(Comp, null));
+    expect(document.querySelector('meta[http-equiv="Content-Security-Policy"]')).toBeTruthy();
+    root.unmount();
+    expect(document.querySelector('meta[http-equiv="Content-Security-Policy"]')).toBeNull();
+  });
 });

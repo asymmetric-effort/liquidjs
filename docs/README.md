@@ -9,7 +9,7 @@
 | Hooks | [api/hooks.md](api/hooks.md) | All 16 hooks with examples |
 | Components API | [api/components.md](api/components.md) | createElement, Fragment, Context, Refs |
 | DOM API | [api/dom.md](api/dom.md) | createRoot, hydrate, portals, events |
-| Server Rendering | [api/server.md](api/server.md) | renderToString, streaming SSR |
+| Static Pre-rendering | [api/server.md](api/server.md) | renderToString, build-time HTML generation |
 | Architecture | [architecture/README.md](architecture/README.md) | Virtual DOM, fiber, reconciler, scheduler |
 | Debug Tools | [tools/liquidjs-debug.md](tools/liquidjs-debug.md) | Deminify, deobfuscate, analyze bundles |
 | Contributing | [contributing/README.md](contributing/README.md) | Development setup, code style, PR process |

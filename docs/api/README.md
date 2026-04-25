@@ -25,5 +25,5 @@
 - [Components](components.md) — createElement, Fragment, Context, Refs, memo, lazy, forwardRef
 - [Hooks](hooks.md) — All 16 hooks with signatures and examples
 - [DOM](dom.md) — Browser rendering APIs
-- [Server](server.md) — Server-side rendering APIs
+- [Server](server.md) — Static pre-rendering — Build-time HTML generation
 - [Types](types.md) — TypeScript type definitions

@@ -17,7 +17,7 @@ Use [Conventional Commits](https://www.conventionalcommits.org/):
 ```
 feat: add useOptimistic hook
 fix: prevent stale closure in setState
-test: add coverage for SSR context restoration
+test: add coverage for pre-render context restoration
 refactor: simplify fiber cloning in memo bail-out
 docs: add sourcemap command documentation
 chore: update playwright to v1.60
