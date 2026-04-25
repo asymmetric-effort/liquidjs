@@ -49,7 +49,7 @@ export function HomeScreen() {
         featureCard('Zero Dependencies',
           'Every algorithm implemented from scratch. No runtime dependencies. 4KB gzipped core.'),
         featureCard('Security Focused',
-          'No server-side code execution. Client-server interaction limited to data exchange via HTTPS. CodeQL analysis and Dependabot on every commit. Automatic HTML escaping prevents XSS.'),
+          'Zero runtime dependencies — complete supply chain integrity. No server-side code execution; client-server interaction limited to data exchange via HTTPS. All algorithms built from scratch, eliminating third-party supply chain risk. CodeQL static analysis and Dependabot on every commit. Automatic HTML escaping prevents XSS.'),
         featureCard('useHead — Meta Tags',
           'Declaratively set page title, description, keywords, Open Graph, and Twitter Card meta tags from within any component.'),
       ),
