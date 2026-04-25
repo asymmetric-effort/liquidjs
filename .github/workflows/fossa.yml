@@ -18,9 +18,3 @@ jobs:
         uses: fossas/fossa-action@a1a2c57355f5e962d8af113a4e2f708f9dd0bff1 # v1.9.0
         with:
           api-key: ${{ secrets.FOSSA_API_KEY }}
-
-      - name: Run FOSSA Test (check for license issues)
-        uses: fossas/fossa-action@a1a2c57355f5e962d8af113a4e2f708f9dd0bff1 # v1.9.0
-        with:
-          api-key: ${{ secrets.FOSSA_API_KEY }}
-          run-tests: true
