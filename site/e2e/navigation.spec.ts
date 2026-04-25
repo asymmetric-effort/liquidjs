@@ -88,6 +88,6 @@ test.describe('Navigation', () => {
   test('all nav links are visible', async ({ page }) => {
     await page.goto('/');
     const links = page.locator('.nav-links .nav-link');
-    await expect(links).toHaveCount(7);
+    await expect(links).toHaveCount(8);
   });
 });

@@ -472,53 +472,84 @@ function PieChartDemo() {
 }
 
 function ForceGraphDemo() {
-  // Simple force-directed graph layout with interactive vertices
-  const [nodes] = useState(() => [
-    { id: 'A', x: 80, y: 50, color: '#3b82f6' },
-    { id: 'B', x: 160, y: 40, color: '#10b981' },
-    { id: 'C', x: 200, y: 110, color: '#f59e0b' },
-    { id: 'D', x: 120, y: 130, color: '#ef4444' },
-    { id: 'E', x: 40, y: 110, color: '#8b5cf6' },
-  ]);
-  const edges = [
-    ['A', 'B'], ['B', 'C'], ['C', 'D'], ['D', 'E'], ['E', 'A'], ['A', 'C'], ['B', 'D'],
+  // Force-directed graph with physics simulation
+  const initNodes = () => [
+    { id: 'A', x: 80, y: 50, vx: 0, vy: 0, locked: false, color: '#3b82f6' },
+    { id: 'B', x: 160, y: 40, vx: 0, vy: 0, locked: false, color: '#10b981' },
+    { id: 'C', x: 200, y: 110, vx: 0, vy: 0, locked: false, color: '#f59e0b' },
+    { id: 'D', x: 120, y: 130, vx: 0, vy: 0, locked: false, color: '#ef4444' },
+    { id: 'E', x: 40, y: 110, vx: 0, vy: 0, locked: false, color: '#8b5cf6' },
   ];
+  const edgePairs = [['A','B'],['B','C'],['C','D'],['D','E'],['E','A'],['A','C'],['B','D']];
+  const [nodes, setNodes] = useState(initNodes);
   const [hovered, setHovered] = useState<string | null>(null);
+  const w = 240, h = 160, cx = w / 2, cy = h / 2;
+
+  // Physics simulation
+  useEffect(() => {
+    let running = true;
+    const step = () => {
+      if (!running) return;
+      setNodes((prev: typeof nodes) => {
+        const next = prev.map(n => ({ ...n }));
+        for (let i = 0; i < next.length; i++) {
+          if (next[i]!.locked) continue;
+          let fx = 0, fy = 0;
+          // Repulsion between all nodes
+          for (let j = 0; j < next.length; j++) {
+            if (i === j) continue;
+            const dx = next[i]!.x - next[j]!.x, dy = next[i]!.y - next[j]!.y;
+            const d = Math.max(Math.sqrt(dx * dx + dy * dy), 1);
+            const f = 800 / (d * d);
+            fx += (dx / d) * f; fy += (dy / d) * f;
+          }
+          // Attraction along edges
+          for (const [a, b] of edgePairs) {
+            const ni = next[i]!;
+            if (ni.id !== a && ni.id !== b) continue;
+            const other = next.find(n => n.id === (ni.id === a ? b : a))!;
+            const dx = other.x - ni.x, dy = other.y - ni.y;
+            const d = Math.sqrt(dx * dx + dy * dy);
+            const f = (d - 60) * 0.02;
+            fx += (dx / Math.max(d, 1)) * f; fy += (dy / Math.max(d, 1)) * f;
+          }
+          // Center gravity
+          fx += (cx - next[i]!.x) * 0.005; fy += (cy - next[i]!.y) * 0.005;
+          next[i]!.vx = (next[i]!.vx + fx) * 0.8; next[i]!.vy = (next[i]!.vy + fy) * 0.8;
+          next[i]!.x = Math.max(12, Math.min(w - 12, next[i]!.x + next[i]!.vx));
+          next[i]!.y = Math.max(12, Math.min(h - 12, next[i]!.y + next[i]!.vy));
+        }
+        return next;
+      });
+      requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+    return () => { running = false; };
+  }, []);
 
   const nodeMap = new Map(nodes.map(n => [n.id, n]));
+  const lockNode = (id: string) => setNodes((prev: typeof nodes) => prev.map(n => n.id === id ? { ...n, locked: !n.locked } : n));
 
   return createElement('div', null,
-    createElement('svg', { width: '240', height: '160', viewBox: '0 0 240 160', style: { background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' } },
-      // Edges
-      ...edges.map(([from, to]) => {
-        const f = nodeMap.get(from!)!;
-        const t = nodeMap.get(to!)!;
-        const isHovered = hovered === from || hovered === to;
-        return createElement('line', {
-          key: `${from}-${to}`,
-          x1: String(f.x), y1: String(f.y),
-          x2: String(t.x), y2: String(t.y),
-          stroke: isHovered ? '#0f172a' : '#94a3b8',
-          strokeWidth: isHovered ? '2' : '1.5',
-        });
+    createElement('svg', { width: String(w), height: String(h), viewBox: `0 0 ${w} ${h}`, style: { background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' } },
+      ...edgePairs.map(([from, to]) => {
+        const f = nodeMap.get(from!)!, t = nodeMap.get(to!)!;
+        return createElement('line', { key: `${from}-${to}`, x1: String(f.x), y1: String(f.y), x2: String(t.x), y2: String(t.y), stroke: hovered === from || hovered === to ? '#0f172a' : '#94a3b8', strokeWidth: hovered === from || hovered === to ? '2' : '1.5' });
       }),
-      // Vertices
       ...nodes.map(n => createElement('g', { key: n.id },
         createElement('circle', {
           cx: String(n.x), cy: String(n.y), r: hovered === n.id ? '12' : '10',
-          fill: n.color, stroke: '#fff', strokeWidth: '2',
-          style: { cursor: 'pointer', transition: 'r 0.15s' },
+          fill: n.color, stroke: n.locked ? '#0f172a' : '#fff', strokeWidth: n.locked ? '3' : '2',
+          style: { cursor: 'pointer' },
+          onClick: () => lockNode(n.id),
           onMouseEnter: () => setHovered(n.id),
           onMouseLeave: () => setHovered(null),
         }),
-        createElement('text', {
-          x: String(n.x), y: String(n.y + 4),
-          textAnchor: 'middle', fill: '#fff', fontSize: '10', fontWeight: '700',
-        }, n.id),
+        createElement('text', { x: String(n.x), y: String(n.y + 4), textAnchor: 'middle', fill: '#fff', fontSize: '10', fontWeight: '700', style: { pointerEvents: 'none' } }, n.id),
       )),
     ),
     createElement('p', { style: { fontSize: '12px', color: '#64748b', marginTop: '6px' } },
-      hovered ? `Hovering: vertex ${hovered}` : 'Hover over vertices to highlight connections',
+      hovered ? `Vertex ${hovered}${nodeMap.get(hovered)?.locked ? ' (locked)' : ''} — click to lock/unlock` : 'Vertices float freely — click to lock position',
     ),
   );
 }
@@ -1434,7 +1465,7 @@ function HistogramDemo() {
         hovered === i
           ? createElement('text', { x: String(x + barW / 2), y: String(y - 4), textAnchor: 'middle', fontSize: '10', fill: '#0f172a', fontWeight: '600' }, `n=${count}`)
           : null,
-        createElement('text', { x: String(x + barW / 2), y: String(h + 12), textAnchor: 'middle', fontSize: '6', fill: '#64748b' }, labels[i]),
+        createElement('text', { x: String(x + barW / 2), y: String(h + 14), textAnchor: 'end', fontSize: '7', fill: '#64748b', transform: `rotate(-45, ${x + barW / 2}, ${h + 14})` }, labels[i]),
       );
     }),
   );
