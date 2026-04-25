@@ -13,3 +13,4 @@ test-results/
 tools/*/liquidjs-*
 tools/*/__debug_bin*
 bin/
+.certs/

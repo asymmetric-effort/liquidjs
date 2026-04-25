@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'liquidjs/hooks';
+import { secureFetch } from 'liquidjs';
 
 export interface UseFetchResult<T> {
   data: T | null;
@@ -16,25 +17,27 @@ export function useFetch<T>(url: string): UseFetchResult<T> {
     setLoading(true);
     setError(null);
 
-    fetch(url)
-      .then(res => {
+    secureFetch(url)
+      .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
-      .then(json => {
+      .then((json) => {
         if (!cancelled) {
           setData(json as T);
           setLoading(false);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         if (!cancelled) {
           setError(err instanceof Error ? err.message : String(err));
           setLoading(false);
         }
       });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [url]);
 
   return { data, loading, error };

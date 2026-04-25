@@ -220,6 +220,10 @@ export function HomeScreen() {
       type: 'website',
       url: 'https://liquidjs.asymmetric-effort.com',
     },
+    httpEquiv: {
+      csp: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
+      referrer: 'strict-origin-when-cross-origin',
+    },
   });
 
   const closeArticle = useCallback(
