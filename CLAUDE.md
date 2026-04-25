@@ -219,6 +219,14 @@ LiquidJS is designed for building **single-page web applications** that compile 
 - Deprecation warnings before removing any API
 - JSDoc comments on all public APIs
 
+### Intellectual Property & Licensing
+- **No code may be copied from any project without verifying its license permits such use**
+- All algorithms must be implemented from original understanding, not copied from other codebases
+- Do not reproduce substantial portions of any copyrighted work (code, documentation, assets)
+- When inspired by another project's approach, implement independently and document the design rationale
+- All contributions must be original work or properly licensed under MIT-compatible terms
+- Any third-party assets (fonts, icons, data) must have explicit permission or compatible licensing
+
 ### Supply Chain Integrity
 - **Zero runtime dependencies** — The published library has no third-party deps
 - Minimize third-party dev dependencies to essential build/test tooling only

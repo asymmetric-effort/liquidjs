@@ -783,39 +783,73 @@ function MultilineDemo() {
 
 function TextEditorDemo() {
   const editorRef = useRef<HTMLDivElement>(null);
-  const execCmd = (cmd: string, val?: string) => {
-    document.execCommand(cmd, false, val);
-    editorRef.current?.focus();
+  const execCmd = (cmd: string, val?: string) => { document.execCommand(cmd, false, val); editorRef.current?.focus(); };
+  const tbtn = (label: string, cmd: string, title?: string) =>
+    createElement('button', { onMouseDown: (e: Event) => e.preventDefault(), onClick: () => execCmd(cmd), title: title ?? cmd, style: { padding: '2px 7px', border: '1px solid #d1d5db', borderRadius: '3px', cursor: 'pointer', fontSize: '12px', fontWeight: label === 'B' ? '700' : '400', fontStyle: label === 'I' ? 'italic' : 'normal', textDecoration: label === 'U' ? 'underline' : label === 'S' ? 'line-through' : 'none', background: '#f8fafc', color: '#0f172a', lineHeight: '1.4' } }, label);
+  const ibtn = (icon: string, action: () => void, title: string) =>
+    createElement('button', { onMouseDown: (e: Event) => e.preventDefault(), onClick: action, title, style: { padding: '2px 6px', border: '1px solid #d1d5db', borderRadius: '3px', cursor: 'pointer', fontSize: '14px', background: '#f8fafc', lineHeight: '1' } }, icon);
+  const sep = () => createElement('div', { style: { width: '1px', background: '#d1d5db', margin: '0 2px', alignSelf: 'stretch' } });
+  const fonts = ['Arial', 'Helvetica', 'Times New Roman', 'Georgia', 'Garamond', 'Courier New', 'Lucida Console', 'Monaco', 'Verdana', 'Trebuchet MS', 'Palatino', 'Impact', 'Comic Sans MS', 'Tahoma', 'Segoe UI', 'system-ui', 'sans-serif', 'serif', 'monospace', 'cursive', 'fantasy'];
+  const sizes = ['1','2','3','4','5','6','7'];
+  const insertLink = () => { const url = prompt('Enter URL:'); if (url) execCmd('createLink', url); };
+  const insertImage = () => { const url = prompt('Enter image URL:'); if (url) execCmd('insertImage', url); };
+  const insertCode = () => { const sel = window.getSelection(); if (sel && sel.rangeCount > 0) { const range = sel.getRangeAt(0); const code = document.createElement('pre'); code.style.cssText = 'background:#1e293b;color:#e2e8f0;padding:8px 12px;border-radius:6px;font-family:monospace;font-size:13px;overflow-x:auto;white-space:pre'; code.textContent = range.toString() || 'code block'; range.deleteContents(); range.insertNode(code); } };
+  const insertMath = () => { const tex = prompt('Enter LaTeX (e.g. x^2 + y^2 = r^2):'); if (tex) { const span = document.createElement('span'); span.style.cssText = 'font-family:serif;font-style:italic;background:#f5f3ff;padding:2px 6px;border-radius:3px;color:#6366f1;border:1px solid #e0e7ff'; span.textContent = tex.replace(/\^(\w+)/g, '\u02e2\u1d58\u1d56').replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '($1/$2)').replace(/\\sqrt\{([^}]+)\}/g, '\u221a($1)'); span.title = `LaTeX: ${tex}`; const sel = window.getSelection(); if (sel && sel.rangeCount > 0) { sel.getRangeAt(0).insertNode(span); } } };
+  const handlePaste = (e: Event) => {
+    const ce = e as ClipboardEvent;
+    if (ce.clipboardData) {
+      const items = ce.clipboardData.items;
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (item && item.type.startsWith('image/')) {
+          e.preventDefault();
+          const file = item.getAsFile();
+          if (file) { const reader = new FileReader(); reader.onload = () => { execCmd('insertImage', reader.result as string); }; reader.readAsDataURL(file); }
+          return;
+        }
+      }
+    }
   };
-  const tbtn = (label: string, cmd: string, extra?: Record<string, string>) =>
-    createElement('button', {
-      onMouseDown: (e: Event) => e.preventDefault(),
-      onClick: () => execCmd(cmd),
-      style: { padding: '3px 8px', border: '1px solid #d1d5db', borderRadius: '3px', cursor: 'pointer', fontSize: '12px', fontWeight: label === 'B' ? '700' : '400', fontStyle: label === 'I' ? 'italic' : 'normal', textDecoration: label === 'U' ? 'underline' : label === 'S' ? 'line-through' : 'none', background: '#f8fafc', color: '#0f172a', ...extra },
-    }, label);
-  const sep = () => createElement('div', { style: { width: '1px', background: '#d1d5db', margin: '0 2px' } });
+
   return createElement('div', null,
-    createElement('div', { style: { display: 'flex', gap: '3px', marginBottom: '6px', padding: '4px', background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0', flexWrap: 'wrap', alignItems: 'center' } },
-      tbtn('B', 'bold'),
-      tbtn('I', 'italic'),
-      tbtn('U', 'underline'),
-      tbtn('S', 'strikeThrough'),
+    // Toolbar row 1: formatting
+    createElement('div', { style: { display: 'flex', gap: '3px', marginBottom: '2px', padding: '4px', background: '#f8fafc', borderRadius: '6px 6px 0 0', border: '1px solid #e2e8f0', borderBottom: 'none', flexWrap: 'wrap', alignItems: 'center' } },
+      tbtn('B', 'bold', 'Bold'), tbtn('I', 'italic', 'Italic'), tbtn('U', 'underline', 'Underline'), tbtn('S', 'strikeThrough', 'Strikethrough'),
       sep(),
-      createElement('select', { onMouseDown: (e: Event) => e.preventDefault(), onChange: (e: Event) => execCmd('fontSize', (e.target as HTMLSelectElement).value), style: { padding: '2px 4px', border: '1px solid #d1d5db', borderRadius: '3px', fontSize: '11px', cursor: 'pointer' } },
-        ...['1', '2', '3', '4', '5', '6', '7'].map(s => createElement('option', { key: s, value: s }, `${s}`)),
+      createElement('select', { onMouseDown: (e: Event) => e.preventDefault(), onChange: (e: Event) => execCmd('fontSize', (e.target as HTMLSelectElement).value), title: 'Font size', style: { padding: '1px 2px', border: '1px solid #d1d5db', borderRadius: '3px', fontSize: '11px', cursor: 'pointer' } },
+        ...sizes.map(s => createElement('option', { key: s, value: s }, `Size ${s}`)),
       ),
-      createElement('select', { onMouseDown: (e: Event) => e.preventDefault(), onChange: (e: Event) => execCmd('fontName', (e.target as HTMLSelectElement).value), style: { padding: '2px 4px', border: '1px solid #d1d5db', borderRadius: '3px', fontSize: '11px', cursor: 'pointer' } },
-        ...['Sans-serif', 'Serif', 'Monospace', 'Georgia', 'Arial'].map(f => createElement('option', { key: f, value: f }, f)),
+      createElement('select', { onMouseDown: (e: Event) => e.preventDefault(), onChange: (e: Event) => execCmd('fontName', (e.target as HTMLSelectElement).value), title: 'Font family', style: { padding: '1px 2px', border: '1px solid #d1d5db', borderRadius: '3px', fontSize: '11px', cursor: 'pointer', maxWidth: '100px' } },
+        ...fonts.map(f => createElement('option', { key: f, value: f, style: { fontFamily: f } }, f)),
       ),
       sep(),
-      createElement('input', { type: 'color', value: '#000000', onInput: (e: Event) => execCmd('foreColor', (e.target as HTMLInputElement).value), title: 'Text color', style: { width: '24px', height: '22px', border: 'none', cursor: 'pointer', padding: '0' } }),
-      createElement('input', { type: 'color', value: '#ffff00', onInput: (e: Event) => execCmd('hiliteColor', (e.target as HTMLInputElement).value), title: 'Highlight', style: { width: '24px', height: '22px', border: 'none', cursor: 'pointer', padding: '0' } }),
+      createElement('input', { type: 'color', value: '#000000', onInput: (e: Event) => execCmd('foreColor', (e.target as HTMLInputElement).value), title: 'Text color', style: { width: '22px', height: '20px', border: 'none', cursor: 'pointer', padding: '0' } }),
+      createElement('input', { type: 'color', value: '#ffff00', onInput: (e: Event) => execCmd('hiliteColor', (e.target as HTMLInputElement).value), title: 'Highlight color', style: { width: '22px', height: '20px', border: 'none', cursor: 'pointer', padding: '0' } }),
     ),
+    // Toolbar row 2: insert
+    createElement('div', { style: { display: 'flex', gap: '3px', marginBottom: '6px', padding: '4px', background: '#f8fafc', borderRadius: '0 0 6px 6px', border: '1px solid #e2e8f0', flexWrap: 'wrap', alignItems: 'center' } },
+      ibtn('\ud83d\udd17', insertLink, 'Insert link'),
+      ibtn('\ud83d\uddbc', insertImage, 'Insert image'),
+      ibtn('\u2328', insertCode, 'Code block'),
+      ibtn('\u03a3', insertMath, 'LaTeX math'),
+      sep(),
+      ibtn('\u2190', () => execCmd('undo'), 'Undo'),
+      ibtn('\u2192', () => execCmd('redo'), 'Redo'),
+      sep(),
+      ibtn('\u2261', () => execCmd('justifyLeft'), 'Align left'),
+      ibtn('\u2263', () => execCmd('justifyCenter'), 'Center'),
+      ibtn('\u2262', () => execCmd('justifyRight'), 'Align right'),
+      sep(),
+      ibtn('\u2022', () => execCmd('insertUnorderedList'), 'Bullet list'),
+      ibtn('1.', () => execCmd('insertOrderedList'), 'Numbered list'),
+    ),
+    // Editor area
     createElement('div', {
       ref: editorRef,
       contentEditable: 'true',
-      dangerouslySetInnerHTML: { __html: 'Select <b>some text</b> and use the toolbar to format it. Try <i>font size</i>, <span style="color:red">colors</span>, and <s>strikethrough</s>.' },
-      style: { width: '100%', minHeight: '80px', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '14px', outline: 'none', lineHeight: '1.6' },
+      onPaste: handlePaste,
+      dangerouslySetInnerHTML: { __html: 'Select <b>text</b> and format with the toolbar. Try <i>fonts</i>, <span style="color:#3b82f6">colors</span>, <s>strikethrough</s>, <a href="#">links</a>, images, <pre style="background:#1e293b;color:#e2e8f0;padding:4px 8px;border-radius:4px;display:inline;font-size:12px">code</pre>, and <span style="font-family:serif;font-style:italic;color:#6366f1;background:#f5f3ff;padding:1px 4px;border-radius:2px">x\u00b2 + y\u00b2 = r\u00b2</span> math.' },
+      style: { width: '100%', minHeight: '120px', padding: '10px 14px', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '14px', outline: 'none', lineHeight: '1.7', cursor: 'text', overflowY: 'auto', maxHeight: '300px' },
     }),
   );
 }

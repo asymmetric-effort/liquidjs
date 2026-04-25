@@ -1,5 +1,5 @@
 import { createElement } from 'liquidjs';
-import { Router, useRouter, FeatureFlagProvider } from 'liquidjs';
+import { Router, useRouter, FeatureFlagProvider, useFeatureFlags } from 'liquidjs';
 import { NavBar } from './components/nav-bar';
 import { Footer } from './components/footer';
 import { HomeScreen } from './screens/home';
@@ -13,34 +13,32 @@ import { FeatureFlagsDemo } from './screens/feature-flags-demo';
 
 function AppContent() {
   const { pathname, navigate } = useRouter();
+  const { isEnabled } = useFeatureFlags();
 
   const isHome = pathname === '/';
 
-  // Map routes to screen components
+  const disabled = createElement('div', { style: { textAlign: 'center', padding: '48px', color: '#94a3b8' } }, 'This feature is disabled. Enable it via Feature Flags.');
+
+  // Route → { title, component, flag? }
+  const routes: { path: string; title: string; content: ReturnType<typeof createElement>; flag?: string }[] = [
+    { path: '/components', title: 'Component Gallery', content: createElement(ComponentsGallery, null) },
+    { path: '/dashboard', title: 'Economic Dashboard', content: createElement(EconomicDashboard, null), flag: 'dashboard' },
+    { path: '/concurrent', title: 'Concurrent Rendering', content: createElement(ConcurrentDemo, null), flag: 'concurrent-rendering' },
+    { path: '/api', title: 'API Integration', content: createElement(ApiIntegration, null), flag: 'api-integration' },
+    { path: '/reference', title: 'Component Reference', content: createElement(ComponentReference, null), flag: 'component-reference' },
+    { path: '/getting-started', title: 'Getting Started', content: createElement(GettingStarted, null), flag: 'getting-started' },
+    { path: '/featureflags', title: 'Feature Flags', content: createElement(FeatureFlagsDemo, null) },
+  ];
+
   let dialogTitle: string | null = null;
   let dialogContent: ReturnType<typeof createElement> | null = null;
 
-  if (pathname.startsWith('/components')) {
-    dialogTitle = 'Component Gallery';
-    dialogContent = createElement(ComponentsGallery, null);
-  } else if (pathname.startsWith('/dashboard')) {
-    dialogTitle = 'Economic Dashboard';
-    dialogContent = createElement(EconomicDashboard, null);
-  } else if (pathname.startsWith('/concurrent')) {
-    dialogTitle = 'Concurrent Rendering';
-    dialogContent = createElement(ConcurrentDemo, null);
-  } else if (pathname.startsWith('/api')) {
-    dialogTitle = 'API Integration';
-    dialogContent = createElement(ApiIntegration, null);
-  } else if (pathname.startsWith('/reference')) {
-    dialogTitle = 'Component Reference';
-    dialogContent = createElement(ComponentReference, null);
-  } else if (pathname.startsWith('/getting-started')) {
-    dialogTitle = 'Getting Started';
-    dialogContent = createElement(GettingStarted, null);
-  } else if (pathname.startsWith('/featureflags')) {
-    dialogTitle = 'Feature Flags';
-    dialogContent = createElement(FeatureFlagsDemo, null);
+  for (const route of routes) {
+    if (pathname.startsWith(route.path)) {
+      dialogTitle = route.title;
+      dialogContent = route.flag && !isEnabled(route.flag) ? disabled : route.content;
+      break;
+    }
   }
 
   const handleClose = () => navigate('/');
