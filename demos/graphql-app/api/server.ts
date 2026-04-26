@@ -110,10 +110,17 @@ function routeQuery(query: string): GraphQLResponse {
 
 // ── Helpers ───────────────────────────────────────────────────────────
 
+const MAX_BODY = 1024 * 1024;
+
 function readBody(req: IncomingMessage): Promise<string> {
   return new Promise((resolve, reject) => {
     const chunks: Buffer[] = [];
-    req.on('data', (chunk: Buffer) => chunks.push(chunk));
+    let size = 0;
+    req.on('data', (chunk: Buffer) => {
+      size += chunk.length;
+      if (size > MAX_BODY) { req.destroy(); reject(new Error('Body too large')); return; }
+      chunks.push(chunk);
+    });
     req.on('end', () => resolve(Buffer.concat(chunks).toString()));
     req.on('error', reject);
   });
@@ -126,7 +133,7 @@ function json(res: ServerResponse, status: number, data: unknown): void {
 }
 
 function cors(res: ServerResponse): void {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', process.env.CORS_ORIGIN ?? '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 }
@@ -151,7 +158,8 @@ async function handler(req: IncomingMessage, res: ServerResponse): Promise<void>
 
   if (url === '/graphql' && method === 'POST') {
     const body = await readBody(req);
-    const gqlReq = JSON.parse(body) as GraphQLRequest;
+    let gqlReq: GraphQLRequest;
+    try { gqlReq = JSON.parse(body) as GraphQLRequest; } catch { json(res, 400, { errors: [{ message: 'Invalid JSON' }] }); return; }
     const result = routeQuery(gqlReq.query);
     json(res, 200, result);
     return;
@@ -164,8 +172,8 @@ async function handler(req: IncomingMessage, res: ServerResponse): Promise<void>
 
 const PORT = parseInt(process.env.PORT ?? '4002', 10);
 const server = createServer((req, res) => {
-  handler(req, res).catch((err) => {
-    json(res, 500, { errors: [{ message: String(err) }] });
+  handler(req, res).catch(() => {
+    json(res, 500, { errors: [{ message: 'Internal server error' }] });
   });
 });
 

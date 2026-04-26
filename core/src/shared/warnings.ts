@@ -6,6 +6,7 @@
  * Warnings are suppressed in production builds.
  */
 
+const MAX_WARNINGS = 1000;
 const warnedMessages = new Set<string>();
 
 /**
@@ -13,6 +14,7 @@ const warnedMessages = new Set<string>();
  */
 export function warn(message: string): void {
   if (warnedMessages.has(message)) return;
+  if (warnedMessages.size >= MAX_WARNINGS) return;
   warnedMessages.add(message);
 
   if (typeof console !== 'undefined') {

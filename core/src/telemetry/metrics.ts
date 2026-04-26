@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { Span } from './tracing';
+import { assertSecureUrl } from '../shared/secure-fetch';
 
 // ---------------------------------------------------------------------------
 // Metric data points
@@ -335,6 +336,7 @@ export async function exportToEndpoint(
   body: Record<string, unknown>,
 ): Promise<void> {
   try {
+    assertSecureUrl(url);
     await fetch(url, {
       method: 'POST',
       headers: {

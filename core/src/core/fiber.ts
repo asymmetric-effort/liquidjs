@@ -154,21 +154,24 @@ export function createWorkInProgress(current: Fiber, pendingProps: Props): Fiber
  * Converts SpecNode children into fiber-compatible form.
  */
 export function coerceToFiberChildren(children: SpecNode): Array<SpecElement | string | number> {
-  if (children == null || typeof children === 'boolean') {
-    return [];
-  }
-  if (Array.isArray(children)) {
-    const result: Array<SpecElement | string | number> = [];
-    for (const child of children) {
-      result.push(...coerceToFiberChildren(child));
+  const result: Array<SpecElement | string | number> = [];
+  const stack: SpecNode[] = [children];
+
+  while (stack.length > 0) {
+    const node = stack.pop()!;
+    if (node == null || typeof node === 'boolean') continue;
+    if (Array.isArray(node)) {
+      for (let i = node.length - 1; i >= 0; i--) {
+        stack.push(node[i] as SpecNode);
+      }
+      continue;
     }
-    return result;
+    if (isValidElement(node)) {
+      result.push(node as SpecElement);
+    } else if (typeof node === 'string' || typeof node === 'number') {
+      result.push(node);
+    }
   }
-  if (isValidElement(children)) {
-    return [children as SpecElement];
-  }
-  if (typeof children === 'string' || typeof children === 'number') {
-    return [children];
-  }
-  return [];
+
+  return result;
 }

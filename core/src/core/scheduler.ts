@@ -8,6 +8,7 @@
 
 type Task = () => void;
 
+const MAX_PENDING_TASKS = 10000;
 let isBatchingUpdates = false;
 let pendingTasks: Task[] = [];
 
@@ -17,6 +18,13 @@ let pendingTasks: Task[] = [];
  */
 export function scheduleUpdate(task: Task): void {
   if (isBatchingUpdates) {
+    if (pendingTasks.length >= MAX_PENDING_TASKS) {
+      if (typeof console !== 'undefined')
+        console.warn(
+          '[SpecifyJS] Scheduler: pending task queue exceeded 10000 — dropping oldest tasks',
+        );
+      pendingTasks = pendingTasks.slice(-Math.floor(MAX_PENDING_TASKS / 2));
+    }
     pendingTasks.push(task);
     return;
   }

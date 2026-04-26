@@ -8,6 +8,7 @@
 import { createElement } from '../core/create-element';
 import { createContext } from '../context/create-context';
 import { useState, useEffect, useContext, useCallback } from '../hooks/index';
+import { secureFetch } from '../shared/secure-fetch';
 import type { SpecNode } from '../shared/types';
 
 // ---------------------------------------------------------------------------
@@ -62,17 +63,21 @@ export function FeatureFlagProvider(props: FeatureFlagProviderProps): SpecNode {
     let cancelled = false;
     setLoading(true);
 
-    fetch(props.url)
+    secureFetch(props.url)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
       .then((json: unknown) => {
         if (!cancelled && typeof json === 'object' && json !== null) {
-          setFlags((prev: FeatureFlags) => ({
-            ...prev,
-            ...(json as FeatureFlags),
-          }));
+          // M-9: Filter __proto__/constructor from untrusted JSON before merging
+          const safe: FeatureFlags = {};
+          for (const k of Object.keys(json as Record<string, unknown>)) {
+            if (k !== '__proto__' && k !== 'constructor' && k !== 'prototype') {
+              safe[k] = (json as Record<string, boolean>)[k] === true;
+            }
+          }
+          setFlags((prev: FeatureFlags) => ({ ...prev, ...safe }));
         }
         if (!cancelled) setLoading(false);
       })

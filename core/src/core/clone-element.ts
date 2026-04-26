@@ -40,7 +40,10 @@ export function cloneElement<P extends Props>(
       if (
         Object.prototype.hasOwnProperty.call(config, propName) &&
         propName !== 'key' &&
-        propName !== 'ref'
+        propName !== 'ref' &&
+        propName !== '__proto__' &&
+        propName !== 'constructor' &&
+        propName !== 'prototype'
       ) {
         props[propName] = (config as Record<string, unknown>)[propName];
       }

@@ -155,8 +155,12 @@ export function useHead(head: HeadMeta): void {
 /**
  * Set or update a meta tag and return a cleanup function that removes it.
  */
+function escapeCssAttr(s: string): string {
+  return s.replace(/["\\]/g, '\\$&');
+}
+
 function setMeta(attr: 'name' | 'property', key: string, content: string): () => void {
-  const selector = `meta[${attr}="${key}"]`;
+  const selector = `meta[${attr}="${escapeCssAttr(key)}"]`;
   let el = document.querySelector(selector) as HTMLMetaElement | null;
   const existed = el !== null;
   const prevContent = el?.content;
@@ -181,7 +185,7 @@ function setMeta(attr: 'name' | 'property', key: string, content: string): () =>
  * Set or update an http-equiv meta tag and return a cleanup function.
  */
 function setHttpEquivMeta(httpEquiv: string, content: string): () => void {
-  const selector = `meta[http-equiv="${httpEquiv}"]`;
+  const selector = `meta[http-equiv="${escapeCssAttr(httpEquiv)}"]`;
   let el = document.querySelector(selector) as HTMLMetaElement | null;
   const existed = el !== null;
   const prevContent = el?.content;

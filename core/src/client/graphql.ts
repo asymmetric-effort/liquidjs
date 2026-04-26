@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: MIT
 
 import { useState, useEffect, useRef, useCallback } from '../hooks/index';
+import { assertSecureUrl } from '../shared/secure-fetch';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -63,7 +64,16 @@ export function gql(strings: TemplateStringsArray, ...values: unknown[]): string
   for (let i = 0; i < strings.length; i++) {
     result += strings[i];
     if (i < values.length) {
-      result += String(values[i]);
+      const val = String(values[i]);
+      // M-8: Warn if interpolated values contain GraphQL metacharacters
+      if (/[{}():]/.test(val)) {
+        if (typeof console !== 'undefined') {
+          console.warn(
+            '[SpecifyJS] gql: Interpolated value contains GraphQL metacharacters. Use variables parameter instead of string interpolation to prevent injection.',
+          );
+        }
+      }
+      result += val;
     }
   }
   return result.replace(/\s+/g, ' ').trim();
@@ -79,6 +89,7 @@ export function gql(strings: TemplateStringsArray, ...values: unknown[]): string
 export function createGraphQLClient(config: GraphQLClientConfig): GraphQLClient {
   const { url, headers: configHeaders, credentials, cache: cacheEnabled = false } = config;
 
+  const MAX_CACHE_SIZE = 100;
   const responseCache = new Map<string, GraphQLResponse<unknown>>();
 
   function buildCacheKey(query: string, variables?: Record<string, unknown>): string {
@@ -96,6 +107,7 @@ export function createGraphQLClient(config: GraphQLClientConfig): GraphQLClient 
 
     const body = JSON.stringify({ query, variables });
 
+    assertSecureUrl(url);
     const response = await fetch(url, {
       method: 'POST',
       headers: reqHeaders,
@@ -128,6 +140,10 @@ export function createGraphQLClient(config: GraphQLClientConfig): GraphQLClient 
           return cached as GraphQLResponse<T>;
         }
         const result = await execute<T>(query, variables);
+        if (responseCache.size >= MAX_CACHE_SIZE) {
+          const oldest = responseCache.keys().next().value;
+          if (oldest !== undefined) responseCache.delete(oldest);
+        }
         responseCache.set(key, result);
         return result;
       }

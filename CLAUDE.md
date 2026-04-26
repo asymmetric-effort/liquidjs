@@ -212,6 +212,7 @@ SpecifyJS is designed for building **single-page web applications** that compile
 - Prefer `const` over `let`, never use `var`
 - Named exports over default exports
 - Pure functions where possible
+- **Avoid recursion** — use iterative approaches with explicit stacks to prevent stack overflow on deep component trees. Tail-call recursion is acceptable only where the engine guarantees TCO.
 
 ### API Design
 - Use clear, intuitive API naming and signatures

@@ -11,17 +11,17 @@ import { isValidElement } from './is-valid-element';
 
 function flattenChildren(children: SpecNode): SpecChild[] {
   const result: SpecChild[] = [];
+  const stack: SpecNode[] = [children];
 
-  if (Array.isArray(children)) {
-    for (const child of children) {
-      if (Array.isArray(child)) {
-        result.push(...flattenChildren(child));
-      } else {
-        result.push(child as SpecChild);
+  while (stack.length > 0) {
+    const node = stack.pop()!;
+    if (Array.isArray(node)) {
+      for (let i = node.length - 1; i >= 0; i--) {
+        stack.push(node[i] as SpecNode);
       }
+    } else {
+      result.push(node as SpecChild);
     }
-  } else {
-    result.push(children as SpecChild);
   }
 
   return result;

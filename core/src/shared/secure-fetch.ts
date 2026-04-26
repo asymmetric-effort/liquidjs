@@ -18,6 +18,13 @@
  * Throws if the URL uses plaintext HTTP.
  */
 export function assertSecureUrl(url: string): void {
+  // Block protocol-relative URLs (//evil.com) — they inherit the page's protocol
+  if (url.startsWith('//')) {
+    throw new Error(
+      `[SpecifyJS] Protocol-relative URL rejected: "${url}". ` + `Use an explicit https:// prefix.`,
+    );
+  }
+
   // Relative URLs are always allowed
   if (url.startsWith('/') || url.startsWith('./') || url.startsWith('../')) {
     return;

@@ -68,22 +68,39 @@ function encodeTaskList(taskList: Task[]): Buffer {
 
 function decodeTask(buf: Buffer, startOffset: number): { task: Partial<Task>; bytesRead: number } {
   let offset = startOffset;
+  const need = (n: number, field: string) => {
+    if (offset + n > buf.length) throw new Error(`Buffer too short for ${field}`);
+  };
+  need(4, 'id');
   const id = buf.readUInt32BE(offset); offset += 4;
+  need(1, 'status');
   const status = buf.readUInt8(offset); offset += 1;
+  need(1, 'priority');
   const priority = buf.readUInt8(offset); offset += 1;
+  need(2, 'titleLen');
   const titleLen = buf.readUInt16BE(offset); offset += 2;
+  need(titleLen, 'title');
   const title = buf.subarray(offset, offset + titleLen).toString('utf8'); offset += titleLen;
+  need(2, 'descLen');
   const descLen = buf.readUInt16BE(offset); offset += 2;
+  need(descLen, 'description');
   const description = buf.subarray(offset, offset + descLen).toString('utf8'); offset += descLen;
   return { task: { id, title, description, status, priority }, bytesRead: offset - startOffset };
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────
 
+const MAX_BODY = 1024 * 1024;
+
 function readRawBody(req: IncomingMessage): Promise<Buffer> {
   return new Promise((resolve, reject) => {
     const chunks: Buffer[] = [];
-    req.on('data', (chunk: Buffer) => chunks.push(chunk));
+    let size = 0;
+    req.on('data', (chunk: Buffer) => {
+      size += chunk.length;
+      if (size > MAX_BODY) { req.destroy(); reject(new Error('Body too large')); return; }
+      chunks.push(chunk);
+    });
     req.on('end', () => resolve(Buffer.concat(chunks)));
     req.on('error', reject);
   });
@@ -92,7 +109,12 @@ function readRawBody(req: IncomingMessage): Promise<Buffer> {
 function readBody(req: IncomingMessage): Promise<string> {
   return new Promise((resolve, reject) => {
     const chunks: Buffer[] = [];
-    req.on('data', (chunk: Buffer) => chunks.push(chunk));
+    let size = 0;
+    req.on('data', (chunk: Buffer) => {
+      size += chunk.length;
+      if (size > MAX_BODY) { req.destroy(); reject(new Error('Body too large')); return; }
+      chunks.push(chunk);
+    });
     req.on('end', () => resolve(Buffer.concat(chunks).toString()));
     req.on('error', reject);
   });
@@ -110,7 +132,7 @@ function binary(res: ServerResponse, status: number, data: Buffer): void {
 }
 
 function cors(res: ServerResponse): void {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', process.env.CORS_ORIGIN ?? '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 }
@@ -189,7 +211,8 @@ async function handler(req: IncomingMessage, res: ServerResponse): Promise<void>
 
   if (url === '/api/tasks' && method === 'POST') {
     const body = await readBody(req);
-    const data = JSON.parse(body) as Partial<Task>;
+    let data: Partial<Task>;
+    try { data = JSON.parse(body) as Partial<Task>; } catch { json(res, 400, { error: 'Invalid JSON' }); return; }
     const task: Task = {
       id: nextId++,
       title: data.title ?? '',
@@ -208,7 +231,8 @@ async function handler(req: IncomingMessage, res: ServerResponse): Promise<void>
     if (method === 'PUT') {
       if (!task) { json(res, 404, { error: 'not found' }); return; }
       const body = await readBody(req);
-      const data = JSON.parse(body) as Partial<Task>;
+      let data: Partial<Task>;
+      try { data = JSON.parse(body) as Partial<Task>; } catch { json(res, 400, { error: 'Invalid JSON' }); return; }
       const updated: Task = { ...task, ...data, id: jsonId };
       tasks.set(jsonId, updated);
       json(res, 200, updated);
@@ -228,8 +252,8 @@ async function handler(req: IncomingMessage, res: ServerResponse): Promise<void>
 
 const PORT = parseInt(process.env.PORT ?? '4003', 10);
 const server = createServer((req, res) => {
-  handler(req, res).catch((err) => {
-    json(res, 500, { error: String(err) });
+  handler(req, res).catch(() => {
+    json(res, 500, { error: 'Internal server error' });
   });
 });
 

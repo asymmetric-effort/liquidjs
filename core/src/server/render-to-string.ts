@@ -228,6 +228,9 @@ function renderHostElement(tag: string, props: Props, includeDataAttrs: boolean)
 
     const attrName = PROP_TO_ATTR[key] || key.toLowerCase();
 
+    // C-1: Validate attribute names to prevent XSS via attribute name injection
+    if (!/^[a-zA-Z_][\w\-:.]*$/.test(attrName)) continue;
+
     if (key === 'style') {
       html += ` style="${renderStyle(value as Record<string, string | number>)}"`;
     } else if (key === 'value' || key === 'checked' || key === 'selected') {
@@ -276,10 +279,15 @@ function renderStyle(style: Record<string, string | number>): string {
 
     // Convert camelCase to kebab-case
     const cssProp = prop.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
-    const cssValue =
+    let cssValue =
       typeof value === 'number' && value !== 0 && !isUnitlessProp(prop)
         ? `${value}px`
         : String(value);
+
+    // L-6: Sanitize CSS values — strip dangerous patterns
+    cssValue = cssValue
+      .replace(/expression\s*\(/gi, '')
+      .replace(/url\s*\(\s*javascript:/gi, 'url(');
 
     parts.push(`${cssProp}:${cssValue}`);
   }

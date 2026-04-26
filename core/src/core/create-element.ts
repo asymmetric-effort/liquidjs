@@ -36,7 +36,10 @@ export function createElement<P extends Props>(
       if (
         Object.prototype.hasOwnProperty.call(config, propName) &&
         propName !== 'key' &&
-        propName !== 'ref'
+        propName !== 'ref' &&
+        propName !== '__proto__' &&
+        propName !== 'constructor' &&
+        propName !== 'prototype'
       ) {
         props[propName] = (config as Record<string, unknown>)[propName];
       }
@@ -55,9 +58,9 @@ export function createElement<P extends Props>(
     (type as unknown as { defaultProps?: Partial<P> }).defaultProps
   ) {
     const defaultProps = (type as unknown as { defaultProps: Partial<P> }).defaultProps;
-    for (const propName in defaultProps) {
-      if (props[propName] === undefined) {
-        props[propName] = defaultProps[propName];
+    for (const propName of Object.keys(defaultProps)) {
+      if (propName !== '__proto__' && propName !== 'constructor' && props[propName] === undefined) {
+        props[propName] = defaultProps[propName as keyof typeof defaultProps];
       }
     }
   }

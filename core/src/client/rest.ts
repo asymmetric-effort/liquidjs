@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 
 import { useState, useEffect, useCallback, useRef } from '../hooks/index';
+import { assertSecureUrl } from '../shared/secure-fetch';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -183,6 +184,7 @@ export function createRestClient(config: RestClientConfig): RestClient {
 
     let response: Response;
     try {
+      assertSecureUrl(reqConfig.url);
       response = await fetch(reqConfig.url, fetchInit);
     } catch (err: unknown) {
       if (timeoutId !== undefined) {

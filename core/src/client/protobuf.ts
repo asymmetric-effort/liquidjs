@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 
 import { useState, useEffect, useCallback, useRef } from '../hooks/index';
+import { assertSecureUrl } from '../shared/secure-fetch';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -353,6 +354,7 @@ export function createGrpcWebClient(config: GrpcWebClientConfig): GrpcWebClient 
       ...extraHeaders,
     };
 
+    assertSecureUrl(url);
     const response = await fetch(url, {
       method: 'POST',
       headers: hdrs,
