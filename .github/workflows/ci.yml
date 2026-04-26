@@ -1,12 +1,23 @@
-name: CI
+name: Full CI/CD Pipeline
 
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: cicd-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  # ── Stage 1: Lint & Type Check ──────────────────────────────────────
   lint:
     name: Lint & Type Check
     runs-on: ubuntu-latest
@@ -29,8 +40,10 @@ jobs:
       - name: Prettier format check
         run: bun run format:check
 
+  # ── Stage 2: Unit & Integration Tests ───────────────────────────────
   test:
     name: Unit & Integration Tests
+    needs: lint
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -56,8 +69,10 @@ jobs:
           path: core/coverage/
           retention-days: 7
 
+  # ── Stage 3: Build Library ──────────────────────────────────────────
   build:
     name: Build
+    needs: test
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -102,8 +117,10 @@ jobs:
           path: core/dist/
           retention-days: 7
 
+  # ── Stage 4: E2E Tests (browser matrix) ─────────────────────────────
   e2e:
-    name: E2E Tests
+    name: E2E Tests (${{ matrix.browser }})
+    needs: build
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -134,3 +151,112 @@ jobs:
           name: playwright-report-${{ matrix.browser }}
           path: core/playwright-report/
           retention-days: 7
+
+  # ── Stage 5: Build Showcase Site ────────────────────────────────────
+  build-site:
+    name: Build Showcase Site
+    needs: e2e
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 2
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+
+      - name: Install site dependencies
+        working-directory: site
+        run: npm install
+
+      - name: Build site
+        working-directory: site
+        run: npx vite build
+
+      - name: Verify copyright banners
+        working-directory: site/dist
+        run: |
+          JS_FILE=$(ls assets/*.js | head -1)
+          CSS_FILE=$(ls assets/*.css | head -1)
+          head -1 "$JS_FILE" | grep -q "Asymmetric Effort" || (echo "Missing JS banner" && exit 1)
+          head -1 "$CSS_FILE" | grep -q "Asymmetric Effort" || (echo "Missing CSS banner" && exit 1)
+          echo "Copyright banners verified"
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
+        with:
+          path: site/dist
+
+  # ── Stage 6: Deploy to GitHub Pages ─────────────────────────────────
+  deploy:
+    name: Deploy Showcase Site
+    needs: build-site
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
+
+  # ── Stage 7: Post-Deployment Verification ───────────────────────────
+  pdv:
+    name: Post-Deployment Verification
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 2
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+
+      - name: Install Playwright
+        working-directory: site
+        run: |
+          npm install
+          npx playwright install chromium --with-deps
+
+      - name: Wait for CDN propagation and verify content
+        run: |
+          echo "Waiting for GitHub Pages to serve fresh content..."
+          for i in $(seq 1 30); do
+            CONTENT=$(curl -sk "https://specifyjs.asymmetric-effort.com/?_cb=$(date +%s%N)" 2>/dev/null)
+            JS_FILE=$(echo "$CONTENT" | grep -oP 'assets/index-[^"]+\.js' || true)
+            if [ -n "$JS_FILE" ]; then
+              HAS_SPECIFY=$(curl -sk "https://specifyjs.asymmetric-effort.com/$JS_FILE" 2>/dev/null | grep -c 'SpecifyJS' || true)
+              if [ "$HAS_SPECIFY" -gt "0" ]; then
+                echo "Site is serving fresh content (SpecifyJS found in $JS_FILE after ${i}0s)"
+                exit 0
+              fi
+            fi
+            echo "Attempt $i/30: waiting 10s..."
+            sleep 10
+          done
+          echo "WARNING: Site may still be serving stale content after 300s"
+
+      - name: Run post-deployment E2E tests
+        id: e2e
+        working-directory: site
+        run: npx playwright test --config=playwright.deploy.config.ts
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: deployment-verification-report
+          path: site/playwright-report/
+          retention-days: 7
+
+      - name: Rollback on verification failure
+        if: failure() && steps.e2e.outcome == 'failure'
+        run: |
+          echo "Post-deployment verification failed."
+          echo "Previous commit: $(git rev-parse HEAD~1)"
+          echo "::error::PDV E2E tests failed. Review the test report artifact."
+          exit 1
