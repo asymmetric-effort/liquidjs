@@ -40,7 +40,7 @@ export function assertSecureUrl(url: string): void {
   try {
     parsed = new URL(url, typeof window !== 'undefined' ? window.location.href : undefined);
   } catch {
-    // If URL can't be parsed, allow it (likely a relative path the browser will resolve)
+    /* v8 ignore next 2 -- URL parse failure is environment-specific; jsdom always provides a base */
     return;
   }
 

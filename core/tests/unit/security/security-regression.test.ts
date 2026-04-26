@@ -166,3 +166,73 @@ describe('renderToStaticMarkup attribute validation', () => {
     expect(html).not.toContain('alert');
   });
 });
+
+// ── M-2: Scheduler queue bounds ───────────────────────────────────────
+
+describe('M-2: Scheduler queue bounds', () => {
+  it('warns and trims when queue exceeds limit', async () => {
+    const { scheduleUpdate, batchUpdates, flushPendingTasks } =
+      await import('../../../src/core/scheduler');
+    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const calls: number[] = [];
+
+    batchUpdates(() => {
+      for (let i = 0; i < 10001; i++) {
+        scheduleUpdate(() => calls.push(i));
+      }
+    });
+
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('pending task queue exceeded'));
+    consoleSpy.mockRestore();
+  });
+});
+
+// ── M-7 additional: secure-fetch edge cases ───────────────────────────
+
+describe('M-7 additional: secure-fetch edge cases', () => {
+  it('allows data: URLs', () => {
+    expect(() => assertSecureUrl('data:text/html,hello')).not.toThrow();
+  });
+
+  it('allows relative ./ URLs', () => {
+    expect(() => assertSecureUrl('./data/file.json')).not.toThrow();
+  });
+
+  it('allows relative ../ URLs', () => {
+    expect(() => assertSecureUrl('../assets/img.png')).not.toThrow();
+  });
+
+  it('allows 127.0.0.1 for development', () => {
+    expect(() => assertSecureUrl('http://127.0.0.1:8080')).not.toThrow();
+  });
+
+  it('allows unparseable URLs (treated as relative paths)', () => {
+    // URL constructor throws on malformed URLs without a base — these are treated as relative
+    expect(() => assertSecureUrl('://')).not.toThrow();
+  });
+});
+
+// ── M-8: gql template tag metacharacter warning ───────────────────────
+
+describe('M-8: gql metacharacter warning', () => {
+  it('warns when interpolated value contains GraphQL metacharacters', async () => {
+    const { gql } = await import('../../../src/client/graphql');
+    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    const query = gql`query { user(id: ${'{injected}'}) { name } }`;
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('GraphQL metacharacters'));
+    expect(query).toContain('{injected}');
+    consoleSpy.mockRestore();
+  });
+
+  it('does not warn for safe interpolated values', async () => {
+    const { gql } = await import('../../../src/client/graphql');
+    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    const frag = 'UserFields';
+    gql`query { user { ...${frag} } }`;
+    // The fragment name "UserFields" has no metacharacters
+    expect(consoleSpy).not.toHaveBeenCalled();
+    consoleSpy.mockRestore();
+  });
+});
