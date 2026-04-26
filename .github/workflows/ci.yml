@@ -263,6 +263,11 @@ jobs:
           exit 1
 
   # ── Stage 8: Publish to npm (tagged releases only) ──────────────────
+  # Uses npm trusted publishing (OIDC) — no API token needed.
+  # Setup: npmjs.com → package settings → Trusted Publishers → Add:
+  #   Repository: asymmetric-effort/specifyjs
+  #   Workflow: ci.yml
+  #   Environment: npm
   publish:
     name: Publish to npm
     needs: pdv
@@ -279,6 +284,9 @@ jobs:
         with:
           node-version: '22'
           registry-url: 'https://registry.npmjs.org'
+
+      - name: Upgrade npm for trusted publishing
+        run: npm install -g npm@latest
 
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
@@ -303,8 +311,6 @@ jobs:
       - name: Publish @asymmetric-effort/specifyjs
         working-directory: core
         run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Sync wrapper package version
         run: |
@@ -319,5 +325,3 @@ jobs:
       - name: Publish specifyjs (alias package)
         working-directory: packages/specifyjs
         run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
