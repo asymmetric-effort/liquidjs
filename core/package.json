@@ -1,6 +1,6 @@
 {
   "name": "specifyjs-framework",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A declarative TypeScript UI framework built for performance and simplicity",
   "type": "module",
   "main": "dist/specifyjs.cjs.js",
