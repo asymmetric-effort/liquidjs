@@ -3,7 +3,7 @@
 
 import { createElement } from 'specifyjs';
 
-const VERSION = '0.0.3';
+const VERSION = '0.0.4';
 
 export function Footer() {
   const year = new Date().getFullYear();
