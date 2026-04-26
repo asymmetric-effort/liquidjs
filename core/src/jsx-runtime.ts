@@ -6,7 +6,7 @@
 
 import { createElement } from './core/create-element';
 import { Fragment } from './core/fragment';
-import type { Props, Key, ComponentType, LiquidElement } from './shared/types';
+import type { Props, Key, ComponentType, SpecElement } from './shared/types';
 
 export { Fragment };
 
@@ -14,7 +14,7 @@ export function jsx<P extends Props>(
   type: ComponentType<P>,
   config: P & { key?: Key },
   maybeKey?: Key,
-): LiquidElement<P> {
+): SpecElement<P> {
   const key = maybeKey !== undefined ? maybeKey : config.key !== undefined ? config.key : null;
   const { key: _key, ...props } = config;
   const configWithKey = key !== null ? { ...props, key } : props;

@@ -298,19 +298,19 @@ describe('edge cases', () => {
   });
 
   it('renders boolean true', () => {
-    expect(renderToString(true as unknown as LiquidNode)).toBe('');
+    expect(renderToString(true as unknown as SpecNode)).toBe('');
   });
 
   it('renders boolean false', () => {
-    expect(renderToString(false as unknown as LiquidNode)).toBe('');
+    expect(renderToString(false as unknown as SpecNode)).toBe('');
   });
 
   it('renders a number', () => {
-    expect(renderToString(42 as unknown as LiquidNode)).toBe('42');
+    expect(renderToString(42 as unknown as SpecNode)).toBe('42');
   });
 
   it('renders a string', () => {
-    expect(renderToString('hello' as unknown as LiquidNode)).toBe('hello');
+    expect(renderToString('hello' as unknown as SpecNode)).toBe('hello');
   });
 
   it('renders an array of elements', () => {
@@ -323,4 +323,4 @@ describe('edge cases', () => {
 });
 
 // Type import for edge case test
-import type { LiquidNode } from '../../../src/shared/types';
+import type { SpecNode } from '../../../src/shared/types';

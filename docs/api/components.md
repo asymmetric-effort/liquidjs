@@ -3,7 +3,7 @@
 ## createElement
 
 ```typescript
-createElement(type, props, ...children): LiquidElement
+createElement(type, props, ...children): SpecElement
 ```
 
 Creates a virtual DOM element. `type` can be a string (`'div'`), function component, or class component.

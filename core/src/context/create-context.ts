@@ -2,29 +2,29 @@
 // SPDX-License-Identifier: MIT
 
 import {
-  LIQUID_PROVIDER_TYPE,
-  LIQUID_CONSUMER_TYPE,
-  type LiquidContext,
+  SPEC_PROVIDER_TYPE,
+  SPEC_CONSUMER_TYPE,
+  type SpecContext,
   type ComponentType,
 } from '../shared/types';
 
 export interface ContextProvider<T> {
-  $$typeof: typeof LIQUID_PROVIDER_TYPE;
-  _context: LiquidContext<T>;
+  $$typeof: typeof SPEC_PROVIDER_TYPE;
+  _context: SpecContext<T>;
 }
 
 export interface ContextConsumer<T> {
-  $$typeof: typeof LIQUID_CONSUMER_TYPE;
-  _context: LiquidContext<T>;
+  $$typeof: typeof SPEC_CONSUMER_TYPE;
+  _context: SpecContext<T>;
 }
 
 /**
  * Creates a context object with Provider and Consumer.
  * Equivalent to React.createContext.
  */
-export function createContext<T>(defaultValue: T): LiquidContext<T> {
-  const context: LiquidContext<T> = {
-    $$typeof: Symbol.for('liquid.context'),
+export function createContext<T>(defaultValue: T): SpecContext<T> {
+  const context: SpecContext<T> = {
+    $$typeof: Symbol.for('spec.context'),
     Provider: null as unknown as ComponentType,
     Consumer: null as unknown as ComponentType,
     _currentValue: defaultValue,
@@ -32,12 +32,12 @@ export function createContext<T>(defaultValue: T): LiquidContext<T> {
   };
 
   const provider: ContextProvider<T> = {
-    $$typeof: LIQUID_PROVIDER_TYPE,
+    $$typeof: SPEC_PROVIDER_TYPE,
     _context: context,
   };
 
   const consumer: ContextConsumer<T> = {
-    $$typeof: LIQUID_CONSUMER_TYPE,
+    $$typeof: SPEC_CONSUMER_TYPE,
     _context: context,
   };
 

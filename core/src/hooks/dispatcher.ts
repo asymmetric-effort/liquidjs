@@ -6,7 +6,7 @@
  * when a function component is being rendered.
  */
 
-import type { LiquidContext, Fiber } from '../shared/types';
+import type { SpecContext, Fiber } from '../shared/types';
 import {
   allocateHook,
   areDepsEqual,
@@ -191,7 +191,7 @@ export function useInsertionEffectDispatch(
 // useContext
 // ---------------------------------------------------------------------------
 
-export function useContextImpl<T>(context: LiquidContext<T>): T {
+export function useContextImpl<T>(context: SpecContext<T>): T {
   allocateHook(); // reserve a slot for consistency
   return context._currentValue;
 }

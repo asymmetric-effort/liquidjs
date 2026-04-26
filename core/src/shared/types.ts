@@ -5,17 +5,17 @@
 // SPDX-License-Identifier: MIT
 
 /** Unique symbol to identify SpecifyJS elements */
-export const LIQUID_ELEMENT_TYPE = Symbol.for('liquid.element');
-export const LIQUID_FRAGMENT_TYPE = Symbol.for('liquid.fragment');
-export const LIQUID_PORTAL_TYPE = Symbol.for('liquid.portal');
-export const LIQUID_PROVIDER_TYPE = Symbol.for('liquid.provider');
-export const LIQUID_CONSUMER_TYPE = Symbol.for('liquid.consumer');
-export const LIQUID_FORWARD_REF_TYPE = Symbol.for('liquid.forward_ref');
-export const LIQUID_MEMO_TYPE = Symbol.for('liquid.memo');
-export const LIQUID_LAZY_TYPE = Symbol.for('liquid.lazy');
-export const LIQUID_SUSPENSE_TYPE = Symbol.for('liquid.suspense');
-export const LIQUID_STRICT_MODE_TYPE = Symbol.for('liquid.strict_mode');
-export const LIQUID_PROFILER_TYPE = Symbol.for('liquid.profiler');
+export const SPEC_ELEMENT_TYPE = Symbol.for('spec.element');
+export const SPEC_FRAGMENT_TYPE = Symbol.for('spec.fragment');
+export const SPEC_PORTAL_TYPE = Symbol.for('spec.portal');
+export const SPEC_PROVIDER_TYPE = Symbol.for('spec.provider');
+export const SPEC_CONSUMER_TYPE = Symbol.for('spec.consumer');
+export const SPEC_FORWARD_REF_TYPE = Symbol.for('spec.forward_ref');
+export const SPEC_MEMO_TYPE = Symbol.for('spec.memo');
+export const SPEC_LAZY_TYPE = Symbol.for('spec.lazy');
+export const SPEC_SUSPENSE_TYPE = Symbol.for('spec.suspense');
+export const SPEC_STRICT_MODE_TYPE = Symbol.for('spec.strict_mode');
+export const SPEC_PROFILER_TYPE = Symbol.for('spec.profiler');
 
 /** A key used for reconciliation */
 export type Key = string | number | null;
@@ -29,17 +29,17 @@ export interface RefObject<T> {
 
 /** Props are an arbitrary key-value map */
 export type Props = Record<string, unknown> & {
-  children?: LiquidNode;
+  children?: SpecNode;
   key?: Key;
   ref?: Ref;
 };
 
 /** Valid child types in a SpecifyJS tree */
-export type LiquidChild = LiquidElement | string | number | boolean | null | undefined;
-export type LiquidNode = LiquidChild | LiquidNode[];
+export type SpecChild = SpecElement | string | number | boolean | null | undefined;
+export type SpecNode = SpecChild | SpecNode[];
 
 /** A functional component */
-export type FunctionComponent<P extends Props = Props> = (props: P) => LiquidNode;
+export type FunctionComponent<P extends Props = Props> = (props: P) => SpecNode;
 
 /** A class component constructor */
 export interface ClassComponentConstructor<P extends Props = Props, S = unknown> {
@@ -54,7 +54,7 @@ export interface ClassComponentInstance<P extends Props = Props, S = unknown> {
   state: S;
   setState(updater: Partial<S> | ((prevState: S, props: P) => Partial<S> | null)): void;
   forceUpdate(callback?: () => void): void;
-  render(): LiquidNode;
+  render(): SpecNode;
   componentDidMount?(): void;
   componentDidUpdate?(prevProps: P, prevState: S, snapshot?: unknown): void;
   componentWillUnmount?(): void;
@@ -75,8 +75,8 @@ export type ComponentType<P extends Props = Props> =
   | symbol;
 
 /** The core element structure — equivalent to React.Element */
-export interface LiquidElement<P extends Props = Props> {
-  $$typeof: typeof LIQUID_ELEMENT_TYPE;
+export interface SpecElement<P extends Props = Props> {
+  $$typeof: typeof SPEC_ELEMENT_TYPE;
   type: ComponentType<P>;
   props: P;
   key: Key;
@@ -142,7 +142,7 @@ export interface Fiber<P extends Props = Props> {
 }
 
 /** Context type */
-export interface LiquidContext<T> {
+export interface SpecContext<T> {
   $$typeof: symbol;
   Provider: ComponentType;
   Consumer: ComponentType;

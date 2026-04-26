@@ -55,9 +55,9 @@ export { FeatureFlagProvider, FeatureGate, useFeatureFlags } from './features/in
 
 // Types
 export type {
-  LiquidElement,
-  LiquidNode,
-  LiquidChild,
+  SpecElement,
+  SpecNode,
+  SpecChild,
   Props,
   Key,
   Ref,
@@ -66,7 +66,7 @@ export type {
   FunctionComponent,
   ClassComponentConstructor,
   ClassComponentInstance,
-  LiquidContext,
+  SpecContext,
   ErrorInfo,
   Fiber,
 } from './shared/types';

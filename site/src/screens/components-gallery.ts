@@ -1831,7 +1831,7 @@ function BubbleChartDemo() {
     { label: 'Angular', x: 170, y: 40, r: 18, color: '#ef4444' },
     { label: 'Svelte', x: 65, y: 80, r: 12, color: '#f59e0b' },
     { label: 'Solid', x: 140, y: 85, r: 10, color: '#8b5cf6' },
-    { label: 'Liquid', x: 210, y: 65, r: 20, color: '#ec4899' },
+    { label: 'Specify', x: 210, y: 65, r: 20, color: '#ec4899' },
   ];
   const [hovered, setHovered] = useState(-1);
 

@@ -1,7 +1,7 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import type { LiquidNode } from '../shared/types';
+import type { SpecNode } from '../shared/types';
 import type { Writable } from 'stream';
 import { renderToString } from './render-to-string';
 
@@ -36,7 +36,7 @@ export interface RenderToPipeableStreamOptions {
  * fetched via HTTPS from API endpoints.
  */
 export function renderToPipeableStream(
-  element: LiquidNode,
+  element: SpecNode,
   options?: RenderToPipeableStreamOptions,
 ): PipeableStream {
   let aborted = false;

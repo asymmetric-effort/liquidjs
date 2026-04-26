@@ -11,12 +11,12 @@
 import {
   type Fiber,
   type Props,
-  type LiquidNode,
+  type SpecNode,
   type FunctionComponent,
   type ClassComponentInstance,
   FiberTag,
   EffectTag,
-  LIQUID_STRICT_MODE_TYPE,
+  SPEC_STRICT_MODE_TYPE,
 } from '../shared/types';
 import { createHostRootFiber, createWorkInProgress } from '../core/fiber';
 import { reconcileChildren } from '../core/reconciler';
@@ -55,7 +55,7 @@ import {
 export interface FiberRoot {
   containerNode: Element | DocumentFragment;
   current: Fiber;
-  pendingChildren: LiquidNode;
+  pendingChildren: SpecNode;
   callbackScheduled: boolean;
 
   // Lane-based concurrent scheduling
@@ -99,7 +99,7 @@ export function createFiberRoot(container: Element | DocumentFragment): FiberRoo
 // Schedule and perform work
 // ---------------------------------------------------------------------------
 
-export function scheduleRender(root: FiberRoot, children: LiquidNode): void {
+export function scheduleRender(root: FiberRoot, children: SpecNode): void {
   root.pendingChildren = children;
 
   if (!root.callbackScheduled) {
@@ -111,7 +111,7 @@ export function scheduleRender(root: FiberRoot, children: LiquidNode): void {
   }
 }
 
-export function performSyncWork(root: FiberRoot, children: LiquidNode): void {
+export function performSyncWork(root: FiberRoot, children: SpecNode): void {
   root.pendingChildren = children;
   performWork(root);
 }
@@ -419,7 +419,7 @@ function beginWork(fiber: Fiber): void {
       break;
     case FiberTag.Fragment:
       // Track StrictMode depth
-      if (fiber.type === LIQUID_STRICT_MODE_TYPE) {
+      if (fiber.type === SPEC_STRICT_MODE_TYPE) {
         strictModeDepth++;
       }
       reconcileFragment(fiber);
@@ -513,7 +513,7 @@ function reconcileContextProvider(fiber: Fiber): void {
 
 function reconcileForwardRef(fiber: Fiber): void {
   const { render } = fiber.type as unknown as {
-    render: (props: Props, ref: unknown) => LiquidNode;
+    render: (props: Props, ref: unknown) => SpecNode;
   };
 
   installDispatcher();
@@ -858,7 +858,7 @@ function completeWork(fiber: Fiber): void {
     case FiberTag.ForwardRef:
     case FiberTag.MemoComponent:
       // Decrement StrictMode depth when completing a StrictMode fiber
-      if (fiber.type === LIQUID_STRICT_MODE_TYPE) {
+      if (fiber.type === SPEC_STRICT_MODE_TYPE) {
         strictModeDepth--;
       }
       fiber.memoizedProps = fiber.pendingProps;

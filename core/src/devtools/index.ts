@@ -22,11 +22,11 @@ let devToolsHook: DevToolsHook | null = null;
 export function connectDevTools(): void {
   if (
     typeof globalThis !== 'undefined' &&
-    (globalThis as unknown as { __LIQUID_DEVTOOLS_GLOBAL_HOOK__?: DevToolsHook })
-      .__LIQUID_DEVTOOLS_GLOBAL_HOOK__
+    (globalThis as unknown as { __SPECIFY_DEVTOOLS_GLOBAL_HOOK__?: DevToolsHook })
+      .__SPECIFY_DEVTOOLS_GLOBAL_HOOK__
   ) {
-    devToolsHook = (globalThis as unknown as { __LIQUID_DEVTOOLS_GLOBAL_HOOK__: DevToolsHook })
-      .__LIQUID_DEVTOOLS_GLOBAL_HOOK__;
+    devToolsHook = (globalThis as unknown as { __SPECIFY_DEVTOOLS_GLOBAL_HOOK__: DevToolsHook })
+      .__SPECIFY_DEVTOOLS_GLOBAL_HOOK__;
   }
 }
 

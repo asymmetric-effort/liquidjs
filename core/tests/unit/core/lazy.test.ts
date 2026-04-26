@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { lazy } from '../../../src/index';
-import { LIQUID_LAZY_TYPE } from '../../../src/shared/types';
+import { SPEC_LAZY_TYPE } from '../../../src/shared/types';
 
 describe('lazy', () => {
   it('creates a Lazy component with correct $$typeof', () => {
     const lazyComp = lazy(() => Promise.resolve({ default: () => null }));
-    expect(lazyComp.$$typeof).toBe(LIQUID_LAZY_TYPE);
+    expect(lazyComp.$$typeof).toBe(SPEC_LAZY_TYPE);
   });
 
   it('starts in pending status', () => {

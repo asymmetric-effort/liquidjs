@@ -1,11 +1,11 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import type { LiquidNode } from '../shared/types';
+import type { SpecNode } from '../shared/types';
 import { createFiberRoot, performSyncWork, fiberRoots } from './work-loop';
 
 export interface Root {
-  render(children: LiquidNode): void;
+  render(children: SpecNode): void;
   unmount(): void;
 }
 
@@ -29,7 +29,7 @@ export function createRoot(container: Element | DocumentFragment, _options?: Roo
   let isMounted = false;
 
   return {
-    render(children: LiquidNode): void {
+    render(children: SpecNode): void {
       isMounted = true;
       performSyncWork(fiberRoot, children);
     },
@@ -52,7 +52,7 @@ export function createRoot(container: Element | DocumentFragment, _options?: Roo
  */
 export function hydrateRoot(
   container: Element | Document,
-  initialChildren: LiquidNode,
+  initialChildren: SpecNode,
   _options?: RootOptions,
 ): Root {
   if (!container) {
@@ -67,7 +67,7 @@ export function hydrateRoot(
   let isMounted = false;
 
   const root: Root = {
-    render(children: LiquidNode): void {
+    render(children: SpecNode): void {
       isMounted = true;
       performSyncWork(fiberRoot, children);
     },

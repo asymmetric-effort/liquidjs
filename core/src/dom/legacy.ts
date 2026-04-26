@@ -1,7 +1,7 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import type { LiquidNode } from '../shared/types';
+import type { SpecNode } from '../shared/types';
 import { createRoot, hydrateRoot, type Root } from './create-root';
 
 const containerRootMap = new WeakMap<Element, Root>();
@@ -10,7 +10,7 @@ const containerRootMap = new WeakMap<Element, Root>();
  * Legacy render API.
  * Equivalent to ReactDOM.render (pre-React 18).
  */
-export function render(element: LiquidNode, container: Element, callback?: () => void): void {
+export function render(element: SpecNode, container: Element, callback?: () => void): void {
   let root = containerRootMap.get(container);
 
   if (!root) {
@@ -30,7 +30,7 @@ export function render(element: LiquidNode, container: Element, callback?: () =>
  * Legacy hydrate API.
  * Equivalent to ReactDOM.hydrate (pre-React 18).
  */
-export function hydrate(element: LiquidNode, container: Element, callback?: () => void): void {
+export function hydrate(element: SpecNode, container: Element, callback?: () => void): void {
   const root = hydrateRoot(container, element);
   containerRootMap.set(container, root);
 

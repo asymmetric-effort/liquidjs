@@ -49,7 +49,7 @@ Fires before DOM mutations. Designed for CSS-in-JS libraries.
 
 ## Context Hooks
 
-### `useContext<T>(context: LiquidContext<T>): T`
+### `useContext<T>(context: SpecContext<T>): T`
 
 Reads the current value from the nearest matching Provider.
 

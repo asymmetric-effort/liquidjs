@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { memo } from '../../../src/index';
-import { LIQUID_MEMO_TYPE } from '../../../src/shared/types';
+import { SPEC_MEMO_TYPE } from '../../../src/shared/types';
 
 describe('memo', () => {
   it('creates a Memo component with correct $$typeof', () => {
     const Comp = () => null;
     const memoized = memo(Comp);
-    expect(memoized.$$typeof).toBe(LIQUID_MEMO_TYPE);
+    expect(memoized.$$typeof).toBe(SPEC_MEMO_TYPE);
   });
 
   it('stores the original component as type', () => {

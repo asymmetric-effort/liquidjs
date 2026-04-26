@@ -8,11 +8,11 @@ import { createRoot } from '../../src/dom/create-root';
 import { getFiberTag, coerceToFiberChildren } from '../../src/core/fiber';
 import {
   FiberTag,
-  LIQUID_CONSUMER_TYPE,
-  LIQUID_SUSPENSE_TYPE,
-  LIQUID_PROFILER_TYPE,
-  LIQUID_PORTAL_TYPE,
-  LIQUID_STRICT_MODE_TYPE,
+  SPEC_CONSUMER_TYPE,
+  SPEC_SUSPENSE_TYPE,
+  SPEC_PROFILER_TYPE,
+  SPEC_PORTAL_TYPE,
+  SPEC_STRICT_MODE_TYPE,
 } from '../../src/shared/types';
 import { reconcileChildren } from '../../src/core/reconciler';
 import { createHostRootFiber } from '../../src/core/fiber';
@@ -33,7 +33,7 @@ import {
 import { hydrateRoot } from '../../src/dom/create-root';
 import { renderToString } from '../../src/server/render-to-string';
 import { setCurrentFiber, allocateHook } from '../../src/hooks/hook-state';
-import { LIQUID_ELEMENT_TYPE } from '../../src/shared/types';
+import { SPEC_ELEMENT_TYPE } from '../../src/shared/types';
 
 let container: HTMLDivElement;
 
@@ -50,19 +50,19 @@ beforeEach(() => {
 // ============================================================================
 describe('fiber.ts coverage gaps', () => {
   it('getFiberTag returns SuspenseComponent for Suspense type', () => {
-    expect(getFiberTag(LIQUID_SUSPENSE_TYPE)).toBe(FiberTag.SuspenseComponent);
+    expect(getFiberTag(SPEC_SUSPENSE_TYPE)).toBe(FiberTag.SuspenseComponent);
   });
 
   it('getFiberTag returns Fragment for StrictMode', () => {
-    expect(getFiberTag(LIQUID_STRICT_MODE_TYPE)).toBe(FiberTag.Fragment);
+    expect(getFiberTag(SPEC_STRICT_MODE_TYPE)).toBe(FiberTag.Fragment);
   });
 
   it('getFiberTag returns Profiler for Profiler type', () => {
-    expect(getFiberTag(LIQUID_PROFILER_TYPE)).toBe(FiberTag.Profiler);
+    expect(getFiberTag(SPEC_PROFILER_TYPE)).toBe(FiberTag.Profiler);
   });
 
   it('getFiberTag returns Portal for Portal type', () => {
-    expect(getFiberTag(LIQUID_PORTAL_TYPE)).toBe(FiberTag.Portal);
+    expect(getFiberTag(SPEC_PORTAL_TYPE)).toBe(FiberTag.Portal);
   });
 
   it('getFiberTag returns ContextConsumer for Consumer type', () => {
@@ -335,7 +335,7 @@ describe('create-root.ts coverage gaps', () => {
 describe('render-to-string.ts coverage gaps', () => {
   it('renders empty string for unknown symbol types', () => {
     const el = {
-      $$typeof: LIQUID_ELEMENT_TYPE,
+      $$typeof: SPEC_ELEMENT_TYPE,
       type: Symbol('unknown'),
       props: {},
       key: null,

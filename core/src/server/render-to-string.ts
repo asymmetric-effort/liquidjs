@@ -2,17 +2,17 @@
 // SPDX-License-Identifier: MIT
 
 import {
-  type LiquidNode,
-  type LiquidElement,
+  type SpecNode,
+  type SpecElement,
   type Props,
   type FunctionComponent,
   type ClassComponentInstance,
-  LIQUID_FRAGMENT_TYPE,
-  LIQUID_STRICT_MODE_TYPE,
-  LIQUID_PROFILER_TYPE,
-  LIQUID_FORWARD_REF_TYPE,
-  LIQUID_MEMO_TYPE,
-  LIQUID_PROVIDER_TYPE,
+  SPEC_FRAGMENT_TYPE,
+  SPEC_STRICT_MODE_TYPE,
+  SPEC_PROFILER_TYPE,
+  SPEC_FORWARD_REF_TYPE,
+  SPEC_MEMO_TYPE,
+  SPEC_PROVIDER_TYPE,
 } from '../shared/types';
 import { isValidElement } from '../core/is-valid-element';
 
@@ -76,7 +76,7 @@ const EVENT_RE = /^on[A-Z]/;
  *
  * @throws {Error} If called in a detected server request context
  */
-export function renderToString(element: LiquidNode): string {
+export function renderToString(element: SpecNode): string {
   assertNotInRequestContext('renderToString');
   return renderNode(element, true);
 }
@@ -89,7 +89,7 @@ export function renderToString(element: LiquidNode): string {
  *
  * @throws {Error} If called in a detected server request context
  */
-export function renderToStaticMarkup(element: LiquidNode): string {
+export function renderToStaticMarkup(element: SpecNode): string {
   assertNotInRequestContext('renderToStaticMarkup');
   return renderNode(element, false);
 }
@@ -104,7 +104,7 @@ function assertNotInRequestContext(fnName: string): void {
   if (
     typeof process !== 'undefined' &&
     typeof process.env !== 'undefined' &&
-    process.env.LIQUIDJS_ALLOW_PRERENDER === 'true'
+    process.env.SPECIFYJS_ALLOW_PRERENDER === 'true'
   ) {
     return;
   }
@@ -114,10 +114,10 @@ function assertNotInRequestContext(fnName: string): void {
     typeof process.env !== 'undefined' &&
     (process.env.NODE_ENV === 'production' || process.env.PORT)
   ) {
-    if (!process.env.LIQUIDJS_ALLOW_PRERENDER) {
+    if (!process.env.SPECIFYJS_ALLOW_PRERENDER) {
       console.warn(
         `[SpecifyJS] ${fnName}() is intended for build-time pre-rendering only, ` +
-          `not runtime server-side rendering. Set LIQUIDJS_ALLOW_PRERENDER=true ` +
+          `not runtime server-side rendering. Set SPECIFYJS_ALLOW_PRERENDER=true ` +
           `if you are using this in a build script. See: ` +
           `https://github.com/asymmetric-effort/specifyjs/blob/main/docs/api/static-prerendering.md`,
       );
@@ -125,7 +125,7 @@ function assertNotInRequestContext(fnName: string): void {
   }
 }
 
-function renderNode(node: LiquidNode, includeDataAttrs: boolean): string {
+function renderNode(node: SpecNode, includeDataAttrs: boolean): string {
   // Null, undefined, boolean → empty
   if (node == null || typeof node === 'boolean') {
     return '';
@@ -149,18 +149,18 @@ function renderNode(node: LiquidNode, includeDataAttrs: boolean): string {
     return '';
   }
 
-  const element = node as LiquidElement;
+  const element = node as SpecElement;
   return renderElement(element, includeDataAttrs);
 }
 
-function renderElement(element: LiquidElement, includeDataAttrs: boolean): string {
+function renderElement(element: SpecElement, includeDataAttrs: boolean): string {
   const { type, props } = element;
 
   // Fragment, StrictMode, Profiler → render children only
   if (
-    type === LIQUID_FRAGMENT_TYPE ||
-    type === LIQUID_STRICT_MODE_TYPE ||
-    type === LIQUID_PROFILER_TYPE
+    type === SPEC_FRAGMENT_TYPE ||
+    type === SPEC_STRICT_MODE_TYPE ||
+    type === SPEC_PROFILER_TYPE
   ) {
     return renderNode(props.children, includeDataAttrs);
   }
@@ -169,7 +169,7 @@ function renderElement(element: LiquidElement, includeDataAttrs: boolean): strin
   if (typeof type === 'object' && type !== null) {
     const $$typeof = (type as { $$typeof?: symbol }).$$typeof;
 
-    if ($$typeof === LIQUID_PROVIDER_TYPE) {
+    if ($$typeof === SPEC_PROVIDER_TYPE) {
       const context = (type as { _context: { _currentValue: unknown } })._context;
       const prevValue = context._currentValue;
       context._currentValue = props.value;
@@ -178,13 +178,13 @@ function renderElement(element: LiquidElement, includeDataAttrs: boolean): strin
       return result;
     }
 
-    if ($$typeof === LIQUID_FORWARD_REF_TYPE) {
-      const render = (type as { render: (props: Props, ref: unknown) => LiquidNode }).render;
+    if ($$typeof === SPEC_FORWARD_REF_TYPE) {
+      const render = (type as { render: (props: Props, ref: unknown) => SpecNode }).render;
       const children = render(props, element.ref);
       return renderNode(children, includeDataAttrs);
     }
 
-    if ($$typeof === LIQUID_MEMO_TYPE) {
+    if ($$typeof === SPEC_MEMO_TYPE) {
       const innerType = (type as { type: FunctionComponent }).type;
       if (typeof innerType === 'function') {
         const children = innerType(props);
@@ -195,7 +195,7 @@ function renderElement(element: LiquidElement, includeDataAttrs: boolean): strin
 
   // Function component
   if (typeof type === 'function') {
-    if ((type.prototype as Record<string, unknown>)?.isLiquidComponent) {
+    if ((type.prototype as Record<string, unknown>)?.isSpecComponent) {
       // Class component
       const Constructor = type as new (props: Props) => ClassComponentInstance;
       const instance = new Constructor(props);

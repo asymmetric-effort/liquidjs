@@ -7,7 +7,7 @@
 
 import { createElement } from '../core/create-element';
 import { useContext, useCallback } from '../hooks/index';
-import type { LiquidNode } from '../shared/types';
+import type { SpecNode } from '../shared/types';
 import { RouterContext } from './router-context';
 import { matchPath } from './match-path';
 
@@ -21,12 +21,12 @@ export interface LinkProps {
   /** If true, activeClassName requires exact path match. Default: false. */
   exact?: boolean;
   /** Children (link text/content) */
-  children?: LiquidNode;
+  children?: SpecNode;
   /** Additional props passed to the anchor element */
   [key: string]: unknown;
 }
 
-export function Link(props: LinkProps): LiquidNode {
+export function Link(props: LinkProps): SpecNode {
   const { to, className, activeClassName, exact, children, ...rest } = props;
   const router = useContext(RouterContext);
 

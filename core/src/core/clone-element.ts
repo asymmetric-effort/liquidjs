@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: MIT
 
 import {
-  LIQUID_ELEMENT_TYPE,
-  type LiquidElement,
+  SPEC_ELEMENT_TYPE,
+  type SpecElement,
   type Props,
   type Key,
   type Ref,
-  type LiquidNode,
+  type SpecNode,
 } from '../shared/types';
 import { isValidElement } from './is-valid-element';
 
@@ -16,10 +16,10 @@ import { isValidElement } from './is-valid-element';
  * Equivalent to React.cloneElement.
  */
 export function cloneElement<P extends Props>(
-  element: LiquidElement<P>,
+  element: SpecElement<P>,
   config?: Partial<P> & { key?: Key; ref?: Ref },
-  ...children: LiquidNode[]
-): LiquidElement<P> {
+  ...children: SpecNode[]
+): SpecElement<P> {
   if (!isValidElement(element)) {
     throw new Error('cloneElement: argument must be a valid SpecifyJS element');
   }
@@ -54,7 +54,7 @@ export function cloneElement<P extends Props>(
   }
 
   return {
-    $$typeof: LIQUID_ELEMENT_TYPE,
+    $$typeof: SPEC_ELEMENT_TYPE,
     type: element.type,
     props: props as P,
     key,

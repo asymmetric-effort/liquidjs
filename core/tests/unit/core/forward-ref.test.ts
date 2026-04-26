@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { forwardRef } from '../../../src/index';
-import { LIQUID_FORWARD_REF_TYPE } from '../../../src/shared/types';
+import { SPEC_FORWARD_REF_TYPE } from '../../../src/shared/types';
 
 describe('forwardRef', () => {
   it('creates a ForwardRef component with the correct $$typeof', () => {
     const render = () => null;
     const comp = forwardRef(render);
-    expect(comp.$$typeof).toBe(LIQUID_FORWARD_REF_TYPE);
+    expect(comp.$$typeof).toBe(SPEC_FORWARD_REF_TYPE);
   });
 
   it('stores the render function', () => {

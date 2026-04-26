@@ -28,7 +28,7 @@ import {
   type EffectHook,
 } from '../../../src/hooks/hook-state';
 import { installDispatcher, uninstallDispatcher } from '../../../src/hooks/install-dispatcher';
-import type { Fiber, LiquidContext } from '../../../src/shared/types';
+import type { Fiber, SpecContext } from '../../../src/shared/types';
 import { FiberTag, EffectTag } from '../../../src/shared/types';
 
 function makeFiber(alternate: Fiber | null = null): Fiber {
@@ -274,7 +274,7 @@ describe('useContextImpl', () => {
   it('returns the current context value', () => {
     const fiber = makeFiber();
     enterFiber(fiber);
-    const ctx: LiquidContext<string> = {
+    const ctx: SpecContext<string> = {
       _currentValue: 'hello',
       Provider: null as any,
       Consumer: null as any,

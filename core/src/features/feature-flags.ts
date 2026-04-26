@@ -8,7 +8,7 @@
 import { createElement } from '../core/create-element';
 import { createContext } from '../context/create-context';
 import { useState, useEffect, useContext, useCallback } from '../hooks/index';
-import type { LiquidNode } from '../shared/types';
+import type { SpecNode } from '../shared/types';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -33,7 +33,7 @@ export interface FeatureFlagProviderProps {
   /** Initial/default flag values */
   defaults?: FeatureFlags;
   /** Children */
-  children?: LiquidNode;
+  children?: SpecNode;
 }
 
 // ---------------------------------------------------------------------------
@@ -51,7 +51,7 @@ const FeatureFlagContext = createContext<FeatureFlagContextValue>({
 // Provider
 // ---------------------------------------------------------------------------
 
-export function FeatureFlagProvider(props: FeatureFlagProviderProps): LiquidNode {
+export function FeatureFlagProvider(props: FeatureFlagProviderProps): SpecNode {
   const [flags, setFlags] = useState<FeatureFlags>(() => ({ ...props.defaults }));
   const [loading, setLoading] = useState(!!props.url);
 
@@ -120,18 +120,18 @@ export interface FeatureGateProps {
   /** Flag name to check */
   flag: string;
   /** Content to render when flag is enabled */
-  children?: LiquidNode;
+  children?: SpecNode;
   /** Content to render when flag is disabled (optional) */
-  fallback?: LiquidNode;
+  fallback?: SpecNode;
 }
 
 /**
  * Conditionally renders children based on a feature flag.
  * Renders nothing (or fallback) when the flag is disabled.
  */
-export function FeatureGate(props: FeatureGateProps): LiquidNode {
+export function FeatureGate(props: FeatureGateProps): SpecNode {
   const { isEnabled } = useContext(FeatureFlagContext);
-  return isEnabled(props.flag) ? (props.children as LiquidNode) : (props.fallback ?? null);
+  return isEnabled(props.flag) ? (props.children as SpecNode) : (props.fallback ?? null);
 }
 
 // ---------------------------------------------------------------------------

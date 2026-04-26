@@ -1,13 +1,13 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import type { Props, LiquidNode, ErrorInfo } from '../shared/types';
+import type { Props, SpecNode, ErrorInfo } from '../shared/types';
 import { Component } from './component';
 
 export interface ErrorBoundaryProps extends Props {
-  fallback?: LiquidNode;
+  fallback?: SpecNode;
   onError?: (error: unknown, info: ErrorInfo) => void;
-  children?: LiquidNode;
+  children?: SpecNode;
 }
 
 export interface ErrorBoundaryState {
@@ -34,7 +34,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     this.props.onError?.(error, info);
   }
 
-  render(): LiquidNode {
+  render(): SpecNode {
     if (this.state.hasError) {
       return this.props.fallback ?? null;
     }

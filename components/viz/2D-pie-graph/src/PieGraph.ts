@@ -5,7 +5,7 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import { createElement, type LiquidElement } from '../../../../core/src/index';
+import { createElement, type SpecElement } from '../../../../core/src/index';
 import { useMemo } from '../../../../core/src/hooks/index';
 
 // ---------------------------------------------------------------------------
@@ -182,7 +182,7 @@ export function computeSlices(
 // PieGraph component
 // ---------------------------------------------------------------------------
 
-export function PieGraph(props: PieGraphProps): LiquidElement {
+export function PieGraph(props: PieGraphProps): SpecElement {
   const {
     data,
     width = 400,
@@ -223,7 +223,7 @@ export function PieGraph(props: PieGraphProps): LiquidElement {
 
   // ---- Build child elements ---
 
-  const children: LiquidElement[] = [];
+  const children: SpecElement[] = [];
 
   // Title
   if (title) {
@@ -351,7 +351,7 @@ export function PieGraph(props: PieGraphProps): LiquidElement {
 
   // Legend
   if (showLegend) {
-    const legendItems: LiquidElement[] = [];
+    const legendItems: SpecElement[] = [];
 
     if (legendPosition === 'right') {
       const legendX = chartWidth + 10;

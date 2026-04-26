@@ -1,7 +1,7 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import type { LiquidNode, LiquidChild, LiquidElement } from '../shared/types';
+import type { SpecNode, SpecChild, SpecElement } from '../shared/types';
 import { isValidElement } from './is-valid-element';
 
 /**
@@ -9,30 +9,30 @@ import { isValidElement } from './is-valid-element';
  * Equivalent to React.Children.
  */
 
-function flattenChildren(children: LiquidNode): LiquidChild[] {
-  const result: LiquidChild[] = [];
+function flattenChildren(children: SpecNode): SpecChild[] {
+  const result: SpecChild[] = [];
 
   if (Array.isArray(children)) {
     for (const child of children) {
       if (Array.isArray(child)) {
         result.push(...flattenChildren(child));
       } else {
-        result.push(child as LiquidChild);
+        result.push(child as SpecChild);
       }
     }
   } else {
-    result.push(children as LiquidChild);
+    result.push(children as SpecChild);
   }
 
   return result;
 }
 
 function mapChildren(
-  children: LiquidNode,
-  fn: (child: LiquidChild, index: number) => LiquidChild,
-): LiquidChild[] {
+  children: SpecNode,
+  fn: (child: SpecChild, index: number) => SpecChild,
+): SpecChild[] {
   const flat = flattenChildren(children);
-  const result: LiquidChild[] = [];
+  const result: SpecChild[] = [];
 
   for (let i = 0; i < flat.length; i++) {
     const child = flat[i];
@@ -45,10 +45,7 @@ function mapChildren(
   return result;
 }
 
-function forEachChildren(
-  children: LiquidNode,
-  fn: (child: LiquidChild, index: number) => void,
-): void {
+function forEachChildren(children: SpecNode, fn: (child: SpecChild, index: number) => void): void {
   const flat = flattenChildren(children);
   let index = 0;
 
@@ -60,7 +57,7 @@ function forEachChildren(
   }
 }
 
-function countChildren(children: LiquidNode): number {
+function countChildren(children: SpecNode): number {
   const flat = flattenChildren(children);
   let count = 0;
 
@@ -73,14 +70,14 @@ function countChildren(children: LiquidNode): number {
   return count;
 }
 
-function onlyChild(children: LiquidNode): LiquidElement {
+function onlyChild(children: SpecNode): SpecElement {
   if (!isValidElement(children)) {
     throw new Error('Children.only: expected a single SpecifyJS element child');
   }
-  return children as LiquidElement;
+  return children as SpecElement;
 }
 
-function toArray(children: LiquidNode): LiquidChild[] {
+function toArray(children: SpecNode): SpecChild[] {
   const flat = flattenChildren(children);
   return flat.filter((child) => child != null && typeof child !== 'boolean');
 }

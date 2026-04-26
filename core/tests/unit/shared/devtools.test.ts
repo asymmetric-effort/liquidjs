@@ -9,7 +9,7 @@ import {
 describe('DevTools integration', () => {
   afterEach(() => {
     // Clean up global hook
-    delete (globalThis as unknown as Record<string, unknown>).__LIQUID_DEVTOOLS_GLOBAL_HOOK__;
+    delete (globalThis as unknown as Record<string, unknown>).__SPECIFY_DEVTOOLS_GLOBAL_HOOK__;
   });
 
   it('isDevToolsConnected returns false when no hook is present', () => {
@@ -17,7 +17,7 @@ describe('DevTools integration', () => {
   });
 
   it('connects when global hook exists', () => {
-    (globalThis as unknown as Record<string, unknown>).__LIQUID_DEVTOOLS_GLOBAL_HOOK__ = {
+    (globalThis as unknown as Record<string, unknown>).__SPECIFY_DEVTOOLS_GLOBAL_HOOK__ = {
       supportsFiber: true,
     };
     connectDevTools();
@@ -26,7 +26,7 @@ describe('DevTools integration', () => {
 
   it('notifyDevToolsOfCommit calls onCommitFiberRoot', () => {
     const onCommit = vi.fn();
-    (globalThis as unknown as Record<string, unknown>).__LIQUID_DEVTOOLS_GLOBAL_HOOK__ = {
+    (globalThis as unknown as Record<string, unknown>).__SPECIFY_DEVTOOLS_GLOBAL_HOOK__ = {
       onCommitFiberRoot: onCommit,
     };
     connectDevTools();
@@ -37,7 +37,7 @@ describe('DevTools integration', () => {
 
   it('notifyDevToolsOfUnmount calls onCommitFiberUnmount', () => {
     const onUnmount = vi.fn();
-    (globalThis as unknown as Record<string, unknown>).__LIQUID_DEVTOOLS_GLOBAL_HOOK__ = {
+    (globalThis as unknown as Record<string, unknown>).__SPECIFY_DEVTOOLS_GLOBAL_HOOK__ = {
       onCommitFiberUnmount: onUnmount,
     };
     connectDevTools();

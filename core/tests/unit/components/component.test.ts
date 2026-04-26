@@ -18,8 +18,8 @@ describe('Component', () => {
     expect(comp.render()).toBeNull();
   });
 
-  it('has isLiquidComponent on prototype', () => {
-    expect(Component.prototype.isLiquidComponent).toBe(true);
+  it('has isSpecComponent on prototype', () => {
+    expect(Component.prototype.isSpecComponent).toBe(true);
   });
 
   it('queues state via setState', () => {
@@ -48,8 +48,8 @@ describe('PureComponent', () => {
     expect(comp).toBeInstanceOf(Component);
   });
 
-  it('has isPureLiquidComponent on prototype', () => {
-    expect(PureComponent.prototype.isPureLiquidComponent).toBe(true);
+  it('has isPureSpecComponent on prototype', () => {
+    expect(PureComponent.prototype.isPureSpecComponent).toBe(true);
   });
 
   it('shouldComponentUpdate returns false for same props and state', () => {

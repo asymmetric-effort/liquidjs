@@ -1,7 +1,7 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import type { LiquidNode } from '../shared/types';
+import type { SpecNode } from '../shared/types';
 import { renderToString } from './render-to-string';
 
 export interface RenderToReadableStreamOptions {
@@ -23,7 +23,7 @@ export interface RenderToReadableStreamOptions {
  * file I/O during static site generation.
  */
 export async function renderToReadableStream(
-  element: LiquidNode,
+  element: SpecNode,
   options?: RenderToReadableStreamOptions,
 ): Promise<ReadableStream<Uint8Array>> {
   const encoder = new TextEncoder();

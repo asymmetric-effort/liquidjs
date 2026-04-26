@@ -25,14 +25,14 @@ If you need dynamic content, have the SPA fetch it as JSON from an API endpoint.
 Renders a component tree to an HTML string during the build process:
 
 ```typescript
-// build-script.ts — run with: LIQUIDJS_ALLOW_PRERENDER=true node build-script.ts
+// build-script.ts — run with: SPECIFYJS_ALLOW_PRERENDER=true node build-script.ts
 import { renderToString } from 'specifyjs/server';
 
 const html = renderToString(createElement(App, null));
 fs.writeFileSync('dist/index.html', wrapInShell(html));
 ```
 
-Set the environment variable `LIQUIDJS_ALLOW_PRERENDER=true` to confirm you are using this in a build context. Without it, a warning is emitted in production environments.
+Set the environment variable `SPECIFYJS_ALLOW_PRERENDER=true` to confirm you are using this in a build context. Without it, a warning is emitted in production environments.
 
 ## renderToStaticMarkup
 

@@ -1,7 +1,7 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import type { Props, LiquidNode, ErrorInfo } from '../shared/types';
+import type { Props, SpecNode, ErrorInfo } from '../shared/types';
 
 /**
  * Base class for class components.
@@ -41,7 +41,7 @@ export class Component<P extends Props = Props, S = unknown> {
     this._enqueueUpdate(callback);
   }
 
-  render(): LiquidNode {
+  render(): SpecNode {
     return null;
   }
 
@@ -60,7 +60,7 @@ export class Component<P extends Props = Props, S = unknown> {
 }
 
 // Set on prototype so instanceof checks and prototype inspection work
-(Component.prototype as unknown as Record<string, boolean>).isLiquidComponent = true;
+(Component.prototype as unknown as Record<string, boolean>).isSpecComponent = true;
 
 /**
  * PureComponent implements shouldComponentUpdate with shallow prop/state comparison.
@@ -72,7 +72,7 @@ export class PureComponent<P extends Props = Props, S = unknown> extends Compone
   }
 }
 
-(PureComponent.prototype as unknown as Record<string, boolean>).isPureLiquidComponent = true;
+(PureComponent.prototype as unknown as Record<string, boolean>).isPureSpecComponent = true;
 
 /**
  * Shallow comparison of two objects.

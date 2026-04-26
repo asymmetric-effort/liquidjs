@@ -4,8 +4,8 @@
 import {
   type Fiber,
   type Props,
-  type LiquidElement,
-  type LiquidNode,
+  type SpecElement,
+  type SpecNode,
   type Key,
   FiberTag,
   EffectTag,
@@ -26,7 +26,7 @@ import { createFiberFromElement, createFiberFromText, coerceToFiberChildren } fr
 export function reconcileChildren(
   returnFiber: Fiber,
   currentFirstChild: Fiber | null,
-  newChildren: LiquidNode,
+  newChildren: SpecNode,
   lanes: number,
 ): Fiber | null {
   // Normalize to array
@@ -53,7 +53,7 @@ export function reconcileChildren(
 function reconcileSingleChild(
   returnFiber: Fiber,
   currentFirstChild: Fiber | null,
-  element: LiquidElement | string | number,
+  element: SpecElement | string | number,
   lanes: number,
 ): Fiber {
   if (typeof element === 'string' || typeof element === 'number') {
@@ -125,7 +125,7 @@ function reconcileSingleTextNode(
 function reconcileChildArray(
   returnFiber: Fiber,
   currentFirstChild: Fiber | null,
-  newChildren: Array<LiquidElement | string | number>,
+  newChildren: Array<SpecElement | string | number>,
   lanes: number,
 ): Fiber | null {
   let resultingFirstChild: Fiber | null = null;
@@ -233,7 +233,7 @@ function reconcileChildArray(
 // Helpers
 // ---------------------------------------------------------------------------
 
-function isSameType(fiber: Fiber, element: LiquidElement): boolean {
+function isSameType(fiber: Fiber, element: SpecElement): boolean {
   return fiber.type === element.type;
 }
 
@@ -274,7 +274,7 @@ function createWorkInProgressFromFiber(current: Fiber, pendingProps: Props): Fib
 function updateSlot(
   returnFiber: Fiber,
   oldFiber: Fiber | null,
-  newChild: LiquidElement | string | number,
+  newChild: SpecElement | string | number,
   lanes: number,
 ): Fiber | null {
   const oldKey = oldFiber !== null ? oldFiber.key : null;
@@ -287,7 +287,7 @@ function updateSlot(
 
   // Element nodes
   if (isValidElement(newChild)) {
-    const element = newChild as LiquidElement;
+    const element = newChild as SpecElement;
     if (element.key === oldKey) {
       return updateElement(returnFiber, oldFiber, element, lanes);
     }
@@ -317,7 +317,7 @@ function updateTextNode(
 function updateElement(
   returnFiber: Fiber,
   current: Fiber | null,
-  element: LiquidElement,
+  element: SpecElement,
   lanes: number,
 ): Fiber {
   if (current !== null && current.type === element.type) {
@@ -335,7 +335,7 @@ function updateElement(
 
 function createChild(
   returnFiber: Fiber,
-  newChild: LiquidElement | string | number,
+  newChild: SpecElement | string | number,
   lanes: number,
 ): Fiber | null {
   if (typeof newChild === 'string' || typeof newChild === 'number') {
@@ -345,8 +345,8 @@ function createChild(
     return created;
   }
   if (isValidElement(newChild)) {
-    const created = createFiberFromElement(newChild as LiquidElement, lanes);
-    created.ref = (newChild as LiquidElement).ref;
+    const created = createFiberFromElement(newChild as SpecElement, lanes);
+    created.ref = (newChild as SpecElement).ref;
     created.return = returnFiber;
     created.effectTag = EffectTag.Placement;
     return created;
@@ -403,7 +403,7 @@ function mapRemainingChildren(currentFirstChild: Fiber): Map<Key | number, Fiber
 function updateFromMap(
   returnFiber: Fiber,
   existingChildren: Map<Key | number, Fiber>,
-  newChild: LiquidElement | string | number,
+  newChild: SpecElement | string | number,
   newIndex: number,
   lanes: number,
 ): Fiber | null {
@@ -413,7 +413,7 @@ function updateFromMap(
   }
 
   if (isValidElement(newChild)) {
-    const element = newChild as LiquidElement;
+    const element = newChild as SpecElement;
     const key = element.key !== null ? element.key : newIndex;
     const matchedFiber = existingChildren.get(key) || null;
     return updateElement(returnFiber, matchedFiber, element, lanes);

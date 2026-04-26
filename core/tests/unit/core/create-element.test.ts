@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { createElement, Fragment } from '../../../src/index';
-import { LIQUID_ELEMENT_TYPE, LIQUID_FRAGMENT_TYPE } from '../../../src/shared/types';
+import { SPEC_ELEMENT_TYPE, SPEC_FRAGMENT_TYPE } from '../../../src/shared/types';
 
 describe('createElement', () => {
   // Happy path
   it('creates an element with a string type (host component)', () => {
     const el = createElement('div', null);
-    expect(el.$$typeof).toBe(LIQUID_ELEMENT_TYPE);
+    expect(el.$$typeof).toBe(SPEC_ELEMENT_TYPE);
     expect(el.type).toBe('div');
     expect(el.props).toEqual({});
     expect(el.key).toBeNull();
@@ -80,9 +80,9 @@ describe('createElement', () => {
   });
 
   it('creates a Fragment element', () => {
-    expect(Fragment).toBe(LIQUID_FRAGMENT_TYPE);
+    expect(Fragment).toBe(SPEC_FRAGMENT_TYPE);
     const el = createElement(Fragment, null, 'a', 'b');
-    expect(el.type).toBe(LIQUID_FRAGMENT_TYPE);
+    expect(el.type).toBe(SPEC_FRAGMENT_TYPE);
     expect(el.props.children).toEqual(['a', 'b']);
   });
 

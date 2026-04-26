@@ -4,7 +4,7 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import type { LiquidContext } from '../shared/types';
+import type { SpecContext } from '../shared/types';
 
 // Internal: the currently rendering fiber sets these
 type Dispatcher = {
@@ -54,7 +54,7 @@ export function useEffect(create: () => void | (() => void), deps?: readonly unk
   return resolveDispatcher().useEffect(create, deps);
 }
 
-export function useContext<T>(context: LiquidContext<T>): T {
+export function useContext<T>(context: SpecContext<T>): T {
   return resolveDispatcher().useContext(context);
 }
 

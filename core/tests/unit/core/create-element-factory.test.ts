@@ -3,13 +3,13 @@
  */
 import { describe, it, expect } from 'vitest';
 import { createFactory, createElement } from '../../../src/core/create-element';
-import { LIQUID_ELEMENT_TYPE } from '../../../src/shared/types';
+import { SPEC_ELEMENT_TYPE } from '../../../src/shared/types';
 
 describe('createFactory', () => {
   it('returns a factory function for a string type', () => {
     const divFactory = createFactory('div');
     const el = divFactory({ id: 'test' }, 'child');
-    expect(el.$$typeof).toBe(LIQUID_ELEMENT_TYPE);
+    expect(el.$$typeof).toBe(SPEC_ELEMENT_TYPE);
     expect(el.type).toBe('div');
     expect(el.props.id).toBe('test');
     expect(el.props.children).toBe('child');

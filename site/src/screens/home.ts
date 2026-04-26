@@ -258,7 +258,7 @@ export function HomeScreen() {
       createElement(
         'h1',
         null,
-        createElement('span', null, 'Liquid'),
+        createElement('span', null, 'Specify'),
         'JS',
       ),
       createElement(

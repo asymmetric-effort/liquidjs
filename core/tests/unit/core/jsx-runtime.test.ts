@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { jsx, jsxs, Fragment } from '../../../src/jsx-runtime';
 import { jsxDEV, Fragment as DevFragment } from '../../../src/jsx-dev-runtime';
-import { LIQUID_ELEMENT_TYPE, LIQUID_FRAGMENT_TYPE } from '../../../src/shared/types';
+import { SPEC_ELEMENT_TYPE, SPEC_FRAGMENT_TYPE } from '../../../src/shared/types';
 
 describe('jsx-runtime', () => {
   describe('jsx', () => {
     it('creates an element with type and props', () => {
       const el = jsx('div', { id: 'test', children: 'hello' });
-      expect(el.$$typeof).toBe(LIQUID_ELEMENT_TYPE);
+      expect(el.$$typeof).toBe(SPEC_ELEMENT_TYPE);
       expect(el.type).toBe('div');
       expect(el.props.id).toBe('test');
     });
@@ -43,7 +43,7 @@ describe('jsx-runtime', () => {
 
     it('works with Fragment', () => {
       const el = jsx(Fragment, { children: ['a', 'b'] });
-      expect(el.type).toBe(LIQUID_FRAGMENT_TYPE);
+      expect(el.type).toBe(SPEC_FRAGMENT_TYPE);
     });
   });
 
@@ -54,14 +54,14 @@ describe('jsx-runtime', () => {
 
     it('creates elements identically to jsx', () => {
       const el = jsxs('ul', { children: ['a', 'b', 'c'] });
-      expect(el.$$typeof).toBe(LIQUID_ELEMENT_TYPE);
+      expect(el.$$typeof).toBe(SPEC_ELEMENT_TYPE);
       expect(el.type).toBe('ul');
     });
   });
 
   describe('Fragment export', () => {
     it('exports Fragment symbol', () => {
-      expect(Fragment).toBe(LIQUID_FRAGMENT_TYPE);
+      expect(Fragment).toBe(SPEC_FRAGMENT_TYPE);
     });
   });
 });
@@ -69,11 +69,11 @@ describe('jsx-runtime', () => {
 describe('jsx-dev-runtime', () => {
   it('jsxDEV creates elements like jsx', () => {
     const el = jsxDEV('span', { children: 'dev' });
-    expect(el.$$typeof).toBe(LIQUID_ELEMENT_TYPE);
+    expect(el.$$typeof).toBe(SPEC_ELEMENT_TYPE);
     expect(el.type).toBe('span');
   });
 
   it('exports Fragment', () => {
-    expect(DevFragment).toBe(LIQUID_FRAGMENT_TYPE);
+    expect(DevFragment).toBe(SPEC_FRAGMENT_TYPE);
   });
 });

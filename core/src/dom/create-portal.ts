@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 import {
-  LIQUID_PORTAL_TYPE,
-  LIQUID_ELEMENT_TYPE,
-  type LiquidElement,
-  type LiquidNode,
+  SPEC_PORTAL_TYPE,
+  SPEC_ELEMENT_TYPE,
+  type SpecElement,
+  type SpecNode,
   type Props,
   type Key,
 } from '../shared/types';
@@ -14,10 +14,10 @@ import {
  * Creates a portal to render children into a different DOM subtree.
  * Equivalent to ReactDOM.createPortal.
  */
-export function createPortal(children: LiquidNode, container: Element, key?: Key): LiquidElement {
+export function createPortal(children: SpecNode, container: Element, key?: Key): SpecElement {
   return {
-    $$typeof: LIQUID_ELEMENT_TYPE,
-    type: LIQUID_PORTAL_TYPE as unknown as symbol,
+    $$typeof: SPEC_ELEMENT_TYPE,
+    type: SPEC_PORTAL_TYPE as unknown as symbol,
     props: { children, container } as unknown as Props,
     key: key ?? null,
     ref: null,

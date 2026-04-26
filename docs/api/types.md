@@ -6,7 +6,7 @@ SpecifyJS is written in TypeScript strict mode. All public APIs are fully typed.
 
 ```typescript
 // Element
-interface LiquidElement<P extends Props = Props> {
+interface SpecElement<P extends Props = Props> {
   $$typeof: symbol;
   type: ComponentType<P>;
   props: P;
@@ -15,11 +15,11 @@ interface LiquidElement<P extends Props = Props> {
 }
 
 // Valid children
-type LiquidChild = LiquidElement | string | number | boolean | null | undefined;
-type LiquidNode = LiquidChild | LiquidNode[];
+type SpecChild = SpecElement | string | number | boolean | null | undefined;
+type SpecNode = SpecChild | SpecNode[];
 
 // Props
-type Props = Record<string, unknown> & { children?: LiquidNode; key?: Key; ref?: Ref };
+type Props = Record<string, unknown> & { children?: SpecNode; key?: Key; ref?: Ref };
 type Key = string | number | null;
 
 // Refs
@@ -28,11 +28,11 @@ type RefCallback<T> = (instance: T | null) => void;
 interface RefObject<T> { current: T | null; }
 
 // Components
-type FunctionComponent<P extends Props = Props> = (props: P) => LiquidNode;
+type FunctionComponent<P extends Props = Props> = (props: P) => SpecNode;
 type ComponentType<P extends Props = Props> = FunctionComponent<P> | ClassComponentConstructor<P> | string | symbol;
 
 // Context
-interface LiquidContext<T> {
+interface SpecContext<T> {
   Provider: ComponentType;
   Consumer: ComponentType;
   _currentValue: T;

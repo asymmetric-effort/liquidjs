@@ -1,12 +1,12 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import { LIQUID_LAZY_TYPE, type Props, type ComponentType } from '../shared/types';
+import { SPEC_LAZY_TYPE, type Props, type ComponentType } from '../shared/types';
 
 type LazyStatus = 'pending' | 'resolved' | 'rejected';
 
 export interface LazyComponent<P extends Props = Props> {
-  $$typeof: typeof LIQUID_LAZY_TYPE;
+  $$typeof: typeof SPEC_LAZY_TYPE;
   _payload: {
     _status: LazyStatus;
     _result: ComponentType<P> | unknown;
@@ -53,7 +53,7 @@ export function lazy<P extends Props>(
   };
 
   return {
-    $$typeof: LIQUID_LAZY_TYPE,
+    $$typeof: SPEC_LAZY_TYPE,
     _payload: payload,
     _init: init,
     displayName: 'Lazy',

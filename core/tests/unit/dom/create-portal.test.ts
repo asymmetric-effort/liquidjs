@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import { createPortal } from '../../../src/dom/create-portal';
 import { createElement } from '../../../src/index';
-import { LIQUID_ELEMENT_TYPE, LIQUID_PORTAL_TYPE } from '../../../src/shared/types';
+import { SPEC_ELEMENT_TYPE, SPEC_PORTAL_TYPE } from '../../../src/shared/types';
 
 describe('createPortal', () => {
   it('creates a portal element', () => {
     const portalContainer = document.createElement('div');
     const portal = createPortal(createElement('span', null, 'portal content'), portalContainer);
-    expect(portal.$$typeof).toBe(LIQUID_ELEMENT_TYPE);
-    expect(portal.type).toBe(LIQUID_PORTAL_TYPE);
+    expect(portal.$$typeof).toBe(SPEC_ELEMENT_TYPE);
+    expect(portal.type).toBe(SPEC_PORTAL_TYPE);
   });
 
   it('stores children and container in props', () => {

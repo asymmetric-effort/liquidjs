@@ -1,10 +1,10 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import { LIQUID_MEMO_TYPE, type Props, type ComponentType } from '../shared/types';
+import { SPEC_MEMO_TYPE, type Props, type ComponentType } from '../shared/types';
 
 export interface MemoComponent<P extends Props = Props> {
-  $$typeof: typeof LIQUID_MEMO_TYPE;
+  $$typeof: typeof SPEC_MEMO_TYPE;
   type: ComponentType<P>;
   compare: ((prevProps: P, nextProps: P) => boolean) | null;
   displayName?: string;
@@ -19,7 +19,7 @@ export function memo<P extends Props>(
   compare?: (prevProps: P, nextProps: P) => boolean,
 ): MemoComponent<P> {
   return {
-    $$typeof: LIQUID_MEMO_TYPE,
+    $$typeof: SPEC_MEMO_TYPE,
     type: component,
     compare: compare || null,
     displayName:

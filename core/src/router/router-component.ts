@@ -8,15 +8,15 @@
 
 import { createElement } from '../core/create-element';
 import { useState, useEffect, useCallback, useMemo } from '../hooks/index';
-import type { LiquidNode } from '../shared/types';
+import type { SpecNode } from '../shared/types';
 import { RouterContext, type RouterContextValue } from './router-context';
 import { subscribe, getSnapshot, navigate } from './router-store';
 
 export interface RouterProps {
-  children?: LiquidNode;
+  children?: SpecNode;
 }
 
-export function Router(props: RouterProps): LiquidNode {
+export function Router(props: RouterProps): SpecNode {
   const [pathname, setPathname] = useState(() => getSnapshot().pathname);
 
   useEffect(() => {

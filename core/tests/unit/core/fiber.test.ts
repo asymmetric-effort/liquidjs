@@ -11,7 +11,7 @@ import {
 import { createElement, Fragment, Component } from '../../../src/index';
 import { forwardRef } from '../../../src/core/forward-ref';
 import { memo } from '../../../src/core/memo';
-import { FiberTag, EffectTag, LIQUID_ELEMENT_TYPE } from '../../../src/shared/types';
+import { FiberTag, EffectTag, SPEC_ELEMENT_TYPE } from '../../../src/shared/types';
 
 describe('getFiberTag', () => {
   it('returns HostComponent for string types', () => {

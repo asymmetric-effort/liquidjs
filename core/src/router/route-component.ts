@@ -7,7 +7,7 @@
 
 import { createElement } from '../core/create-element';
 import { useContext, useMemo } from '../hooks/index';
-import type { LiquidNode, FunctionComponent } from '../shared/types';
+import type { SpecNode, FunctionComponent } from '../shared/types';
 import { RouterContext, type RouterContextValue } from './router-context';
 import { matchPath } from './match-path';
 
@@ -19,10 +19,10 @@ export interface RouteProps {
   /** If true, path must match the entire pathname. Default: false. */
   exact?: boolean;
   /** Children to render when matched (alternative to component). */
-  children?: LiquidNode;
+  children?: SpecNode;
 }
 
-export function Route(props: RouteProps): LiquidNode {
+export function Route(props: RouteProps): SpecNode {
   const router = useContext(RouterContext);
   const fullPattern = router.basePath + props.path;
   const match = matchPath(fullPattern, router.pathname, {
