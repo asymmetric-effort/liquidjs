@@ -3,7 +3,7 @@ import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
 import dts from 'rollup-plugin-dts';
 
-function createConfig(input, outputName) {
+function createConfig(input, outputName, tsconfig = './tsconfig.json') {
   return {
     input,
     output: [
@@ -21,7 +21,7 @@ function createConfig(input, outputName) {
     plugins: [
       resolve(),
       typescript({
-        tsconfig: './tsconfig.json',
+        tsconfig,
         declaration: false,
         declarationDir: undefined,
       }),
@@ -49,6 +49,7 @@ const mainConfigs = [
   createConfig('src/jsx-dev-runtime.ts', 'specifyjs-jsx-dev-runtime'),
   createConfig('src/client/index.ts', 'specifyjs-client'),
   createConfig('src/telemetry/index.ts', 'specifyjs-telemetry'),
+  createConfig('src/components-barrel.ts', 'specifyjs-components', './tsconfig.components.json'),
 ];
 
 // Declaration bundling configs — one per sub-package
@@ -58,6 +59,7 @@ const declarationConfigs = [
   { input: 'src/server/index.ts', output: [{ file: 'dist/specifyjs-server.d.ts', format: 'esm' }] },
   { input: 'src/client/index.ts', output: [{ file: 'dist/specifyjs-client.d.ts', format: 'esm' }] },
   { input: 'src/telemetry/index.ts', output: [{ file: 'dist/specifyjs-telemetry.d.ts', format: 'esm' }] },
+  { input: 'src/components-barrel.ts', output: [{ file: 'dist/specifyjs-components.d.ts', format: 'esm' }] },
 ].map(cfg => ({ ...cfg, plugins: [dts()] }));
 
 export default [...mainConfigs, ...declarationConfigs];

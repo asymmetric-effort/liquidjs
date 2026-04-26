@@ -207,12 +207,16 @@ SpecifyJS is designed for building **single-page web applications** that compile
 ## Development Guidelines
 
 ### Code Style
+
+See the organization-wide coding standards at: http://coding-standards.asymmetric-effort.com/
+
+Project-specific conventions:
 - TypeScript strict mode (`strict: true` in tsconfig)
 - No `any` types unless absolutely necessary (and documented)
 - Prefer `const` over `let`, never use `var`
 - Named exports over default exports
 - Pure functions where possible
-- **Avoid recursion** — use iterative approaches with explicit stacks to prevent stack overflow on deep component trees. Tail-call recursion is acceptable only where the engine guarantees TCO.
+- **No recursion** — use iterative approaches with explicit stacks to prevent stack overflow on deep component trees. Tail-call recursion is acceptable only where the engine guarantees TCO.
 
 ### API Design
 - Use clear, intuitive API naming and signatures
