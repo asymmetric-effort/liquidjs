@@ -4,7 +4,7 @@
 import { createElement } from 'specifyjs';
 import { useState, useEffect, useMemo, useCallback, useHead } from 'specifyjs/hooks';
 import { useRouter } from 'specifyjs';
-import { docsTree, docsContent, DocTreeNode } from '../docs-data';
+import { docsTree, docsContent } from '../docs-data';
 
 // ─── Search Index ───────────────────────────────────────────────────────────
 
@@ -510,90 +510,86 @@ function renderInline(text: string): ReturnType<typeof createElement> {
 
 // ─── Sidebar Tree ────────────────────────────────────────────────────────────
 
-function SidebarItem(props: { node: DocTreeNode; activePath: string; onSelect: (path: string) => void; depth: number }) {
-  const { node, activePath, onSelect, depth } = props;
+function SidebarSection(props: {
+  section: { title: string; children: { title: string; path: string }[] };
+  activePath: string;
+  onSelect: (path: string) => void;
+}) {
+  const { section, activePath, onSelect } = props;
+  const hasActiveChild = section.children.some((c) => c.path === activePath);
+  const [expanded, setExpanded] = useState(hasActiveChild);
 
-  if (node.type === 'doc') {
-    const isActive = activePath === node.path;
-    return createElement('button', {
-      onClick: () => onSelect(node.path),
-      style: {
-        display: 'block',
-        width: '100%',
-        textAlign: 'left',
-        padding: '6px 12px',
-        paddingLeft: `${12 + depth * 16}px`,
-        border: 'none',
-        borderRadius: '4px',
-        cursor: 'pointer',
-        fontSize: '13px',
-        fontWeight: isActive ? '600' : '400',
-        color: isActive ? '#3b82f6' : '#475569',
-        backgroundColor: isActive ? '#eff6ff' : 'transparent',
-        transition: 'all 0.15s',
-        fontFamily: 'inherit',
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-      },
-    }, node.title);
-  }
-
-  // Section
-  const [expanded, setExpanded] = useState(true);
-  const hasActiveChild = checkHasActiveChild(node, activePath);
-
-  return createElement('div', { style: { margin: depth === 0 ? '4px 0' : '0' } },
-    createElement('button', {
-      onClick: () => setExpanded(!expanded),
-      style: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: '6px',
-        width: '100%',
-        textAlign: 'left',
-        padding: '8px 12px',
-        paddingLeft: `${12 + depth * 16}px`,
-        border: 'none',
-        cursor: 'pointer',
-        fontSize: '13px',
-        fontWeight: '600',
-        color: hasActiveChild ? '#1e293b' : '#64748b',
-        backgroundColor: 'transparent',
-        fontFamily: 'inherit',
-        textTransform: depth === 0 ? 'uppercase' : 'none',
-        letterSpacing: depth === 0 ? '0.05em' : 'normal',
-      },
-    },
-      createElement('span', {
+  return createElement(
+    'div',
+    { style: { margin: '4px 0' } },
+    createElement(
+      'button',
+      {
+        onClick: () => setExpanded(!expanded),
         style: {
-          display: 'inline-block',
-          fontSize: '10px',
-          transition: 'transform 0.2s',
-          transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          width: '100%',
+          textAlign: 'left',
+          padding: '8px 12px',
+          border: 'none',
+          cursor: 'pointer',
+          fontSize: '13px',
+          fontWeight: '600',
+          color: hasActiveChild ? 'var(--color-text, #1e293b)' : 'var(--color-text-muted, #64748b)',
+          backgroundColor: 'transparent',
+          fontFamily: 'inherit',
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em',
         },
-      }, '\u25B6'),
-      node.title,
+      },
+      createElement(
+        'span',
+        {
+          style: {
+            display: 'inline-block',
+            fontSize: '10px',
+            transition: 'transform 0.2s',
+            transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)',
+          },
+        },
+        '\u25B6',
+      ),
+      section.title,
     ),
     expanded
-      ? createElement('div', null,
-          ...node.children.map((child, ci) =>
-            createElement(SidebarItem, {
-              key: `${child.type === 'doc' ? child.path : child.title}-${ci}`,
-              node: child,
-              activePath,
-              onSelect,
-              depth: depth + 1,
-            }),
-          ),
+      ? createElement(
+          'div',
+          null,
+          ...section.children.map((entry, ci) => {
+            const isActive = activePath === entry.path;
+            return createElement('button', {
+              key: `${entry.path}-${ci}`,
+              onClick: () => onSelect(entry.path),
+              style: {
+                display: 'block',
+                width: '100%',
+                textAlign: 'left',
+                padding: '6px 12px 6px 28px',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: isActive ? '600' : '400',
+                color: isActive ? '#3b82f6' : 'var(--color-text-muted, #475569)',
+                backgroundColor: isActive ? 'var(--color-bg-muted, #eff6ff)' : 'transparent',
+                transition: 'all 0.15s',
+                fontFamily: 'inherit',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              },
+            }, entry.title);
+          }),
         )
       : null,
   );
-}
-
-function checkHasActiveChild(node: DocTreeNode, activePath: string): boolean {
-  if (node.type === 'doc') return node.path === activePath;
-  return node.children.some(c => checkHasActiveChild(c, activePath));
 }
 
 // ─── Docs Viewer Component ───────────────────────────────────────────────────
@@ -695,13 +691,12 @@ export function DocsViewer() {
       ),
 
       // Tree
-      ...docsTree.map((node, i) =>
-        createElement(SidebarItem, {
-          key: `root-${i}`,
-          node,
+      ...docsTree.map((section, i) =>
+        createElement(SidebarSection, {
+          key: `section-${i}`,
+          section,
           activePath,
           onSelect: handleSelect,
-          depth: 0,
         }),
       ),
     ),
