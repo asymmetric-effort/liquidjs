@@ -1,7 +1,19 @@
 {
-  "name": "specifyjs-framework",
+  "name": "@asymmetric-effort/specifyjs",
   "version": "0.0.6",
   "description": "A declarative TypeScript UI framework built for performance and simplicity",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/asymmetric-effort/specifyjs.git"
+  },
+  "homepage": "https://specifyjs.asymmetric-effort.com",
+  "bugs": {
+    "url": "https://github.com/asymmetric-effort/specifyjs/issues"
+  },
+  "author": "Asymmetric Effort, LLC",
   "type": "module",
   "main": "dist/specifyjs.cjs.js",
   "module": "dist/specifyjs.esm.js",

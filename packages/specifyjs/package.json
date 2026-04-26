@@ -1,0 +1,33 @@
+{
+  "name": "specifyjs",
+  "version": "0.0.6",
+  "description": "A declarative TypeScript UI framework — alias for @asymmetric-effort/specifyjs",
+  "type": "module",
+  "main": "index.cjs",
+  "module": "index.mjs",
+  "types": "index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/asymmetric-effort/specifyjs.git"
+  },
+  "homepage": "https://specifyjs.asymmetric-effort.com",
+  "bugs": {
+    "url": "https://github.com/asymmetric-effort/specifyjs/issues"
+  },
+  "author": "Asymmetric Effort, LLC",
+  "license": "MIT",
+  "keywords": [
+    "ui",
+    "framework",
+    "virtual-dom",
+    "components",
+    "declarative",
+    "typescript"
+  ],
+  "dependencies": {
+    "@asymmetric-effort/specifyjs": "0.0.6"
+  }
+}

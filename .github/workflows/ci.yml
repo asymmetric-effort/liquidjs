@@ -3,6 +3,7 @@ name: Full CI/CD Pipeline
 on:
   push:
     branches: [main]
+    tags: ['v*']
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -260,3 +261,63 @@ jobs:
           echo "Previous commit: $(git rev-parse HEAD~1)"
           echo "::error::PDV E2E tests failed. Review the test report artifact."
           exit 1
+
+  # ── Stage 8: Publish to npm (tagged releases only) ──────────────────
+  publish:
+    name: Publish to npm
+    needs: pdv
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: latest
+
+      - name: Install and build
+        working-directory: core
+        run: |
+          bun install --frozen-lockfile
+          bun run build
+
+      - name: Verify package version matches tag
+        run: |
+          TAG_VERSION="${GITHUB_REF#refs/tags/v}"
+          PKG_VERSION=$(node -p "require('./core/package.json').version")
+          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
+            echo "ERROR: Tag v$TAG_VERSION does not match package.json version $PKG_VERSION"
+            exit 1
+          fi
+          echo "Version verified: $PKG_VERSION"
+
+      - name: Publish @asymmetric-effort/specifyjs
+        working-directory: core
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Sync wrapper package version
+        run: |
+          PKG_VERSION=$(node -p "require('./core/package.json').version")
+          node -e "
+            const pkg = require('./packages/specifyjs/package.json');
+            pkg.version = '$PKG_VERSION';
+            pkg.dependencies['@asymmetric-effort/specifyjs'] = '$PKG_VERSION';
+            require('fs').writeFileSync('./packages/specifyjs/package.json', JSON.stringify(pkg, null, 2) + '\n');
+          "
+
+      - name: Publish specifyjs (alias package)
+        working-directory: packages/specifyjs
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
