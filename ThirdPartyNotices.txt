@@ -7,14 +7,6 @@ This project is licensed under the MIT License. See LICENSE for details.
 Third-Party Dependencies
 ========================
 
-Go Binaries (tools/)
---------------------
-The Go tools in this project use only the Go standard library.
-No third-party Go modules are imported at runtime.
-
-- Go standard library: BSD-3-Clause license
-  https://go.dev/LICENSE
-
 Development Dependencies (not shipped to consumers)
 ----------------------------------------------------
 - TypeScript: Apache-2.0 (https://github.com/microsoft/TypeScript)
