@@ -270,7 +270,7 @@ jobs:
   #   Environment: npm
   publish:
     name: Publish to npm
-    needs: pdv
+    needs: e2e
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     environment: npm
