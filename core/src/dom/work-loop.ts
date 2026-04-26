@@ -47,6 +47,7 @@ import {
   type CallbackNode,
   type SchedulerCallback,
 } from '../core/scheduler-host-config';
+import { registerComponentInstance, getComponentName } from '../shared/component-registry';
 
 // ---------------------------------------------------------------------------
 // Root container state
@@ -830,6 +831,32 @@ function completeWork(fiber: Fiber): void {
           ? document.createElementNS('http://www.w3.org/2000/svg', tag)
           : document.createElement(tag);
         updateDOMProperties(domNode as HTMLElement, {}, fiber.pendingProps);
+        // Assign component ID to the wrapper element of a user component.
+        // Walk up the fiber tree to find the nearest function/class component.
+        // Only the first host child of that component gets an ID.
+        // Assign component ID (data-cid) to the wrapper element of user components.
+        {
+          let ancestor = fiber.return;
+          while (ancestor !== null) {
+            if (
+              ancestor.tag === FiberTag.FunctionComponent ||
+              ancestor.tag === FiberTag.ClassComponent ||
+              ancestor.tag === FiberTag.ForwardRef ||
+              ancestor.tag === FiberTag.MemoComponent
+            ) {
+              if (ancestor.child === fiber) {
+                const componentName = getComponentName(ancestor.type);
+                const cid = registerComponentInstance(componentName);
+                if (cid) (domNode as HTMLElement).setAttribute('data-cid', cid);
+              }
+              break;
+            }
+            if (ancestor.tag === FiberTag.HostComponent || ancestor.tag === FiberTag.HostRoot) {
+              break;
+            }
+            ancestor = ancestor.return;
+          }
+        }
         fiber.stateNode = domNode;
         appendAllChildren(domNode as HTMLElement, fiber);
       } else if (activeHydrationRoot !== null && fiber.alternate === null) {

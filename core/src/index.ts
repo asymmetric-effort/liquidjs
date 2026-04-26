@@ -49,6 +49,11 @@ export { Router, Route, Link, useRouter, useParams, useNavigate, matchPath } fro
 export { startTransition } from './core/transitions';
 export { act } from './shared/act';
 export { secureFetch, assertSecureUrl } from './shared/secure-fetch';
+export {
+  resolveComponentId,
+  getComponentTypeTable,
+  setComponentIdsEnabled,
+} from './shared/component-registry';
 
 // Feature Flags
 export { FeatureFlagProvider, FeatureGate, useFeatureFlags } from './features/index';
