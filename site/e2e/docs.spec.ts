@@ -6,7 +6,7 @@ test.describe('Documentation Viewer', () => {
     page.on('pageerror', (err) => errors.push(err.message));
     await page.goto('/#/docs');
     // Wait for docs content to render
-    await expect(page.locator('text=Documentation')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('text=Documentation').first()).toBeVisible({ timeout: 10000 });
   });
 
   test('renders docs viewer with sidebar and content', async ({ page }) => {
@@ -201,6 +201,6 @@ test.describe('Documentation Content Rendering', () => {
 test.describe('Documentation from Reference Page', () => {
   test('reference page has link to docs', async ({ page }) => {
     await page.goto('/#/reference');
-    await expect(page.locator('text=Documentation')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('text=Documentation').first()).toBeVisible({ timeout: 10000 });
   });
 });
