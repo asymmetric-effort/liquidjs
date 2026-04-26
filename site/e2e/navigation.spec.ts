@@ -50,13 +50,13 @@ test.describe('Navigation', () => {
     expect(errors).toEqual([]);
   });
 
-  test('navigates to Reference via nav link', async ({ page }) => {
+  test('navigates to Docs via nav link', async ({ page }) => {
     const errors: string[] = [];
     page.on('pageerror', (err) => errors.push(err.message));
     await page.goto('/');
-    await page.click('.nav-links >> text=Reference');
-    await expect(page.locator('.dialog-title')).toContainText('Component Reference');
-    expect(page.url()).toContain('#/reference');
+    await page.click('.nav-links >> text=Docs');
+    await expect(page.locator('.dialog-title')).toContainText('Documentation');
+    expect(page.url()).toContain('#/docs');
     expect(errors).toEqual([]);
   });
 
