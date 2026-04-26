@@ -5,7 +5,7 @@ import { createElement, FeatureGate, useFeatureFlags } from 'specifyjs';
 import { Link } from 'specifyjs';
 import { useState } from 'specifyjs/hooks';
 
-function DropletLogo() {
+function SpecifyLogo() {
   return createElement(
     'svg',
     {
@@ -14,43 +14,19 @@ function DropletLogo() {
       viewBox: '0 0 64 64',
       style: { flexShrink: '0' },
     },
-    createElement('path', {
-      d: 'M32 4 C32 4, 12 28, 12 40 C12 51.05 20.95 60 32 60 C43.05 60 52 51.05 52 40 C52 28, 32 4, 32 4 Z',
-      fill: '#3b82f6',
-    }),
-    createElement('ellipse', {
-      cx: '24',
-      cy: '36',
-      rx: '6',
-      ry: '8',
-      fill: '#60a5fa',
-      opacity: '0.5',
-      transform: 'rotate(-15 24 36)',
-    }),
-    createElement(
-      'defs',
-      null,
-      createElement(
-        'clipPath',
-        { id: 'drop-clip' },
-        createElement('path', {
-          d: 'M32 4 C32 4, 12 28, 12 40 C12 51.05 20.95 60 32 60 C43.05 60 52 51.05 52 40 C52 28, 32 4, 32 4 Z',
-        }),
-      ),
-    ),
-    createElement(
-      'g',
-      { 'clip-path': 'url(#drop-clip)' },
-      createElement('rect', {
-        x: '-10',
-        y: '24',
-        width: '84',
-        height: '8',
-        fill: '#f59e0b',
-        transform: 'rotate(-45 32 32)',
-        rx: '1',
-      }),
-    ),
+    createElement('rect', { x: '2', y: '2', width: '60', height: '60', rx: '12', fill: '#3b82f6' }),
+    // T-square
+    createElement('line', { x1: '14', y1: '14', x2: '50', y2: '50', stroke: 'white', 'stroke-width': '5', 'stroke-linecap': 'round' }),
+    createElement('line', { x1: '10', y1: '18', x2: '22', y2: '10', stroke: 'white', 'stroke-width': '5', 'stroke-linecap': 'round' }),
+    // Ruler ticks
+    createElement('line', { x1: '22', y1: '20', x2: '24', y2: '22', stroke: 'white', 'stroke-width': '1.5', 'stroke-linecap': 'round' }),
+    createElement('line', { x1: '30', y1: '28', x2: '32', y2: '30', stroke: 'white', 'stroke-width': '1.5', 'stroke-linecap': 'round' }),
+    createElement('line', { x1: '38', y1: '36', x2: '40', y2: '38', stroke: 'white', 'stroke-width': '1.5', 'stroke-linecap': 'round' }),
+    // Compass
+    createElement('circle', { cx: '42', cy: '16', r: '2', fill: 'white' }),
+    createElement('line', { x1: '42', y1: '16', x2: '50', y2: '36', stroke: 'white', 'stroke-width': '3', 'stroke-linecap': 'round' }),
+    createElement('line', { x1: '42', y1: '16', x2: '36', y2: '38', stroke: 'white', 'stroke-width': '3', 'stroke-linecap': 'round' }),
+    createElement('circle', { cx: '43', cy: '30', r: '6', fill: 'none', stroke: 'white', 'stroke-width': '1.5' }),
   );
 }
 
@@ -112,7 +88,7 @@ export function NavBar() {
       createElement(
         Link,
         { to: '/', className: 'nav-logo', exact: true },
-        createElement(DropletLogo, null),
+        createElement(SpecifyLogo, null),
         'SpecifyJS',
       ),
       createElement(GatedNavLinks, null),
