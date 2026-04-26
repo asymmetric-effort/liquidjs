@@ -1,8 +1,5 @@
 # SpecifyJS
 
-[![FOSSA Status](https://app.fossa.com/api/projects/custom%2B61980%2Fgit%40github.com%3Aasymmetric-effort%2Fspecifyjs.git.svg?type=shield&issueType=license)](https://app.fossa.com/projects/custom%2B61980%2Fgit%40github.com%3Aasymmetric-effort%2Fspecifyjs.git?ref=badge_shield&issueType=license)
-[![FOSSA Status](https://app.fossa.com/api/projects/custom%2B61980%2Fgit%40github.com%3Aasymmetric-effort%2Fspecifyjs.git.svg?type=shield&issueType=security)](https://app.fossa.com/projects/custom%2B61980%2Fgit%40github.com%3Aasymmetric-effort%2Fspecifyjs.git?ref=badge_shield&issueType=security)
-
 A declarative TypeScript UI framework built for performance, browser compatibility, and developer simplicity.
 
 ## Monorepo Structure
