@@ -9,7 +9,7 @@
  * NavWrapper with role="tree" and assigns role="treeitem" to each node row.
  */
 
-import { createElement } from '../../../../core/src/index';
+import { createElement, type FunctionComponent } from '../../../../core/src/index';
 import { useState, useCallback, useMemo, useRef, useEffect } from '../../../../core/src/hooks/index';
 import { NavWrapper, buildNavItemStyle, useHover } from '../../wrapper/src/NavWrapper';
 import type { NavItemStyle, NavWrapperStyle } from '../../wrapper/src/NavWrapper';
@@ -423,7 +423,7 @@ export function TreeNav(props: TreeNavProps) {
 
   // Render visible node rows
   const rows = visibleNodes.map((node: TreeNode) =>
-    createElement(TreeNodeRow, {
+    createElement(TreeNodeRow as unknown as FunctionComponent, {
       key: node.id,
       node,
       isSelected: node.id === selectedId,

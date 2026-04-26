@@ -7,7 +7,6 @@ import {
   type Props,
   type Key,
   type Ref,
-  type SpecNode,
 } from '../shared/types';
 import { isValidElement } from './is-valid-element';
 
@@ -18,7 +17,7 @@ import { isValidElement } from './is-valid-element';
 export function cloneElement<P extends Props>(
   element: SpecElement<P>,
   config?: Partial<P> & { key?: Key; ref?: Ref },
-  ...children: SpecNode[]
+  ...children: unknown[]
 ): SpecElement<P> {
   if (!isValidElement(element)) {
     throw new Error('cloneElement: argument must be a valid SpecifyJS element');

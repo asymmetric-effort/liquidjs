@@ -205,7 +205,8 @@ export function useContextImpl<T>(context: SpecContext<T>): T {
 // useCallback
 // ---------------------------------------------------------------------------
 
-export function useCallbackImpl<T extends (...args: unknown[]) => unknown>(
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function useCallbackImpl<T extends (...args: any[]) => any>(
   callback: T,
   deps: readonly unknown[],
 ): T {

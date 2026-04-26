@@ -133,14 +133,14 @@ export function Carousel(props: CarouselProps) {
 
   const trackStyle = useMemo<Record<string, string>>(() => {
     if (animation === 'fade') {
-      return { position: 'relative', width: '100%' };
+      return { position: 'relative', width: '100%' } as Record<string, string>;
     }
     return {
       display: 'flex',
       transition: 'transform 0.4s ease',
       transform: `translateX(-${current * 100}%)`,
       width: '100%',
-    };
+    } as Record<string, string>;
   }, [current, animation]);
 
   const arrowStyle: Record<string, string> = {

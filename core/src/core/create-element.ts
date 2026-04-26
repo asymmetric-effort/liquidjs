@@ -8,7 +8,6 @@ import {
   type Props,
   type Key,
   type Ref,
-  type SpecNode,
 } from '../shared/types';
 
 /**
@@ -18,7 +17,7 @@ import {
 export function createElement<P extends Props>(
   type: ComponentType<P>,
   config: (Omit<P, 'children'> & { key?: Key; ref?: Ref }) | null,
-  ...children: SpecNode[]
+  ...children: unknown[]
 ): SpecElement<P> {
   let key: Key = null;
   let ref: Ref = null;
@@ -84,7 +83,7 @@ export function createFactory<P extends Props>(
   type: ComponentType<P>,
 ): (
   config?: (Omit<P, 'children'> & { key?: Key; ref?: Ref }) | null,
-  ...children: SpecNode[]
+  ...children: unknown[]
 ) => SpecElement<P> {
   return (config, ...children) => createElement(type, config ?? null, ...children);
 }

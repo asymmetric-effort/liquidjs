@@ -9,7 +9,7 @@
  * navigation, and custom styling.
  */
 
-import { createElement } from '../../../../core/src/index';
+import { createElement, type FunctionComponent } from '../../../../core/src/index';
 import { useState, useCallback, useMemo } from '../../../../core/src/hooks/index';
 import { NavWrapper, useHover } from '../../wrapper/src/NavWrapper';
 import type { NavWrapperStyle } from '../../wrapper/src/NavWrapper';
@@ -286,7 +286,7 @@ export function Accordion(props: AccordionProps) {
     return sections.map((section: AccordionSection) => {
       const expanded = expandedIds.includes(section.id);
 
-      const header = createElement(SectionHeader, {
+      const header = createElement(SectionHeader as unknown as FunctionComponent, {
         key: `header-${section.id}`,
         section,
         expanded,
@@ -297,7 +297,7 @@ export function Accordion(props: AccordionProps) {
         iconPosition,
       });
 
-      const content = createElement(SectionContent, {
+      const content = createElement(SectionContent as unknown as FunctionComponent, {
         key: `content-${section.id}`,
         section,
         expanded,

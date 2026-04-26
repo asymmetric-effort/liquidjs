@@ -8,7 +8,7 @@
  * badge indicators, icon-only collapsed mode, and tooltip labels when collapsed.
  */
 
-import { createElement } from '../../../../core/src/index';
+import { createElement, type SpecNode } from '../../../../core/src/index';
 import { useState, useCallback } from '../../../../core/src/hooks/index';
 import { NavWrapper, useHover, buildNavItemStyle } from '../../wrapper/src/NavWrapper';
 
@@ -52,7 +52,7 @@ function SidebarNavItem(props: {
   selectedId?: string;
   onSelect?: (id: string) => void;
   depth: number;
-}) {
+}): SpecNode {
   const { item, collapsed, selectedId, onSelect, depth } = props;
   const { hover, onMouseEnter, onMouseLeave } = useHover();
   const [expanded, setExpanded] = useState(false);
@@ -199,9 +199,9 @@ function SidebarNavItem(props: {
     tooltipEl,
   );
 
-  const childItems = !collapsed && hasChildren && expanded
-    ? item.children!.map((child: SidebarItem) =>
-        createElement(SidebarNavItem, {
+  const childItems: SpecNode[] | false | null = !collapsed && hasChildren && expanded
+    ? item.children!.map((child: SidebarItem): SpecNode =>
+        createElement(SidebarNavItem as unknown as (props: Record<string, unknown>) => SpecNode, {
           key: child.id,
           item: child,
           collapsed,

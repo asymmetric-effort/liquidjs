@@ -66,7 +66,8 @@ export function useReducer<S, A>(
   return resolveDispatcher().useReducer(reducer, initialArg, init);
 }
 
-export function useCallback<T extends (...args: unknown[]) => unknown>(
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function useCallback<T extends (...args: any[]) => any>(
   callback: T,
   deps: readonly unknown[],
 ): T {
