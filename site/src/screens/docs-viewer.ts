@@ -2,9 +2,148 @@
 // SPDX-License-Identifier: MIT
 
 import { createElement } from 'specifyjs';
-import { useState, useEffect, useHead } from 'specifyjs/hooks';
+import { useState, useEffect, useMemo, useCallback, useHead } from 'specifyjs/hooks';
 import { useRouter } from 'specifyjs';
 import { docsTree, docsContent, DocTreeNode } from '../docs-data';
+
+// ─── Search Index ───────────────────────────────────────────────────────────
+
+interface SearchResult {
+  path: string;
+  title: string;
+  snippet: string;
+  score: number;
+}
+
+function buildSearchIndex(): { path: string; title: string; words: string[]; content: string }[] {
+  const index: { path: string; title: string; words: string[]; content: string }[] = [];
+  for (const [path, entry] of Object.entries(docsContent)) {
+    const text = entry.content
+      .replace(/```[\s\S]*?```/g, '') // strip code blocks
+      .replace(/[#*`\[\]()|\-_>]/g, ' ')
+      .toLowerCase();
+    const words = text.split(/\s+/).filter((w) => w.length > 2);
+    index.push({ path, title: entry.title, words, content: text });
+  }
+  return index;
+}
+
+function searchDocs(query: string, index: ReturnType<typeof buildSearchIndex>): SearchResult[] {
+  if (!query || query.length < 2) return [];
+  const terms = query.toLowerCase().split(/\s+/).filter((t) => t.length > 1);
+  if (terms.length === 0) return [];
+
+  const results: SearchResult[] = [];
+  for (const entry of index) {
+    let score = 0;
+    const titleLower = entry.title.toLowerCase();
+    for (const term of terms) {
+      if (titleLower.includes(term)) score += 10;
+      const wordMatches = entry.words.filter((w) => w.includes(term)).length;
+      score += Math.min(wordMatches, 20);
+    }
+    if (score > 0) {
+      // Extract snippet around first match
+      let snippet = '';
+      const firstTerm = terms[0];
+      const idx = entry.content.indexOf(firstTerm);
+      if (idx >= 0) {
+        const start = Math.max(0, idx - 60);
+        const end = Math.min(entry.content.length, idx + 120);
+        snippet = (start > 0 ? '...' : '') + entry.content.slice(start, end).trim() + (end < entry.content.length ? '...' : '');
+      }
+      results.push({ path: entry.path, title: entry.title, snippet, score });
+    }
+  }
+  return results.sort((a, b) => b.score - a.score).slice(0, 15);
+}
+
+function SearchBar(props: { onSelect: (path: string) => void }) {
+  const [query, setQuery] = useState('');
+  const [focused, setFocused] = useState(false);
+  const index = useMemo(() => buildSearchIndex(), []);
+  const results = useMemo(() => searchDocs(query, index), [query, index]);
+  const showResults = focused && results.length > 0;
+
+  return createElement(
+    'div',
+    { style: { position: 'relative' } },
+    createElement('input', {
+      type: 'text',
+      value: query,
+      placeholder: 'Search docs...',
+      onInput: (e: Event) => setQuery((e.target as HTMLInputElement).value),
+      onFocus: () => setFocused(true),
+      onBlur: () => setTimeout(() => setFocused(false), 200),
+      style: {
+        width: '100%',
+        padding: '8px 12px',
+        border: '1px solid var(--color-border, #e2e8f0)',
+        borderRadius: '6px',
+        fontSize: '13px',
+        background: 'var(--color-bg, #fff)',
+        color: 'var(--color-text, #0f172a)',
+        outline: 'none',
+        fontFamily: 'inherit',
+      },
+    }),
+    showResults
+      ? createElement(
+          'div',
+          {
+            style: {
+              position: 'absolute',
+              top: '100%',
+              left: '0',
+              right: '0',
+              backgroundColor: 'var(--color-bg, #fff)',
+              border: '1px solid var(--color-border, #e2e8f0)',
+              borderRadius: '8px',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+              zIndex: '200',
+              maxHeight: '400px',
+              overflowY: 'auto',
+              marginTop: '4px',
+            },
+          },
+          ...results.map((r, i) =>
+            createElement(
+              'button',
+              {
+                key: `sr-${i}`,
+                onClick: () => {
+                  props.onSelect(r.path);
+                  setQuery('');
+                },
+                style: {
+                  display: 'block',
+                  width: '100%',
+                  textAlign: 'left',
+                  padding: '10px 14px',
+                  border: 'none',
+                  borderBottom: i < results.length - 1 ? '1px solid var(--color-border, #f1f5f9)' : 'none',
+                  background: 'transparent',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                  fontSize: '13px',
+                },
+              },
+              createElement(
+                'div',
+                { style: { fontWeight: '600', color: 'var(--color-text, #1e293b)', marginBottom: '2px' } },
+                r.title,
+              ),
+              createElement(
+                'div',
+                { style: { fontSize: '12px', color: 'var(--color-text-muted, #94a3b8)', lineHeight: '1.4' } },
+                r.snippet,
+              ),
+            ),
+          ),
+        )
+      : null,
+  );
+}
 
 // ─── Markdown Renderer ───────────────────────────────────────────────────────
 
@@ -530,11 +669,10 @@ export function DocsViewer() {
       },
       className: `docs-sidebar${sidebarOpen ? ' docs-sidebar--open' : ''}`,
     },
-      // Search placeholder
       createElement('div', {
         style: {
           padding: '4px 12px 16px',
-          borderBottom: '1px solid #e2e8f0',
+          borderBottom: '1px solid var(--color-border, #e2e8f0)',
           marginBottom: '8px',
         },
       },
@@ -542,14 +680,16 @@ export function DocsViewer() {
           style: {
             fontSize: '16px',
             fontWeight: '700',
-            color: '#0f172a',
-            marginBottom: '4px',
+            color: 'var(--color-text, #0f172a)',
+            marginBottom: '8px',
           },
         }, 'Documentation'),
+        createElement(SearchBar, { onSelect: handleSelect }),
         createElement('div', {
           style: {
             fontSize: '12px',
-            color: '#94a3b8',
+            color: 'var(--color-text-muted, #94a3b8)',
+            marginTop: '6px',
           },
         }, `${Object.keys(docsContent).length} documents`),
       ),

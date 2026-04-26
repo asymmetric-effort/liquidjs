@@ -56,7 +56,7 @@ const navItems: { to: string; label: string; flag?: string; exact?: boolean }[] 
   { to: '/dashboard', label: 'Dashboard', flag: 'dashboard' },
   { to: '/concurrent', label: 'Concurrent', flag: 'concurrent-rendering' },
   { to: '/api', label: 'API' },
-  { to: '/reference', label: 'Reference', flag: 'component-reference' },
+  { to: '/docs', label: 'Docs' },
   { to: '/getting-started', label: 'Get Started', flag: 'getting-started' },
   { to: '/featureflags', label: 'Flags', flag: 'feature-flags-demo' },
 ];

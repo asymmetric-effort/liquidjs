@@ -29,7 +29,7 @@ function AppContent() {
     { path: '/dashboard', title: 'Economic Dashboard', content: createElement(EconomicDashboard, null), flag: 'dashboard' },
     { path: '/concurrent', title: 'Concurrent Rendering', content: createElement(ConcurrentDemo, null), flag: 'concurrent-rendering' },
     { path: '/api', title: 'API Integration', content: createElement(ApiIntegration, null) },
-    { path: '/reference', title: 'Component Reference', content: createElement(ComponentReference, null), flag: 'component-reference' },
+    { path: '/reference', title: 'Component Reference', content: createElement(ComponentReference, null) },
     { path: '/getting-started', title: 'Getting Started', content: createElement(GettingStarted, null), flag: 'getting-started' },
     { path: '/featureflags', title: 'Feature Flags', content: createElement(FeatureFlagsDemo, null) },
     { path: '/docs', title: 'Documentation', content: createElement(DocsViewer, null) },
