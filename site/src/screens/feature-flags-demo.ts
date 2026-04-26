@@ -20,7 +20,7 @@ export function FeatureFlagsDemo() {
   if (loading) {
     return createElement(
       'div',
-      { style: { textAlign: 'center', padding: '24px', color: '#64748b' } },
+      { style: { textAlign: 'center', padding: '24px', color: 'var(--color-text-muted)' } },
       'Loading feature flags...',
     );
   }
@@ -34,7 +34,7 @@ export function FeatureFlagsDemo() {
       'p',
       {
         style: {
-          color: '#64748b',
+          color: 'var(--color-text-muted)',
           marginBottom: '24px',
           lineHeight: '1.7',
           fontSize: '15px',
@@ -61,9 +61,9 @@ export function FeatureFlagsDemo() {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 padding: '10px 14px',
-                border: '1px solid #e2e8f0',
+                border: '1px solid var(--color-border)',
                 borderRadius: '6px',
-                background: isEnabled(name) ? '#f0fdf4' : '#f8fafc',
+                background: isEnabled(name) ? 'var(--color-bg-muted)' : 'var(--color-bg-subtle)',
               },
             },
             createElement(
@@ -184,12 +184,12 @@ function gatedOn(flag: string, message: string) {
     {
       style: {
         padding: '12px 16px',
-        background: '#f0fdf4',
-        border: '1px solid #bbf7d0',
+        background: 'var(--color-bg-subtle)',
+        border: '1px solid var(--color-border)',
         borderRadius: '6px',
         marginBottom: '8px',
         fontSize: '14px',
-        color: '#16a34a',
+        color: '#22c55e',
         display: 'flex',
         gap: '8px',
         alignItems: 'center',
@@ -206,12 +206,12 @@ function gatedOff(flag: string) {
     {
       style: {
         padding: '12px 16px',
-        background: '#fef2f2',
-        border: '1px solid #fecaca',
+        background: 'var(--color-bg-subtle)',
+        border: '1px solid var(--color-border)',
         borderRadius: '6px',
         marginBottom: '8px',
         fontSize: '14px',
-        color: '#dc2626',
+        color: '#ef4444',
         display: 'flex',
         gap: '8px',
         alignItems: 'center',
