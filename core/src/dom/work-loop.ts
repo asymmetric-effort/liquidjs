@@ -191,9 +191,17 @@ function workLoopConcurrent(startFiber: Fiber): Fiber | null {
 // Concurrent rendering entry point
 // ---------------------------------------------------------------------------
 
-// Module-level state for interruptible rendering
-let wipRoot: FiberRoot | null = null;
-let wipFiber: Fiber | null = null;
+// Per-root state for interruptible rendering (M-10: no module-level singletons)
+const rootWipState = new WeakMap<FiberRoot, { wipFiber: Fiber | null }>();
+
+function getWipState(root: FiberRoot): { wipFiber: Fiber | null } {
+  let state = rootWipState.get(root);
+  if (!state) {
+    state = { wipFiber: null };
+    rootWipState.set(root, state);
+  }
+  return state;
+}
 
 /**
  * Mark a root as having pending work at the given lane.
@@ -278,8 +286,8 @@ function performSyncWorkOnRoot(root: FiberRoot): void {
     children: root.pendingChildren,
   } as Props);
 
-  wipRoot = root;
-  wipFiber = wip;
+  const state = getWipState(root);
+  state.wipFiber = wip;
 
   workLoopSync(wip);
 
@@ -291,8 +299,7 @@ function performSyncWorkOnRoot(root: FiberRoot): void {
   root.pendingLanes = removeLanes(root.pendingLanes, lanes);
   root.callbackNode = null;
   root.callbackPriority = NoLanes;
-  wipRoot = null;
-  wipFiber = null;
+  state.wipFiber = null;
 
   // Check if there's more work at a different priority
   ensureRootIsScheduled(root);
@@ -309,26 +316,27 @@ function performConcurrentWorkOnRoot(root: FiberRoot): SchedulerCallback | null 
 
   installPersistentRerenderCallback();
 
-  // If we don't have a WIP tree for this root, create one
-  if (wipRoot !== root || wipFiber === null) {
+  const state = getWipState(root);
+
+  // If we don't have a WIP fiber for this root, create one
+  if (state.wipFiber === null) {
     const currentRoot = root.current;
-    wipFiber = createWorkInProgress(currentRoot, {
+    state.wipFiber = createWorkInProgress(currentRoot, {
       children: root.pendingChildren,
     } as Props);
-    wipRoot = root;
   }
 
   resetDeadline();
-  const remaining = workLoopConcurrent(wipFiber);
+  const remaining = workLoopConcurrent(state.wipFiber);
 
   if (remaining !== null) {
     // Work was interrupted — save position and return continuation
-    wipFiber = remaining;
+    state.wipFiber = remaining;
     return () => performConcurrentWorkOnRoot(root);
   }
 
   // Work is complete — commit
-  const finishedWork = wipFiber!;
+  const finishedWork = state.wipFiber!;
   commitRoot(root, finishedWork);
   root.current = finishedWork;
 
@@ -336,8 +344,7 @@ function performConcurrentWorkOnRoot(root: FiberRoot): SchedulerCallback | null 
   root.pendingLanes = removeLanes(root.pendingLanes, lanes);
   root.callbackNode = null;
   root.callbackPriority = NoLanes;
-  wipRoot = null;
-  wipFiber = null;
+  state.wipFiber = null;
 
   // Check for remaining work
   ensureRootIsScheduled(root);
@@ -587,6 +594,42 @@ function shallowPropsEqual(a: Props, b: Props): boolean {
 function cloneFiberSubtree(source: Fiber | null, parent: Fiber): Fiber | null {
   if (source === null) return null;
 
+  // Iterative BFS/DFS using an explicit work stack
+  const rootClone = cloneOneFiber(source, parent);
+  const stack: { source: Fiber; cloneParent: Fiber }[] = [];
+
+  // Enqueue children of the root source
+  let srcChild = source.child;
+  if (srcChild) {
+    stack.push({ source: srcChild, cloneParent: rootClone });
+  }
+
+  while (stack.length > 0) {
+    const { source: src, cloneParent } = stack.pop()!;
+
+    // Clone this fiber and all its siblings under cloneParent
+    let currentSrc: Fiber | null = src;
+    let prevClone: Fiber | null = null;
+    while (currentSrc !== null) {
+      const clone = cloneOneFiber(currentSrc, cloneParent);
+      if (prevClone) {
+        prevClone.sibling = clone;
+      } else {
+        cloneParent.child = clone;
+      }
+      // If this source fiber has children, push them for processing
+      if (currentSrc.child) {
+        stack.push({ source: currentSrc.child, cloneParent: clone });
+      }
+      prevClone = clone;
+      currentSrc = currentSrc.sibling;
+    }
+  }
+
+  return rootClone;
+}
+
+function cloneOneFiber(source: Fiber, parent: Fiber): Fiber {
   const clone: Fiber = {
     ...source,
     return: parent,
@@ -597,32 +640,6 @@ function cloneFiberSubtree(source: Fiber | null, parent: Fiber): Fiber | null {
     pendingProps: source.memoizedProps ?? source.pendingProps,
   };
   source.alternate = clone;
-
-  clone.child = cloneFiberSubtree(source.child, clone);
-
-  let sourceChild = source.child?.sibling ?? null;
-  let prevClonedChild = clone.child;
-  while (sourceChild !== null) {
-    const clonedSibling: Fiber = {
-      ...sourceChild,
-      return: parent,
-      alternate: sourceChild,
-      child: null,
-      sibling: null,
-      effectTag: EffectTag.NoEffect,
-      pendingProps: sourceChild.memoizedProps ?? sourceChild.pendingProps,
-    };
-    sourceChild.alternate = clonedSibling;
-
-    clonedSibling.child = cloneFiberSubtree(sourceChild.child, clonedSibling);
-
-    if (prevClonedChild) {
-      prevClonedChild.sibling = clonedSibling;
-    }
-    prevClonedChild = clonedSibling;
-    sourceChild = sourceChild.sibling;
-  }
-
   return clone;
 }
 
@@ -913,21 +930,36 @@ function commitRoot(root: FiberRoot, finishedWork: Fiber): void {
   notifyDevToolsOfCommit(root);
 }
 
-function commitDeletions(fiber: Fiber): void {
-  // Process deletions tracked in updateQueue
-  if (fiber.updateQueue && Array.isArray(fiber.updateQueue)) {
-    for (const item of fiber.updateQueue as unknown[]) {
-      const deletedFiber = item as Fiber;
-      if (deletedFiber.effectTag === EffectTag.Deletion) {
-        commitDeletion(deletedFiber);
+function commitDeletions(rootFiber: Fiber): void {
+  // Iterative DFS — walk the fiber tree without recursion
+  let node: Fiber | null = rootFiber;
+  while (node !== null) {
+    if (node.updateQueue && Array.isArray(node.updateQueue)) {
+      for (const item of node.updateQueue as unknown[]) {
+        const deletedFiber = item as Fiber;
+        if (deletedFiber.effectTag === EffectTag.Deletion) {
+          commitDeletion(deletedFiber);
+        }
       }
     }
-  }
 
-  let child = fiber.child;
-  while (child !== null) {
-    commitDeletions(child);
-    child = child.sibling;
+    // Descend into children first
+    if (node.child !== null) {
+      node = node.child;
+      continue;
+    }
+    // Walk back up via siblings
+    while (node !== null) {
+      if (node === rootFiber) {
+        node = null;
+        break;
+      }
+      if (node.sibling !== null) {
+        node = node.sibling;
+        break;
+      }
+      node = node.return;
+    }
   }
 }
 
@@ -951,53 +983,71 @@ function commitDeletion(fiber: Fiber): void {
   runCleanupEffects(fiber);
 }
 
-function removeHostChildren(fiber: Fiber, parentDOM: Element): void {
-  if (fiber.tag === FiberTag.HostComponent || fiber.tag === FiberTag.HostText) {
-    if (fiber.stateNode && parentDOM.contains(fiber.stateNode as Node)) {
-      parentDOM.removeChild(fiber.stateNode as Node);
+function removeHostChildren(rootFiber: Fiber, parentDOM: Element): void {
+  // Iterative DFS — find and remove all host nodes in the subtree
+  let node: Fiber | null = rootFiber;
+  while (node !== null) {
+    if (node.tag === FiberTag.HostComponent || node.tag === FiberTag.HostText) {
+      if (node.stateNode && parentDOM.contains(node.stateNode as Node)) {
+        parentDOM.removeChild(node.stateNode as Node);
+      }
+      // Don't descend into removed host nodes — their DOM children are removed with them
+    } else if (node.child !== null) {
+      node = node.child;
+      continue;
     }
-  } else {
-    let child = fiber.child;
-    while (child !== null) {
-      removeHostChildren(child, parentDOM);
-      child = child.sibling;
+    // Walk back up via siblings
+    while (node !== null) {
+      if (node === rootFiber) {
+        node = null;
+        break;
+      }
+      if (node.sibling !== null) {
+        node = node.sibling;
+        break;
+      }
+      node = node.return;
     }
   }
 }
 
-function commitWork(fiber: Fiber, container: Element | DocumentFragment): void {
-  if (fiber.tag === FiberTag.HostRoot) {
-    // Root: process children
-    let child = fiber.child;
-    while (child !== null) {
-      commitWork(child, container);
-      child = child.sibling;
-    }
-    return;
-  }
-
-  if (
-    (fiber.tag === FiberTag.HostComponent || fiber.tag === FiberTag.HostText) &&
-    fiber.effectTag & EffectTag.Placement
-  ) {
-    // Find the parent DOM node
-    const parentDOM = getHostParentNode(fiber, container);
-    if (parentDOM && fiber.stateNode) {
-      // Find the next sibling DOM node for insertion order
-      const before = getHostSibling(fiber);
-      if (before) {
-        parentDOM.insertBefore(fiber.stateNode as Node, before);
-      } else {
-        parentDOM.appendChild(fiber.stateNode as Node);
+function commitWork(rootFiber: Fiber, container: Element | DocumentFragment): void {
+  // Iterative DFS — walk entire fiber tree for placements
+  let node: Fiber | null = rootFiber;
+  while (node !== null) {
+    if (
+      node.tag !== FiberTag.HostRoot &&
+      (node.tag === FiberTag.HostComponent || node.tag === FiberTag.HostText) &&
+      node.effectTag & EffectTag.Placement
+    ) {
+      const parentDOM = getHostParentNode(node, container);
+      if (parentDOM && node.stateNode) {
+        const before = getHostSibling(node);
+        if (before) {
+          parentDOM.insertBefore(node.stateNode as Node, before);
+        } else {
+          parentDOM.appendChild(node.stateNode as Node);
+        }
       }
     }
-  }
 
-  // Process children
-  let child = fiber.child;
-  while (child !== null) {
-    commitWork(child, container);
-    child = child.sibling;
+    // Descend into children
+    if (node.child !== null) {
+      node = node.child;
+      continue;
+    }
+    // Walk back up via siblings
+    while (node !== null) {
+      if (node === rootFiber) {
+        node = null;
+        break;
+      }
+      if (node.sibling !== null) {
+        node = node.sibling;
+        break;
+      }
+      node = node.return;
+    }
   }
 }
 
@@ -1055,46 +1105,60 @@ function isHostParent(fiber: Fiber): boolean {
 // Effects
 // ---------------------------------------------------------------------------
 
-function commitEffects(fiber: Fiber): void {
-  // Attach refs
-  if (fiber.ref && fiber.stateNode) {
-    if (typeof fiber.ref === 'function') {
-      fiber.ref(fiber.stateNode);
-    } else if (typeof fiber.ref === 'object') {
-      (fiber.ref as { current: unknown }).current = fiber.stateNode;
+function commitEffects(rootFiber: Fiber): void {
+  // Iterative DFS — process effects for the entire tree
+  let node: Fiber | null = rootFiber;
+  while (node !== null) {
+    // Attach refs
+    if (node.ref && node.stateNode) {
+      if (typeof node.ref === 'function') {
+        node.ref(node.stateNode);
+      } else if (typeof node.ref === 'object') {
+        (node.ref as { current: unknown }).current = node.stateNode;
+      }
     }
-  }
 
-  // Process this fiber's effects
-  if (
-    fiber.tag === FiberTag.FunctionComponent ||
-    fiber.tag === FiberTag.ForwardRef ||
-    fiber.tag === FiberTag.MemoComponent
-  ) {
-    const effectList = fiber.dependencies as EffectHook | null;
-    if (effectList) {
-      runEffects(effectList);
+    // Process this fiber's effects
+    if (
+      node.tag === FiberTag.FunctionComponent ||
+      node.tag === FiberTag.ForwardRef ||
+      node.tag === FiberTag.MemoComponent
+    ) {
+      const effectList = node.dependencies as EffectHook | null;
+      if (effectList) {
+        runEffects(effectList);
+      }
     }
-  }
 
-  // Class component lifecycle
-  if (fiber.tag === FiberTag.ClassComponent && fiber.stateNode) {
-    const instance = fiber.stateNode as ClassComponentInstance;
-    if (fiber.alternate === null) {
-      // Mount
-      instance.componentDidMount?.();
-    } else {
-      // Update
-      const prevProps = fiber.alternate.memoizedProps || ({} as Props);
-      const prevState = fiber.alternate.memoizedState;
-      instance.componentDidUpdate?.(prevProps, prevState);
+    // Class component lifecycle
+    if (node.tag === FiberTag.ClassComponent && node.stateNode) {
+      const instance = node.stateNode as ClassComponentInstance;
+      if (node.alternate === null) {
+        instance.componentDidMount?.();
+      } else {
+        const prevProps = node.alternate.memoizedProps || ({} as Props);
+        const prevState = node.alternate.memoizedState;
+        instance.componentDidUpdate?.(prevProps, prevState);
+      }
     }
-  }
 
-  let child = fiber.child;
-  while (child !== null) {
-    commitEffects(child);
-    child = child.sibling;
+    // Descend into children
+    if (node.child !== null) {
+      node = node.child;
+      continue;
+    }
+    // Walk back up via siblings
+    while (node !== null) {
+      if (node === rootFiber) {
+        node = null;
+        break;
+      }
+      if (node.sibling !== null) {
+        node = node.sibling;
+        break;
+      }
+      node = node.return;
+    }
   }
 }
 
@@ -1114,28 +1178,44 @@ function runEffects(effect: EffectHook): void {
   }
 }
 
-function runCleanupEffects(fiber: Fiber): void {
-  if (fiber.tag === FiberTag.FunctionComponent || fiber.tag === FiberTag.ForwardRef) {
-    const effectList = fiber.dependencies as EffectHook | null;
-    if (effectList) {
-      let current: EffectHook | null = effectList;
-      while (current !== null) {
-        if (current.destroy) {
-          current.destroy();
+function runCleanupEffects(rootFiber: Fiber): void {
+  // Iterative DFS — run cleanup for entire subtree
+  let node: Fiber | null = rootFiber;
+  while (node !== null) {
+    if (node.tag === FiberTag.FunctionComponent || node.tag === FiberTag.ForwardRef) {
+      const effectList = node.dependencies as EffectHook | null;
+      if (effectList) {
+        let current: EffectHook | null = effectList;
+        while (current !== null) {
+          if (current.destroy) {
+            current.destroy();
+          }
+          current = current.next;
         }
-        current = current.next;
       }
     }
-  }
 
-  if (fiber.tag === FiberTag.ClassComponent && fiber.stateNode) {
-    (fiber.stateNode as ClassComponentInstance).componentWillUnmount?.();
-  }
+    if (node.tag === FiberTag.ClassComponent && node.stateNode) {
+      (node.stateNode as ClassComponentInstance).componentWillUnmount?.();
+    }
 
-  let child = fiber.child;
-  while (child !== null) {
-    runCleanupEffects(child);
-    child = child.sibling;
+    // Descend into children
+    if (node.child !== null) {
+      node = node.child;
+      continue;
+    }
+    // Walk back up via siblings
+    while (node !== null) {
+      if (node === rootFiber) {
+        node = null;
+        break;
+      }
+      if (node.sibling !== null) {
+        node = node.sibling;
+        break;
+      }
+      node = node.return;
+    }
   }
 }
 

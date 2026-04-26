@@ -190,10 +190,16 @@ export interface Tracer {
 }
 
 export function createTracer(config: TracerConfig): Tracer {
+  const MAX_BUFFER_SIZE = config.batchSize ?? 1000;
   const spanStack: Span[] = [];
   const buffer: Span[] = [];
-  // batchSize reserved for future batched export
-  void config.batchSize;
+
+  function bufferSpan(span: Span): void {
+    if (buffer.length >= MAX_BUFFER_SIZE) {
+      buffer.splice(0, Math.floor(MAX_BUFFER_SIZE / 2)); // drop oldest half
+    }
+    buffer.push(span);
+  }
 
   // Auto-flush timer (if configured)
   let flushTimer: ReturnType<typeof setInterval> | undefined;
@@ -253,27 +259,27 @@ export function createTracer(config: TracerConfig): Tracer {
           return (result as unknown as Promise<unknown>).then(
             (value) => {
               endSpan(span);
-              buffer.push(span);
+              bufferSpan(span);
               removeFromStack();
               return value;
             },
             (err) => {
               span.status = { code: 'error', message: String(err) };
               endSpan(span);
-              buffer.push(span);
+              bufferSpan(span);
               removeFromStack();
               throw err;
             },
           ) as unknown as T;
         }
         endSpan(span);
-        buffer.push(span);
+        bufferSpan(span);
         removeFromStack();
         return result;
       } catch (err) {
         span.status = { code: 'error', message: String(err) };
         endSpan(span);
-        buffer.push(span);
+        bufferSpan(span);
         removeFromStack();
         throw err;
       }

@@ -139,9 +139,29 @@ function renderNode(node: SpecNode, includeDataAttrs: boolean): string {
     return String(node);
   }
 
-  // Array → render each child
+  // Array → render each child (iterative, no recursion for flat arrays)
   if (Array.isArray(node)) {
-    return node.map((child) => renderNode(child, includeDataAttrs)).join('');
+    let result = '';
+    const stack: SpecNode[] = [];
+    for (let i = node.length - 1; i >= 0; i--) stack.push(node[i] as SpecNode);
+    while (stack.length > 0) {
+      const child = stack.pop()!;
+      if (child == null || typeof child === 'boolean') continue;
+      if (typeof child === 'string') {
+        result += escapeHtml(child);
+        continue;
+      }
+      if (typeof child === 'number') {
+        result += String(child);
+        continue;
+      }
+      if (Array.isArray(child)) {
+        for (let i = child.length - 1; i >= 0; i--) stack.push(child[i] as SpecNode);
+        continue;
+      }
+      if (isValidElement(child)) result += renderElement(child as SpecElement, includeDataAttrs);
+    }
+    return result;
   }
 
   // Must be an element

@@ -82,6 +82,11 @@ export function useStateImpl<T>(
 
   const setState = (action: T | ((prev: T) => T)) => {
     const lane = requestUpdateLane();
+    if (queue.length >= 10000) {
+      if (typeof console !== 'undefined')
+        console.warn('[SpecifyJS] Hook update queue exceeded 10000 — dropping oldest updates');
+      queue.splice(0, queue.length - 5000);
+    }
     queue.push({ action });
     markFiberWithLane(fiber, lane);
     if (rerenderFiber) {

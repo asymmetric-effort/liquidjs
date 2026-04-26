@@ -60,6 +60,23 @@ export interface InstrumentOptions {
 // Instrument factories (internal)
 // ---------------------------------------------------------------------------
 
+const MAX_DATA_POINTS = 10000;
+
+function addDataPoint(
+  points: DataPoint[],
+  value: number,
+  attributes?: Record<string, string | number | boolean>,
+): void {
+  if (points.length >= MAX_DATA_POINTS) {
+    points.splice(0, Math.floor(MAX_DATA_POINTS / 2));
+  }
+  points.push({
+    value,
+    attributes: attributes ? { ...attributes } : {},
+    timestamp: performance.now(),
+  });
+}
+
 function createCounter(name: string, opts?: InstrumentOptions): Counter {
   const points: DataPoint[] = [];
   return {
@@ -67,11 +84,7 @@ function createCounter(name: string, opts?: InstrumentOptions): Counter {
     description: opts?.description ?? '',
     add(value: number, attributes?: Record<string, string | number | boolean>): void {
       if (value < 0) return; // counters are monotonic
-      points.push({
-        value,
-        attributes: attributes ? { ...attributes } : {},
-        timestamp: performance.now(),
-      });
+      addDataPoint(points, value, attributes);
     },
     get dataPoints(): ReadonlyArray<DataPoint> {
       return points;
@@ -85,11 +98,7 @@ function createHistogram(name: string, opts?: InstrumentOptions): Histogram {
     name,
     description: opts?.description ?? '',
     record(value: number, attributes?: Record<string, string | number | boolean>): void {
-      points.push({
-        value,
-        attributes: attributes ? { ...attributes } : {},
-        timestamp: performance.now(),
-      });
+      addDataPoint(points, value, attributes);
     },
     get dataPoints(): ReadonlyArray<DataPoint> {
       return points;
@@ -103,11 +112,7 @@ function createGauge(name: string, opts?: InstrumentOptions): Gauge {
     name,
     description: opts?.description ?? '',
     set(value: number, attributes?: Record<string, string | number | boolean>): void {
-      points.push({
-        value,
-        attributes: attributes ? { ...attributes } : {},
-        timestamp: performance.now(),
-      });
+      addDataPoint(points, value, attributes);
     },
     get dataPoints(): ReadonlyArray<DataPoint> {
       return points;
