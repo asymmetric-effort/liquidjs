@@ -83,10 +83,23 @@ jobs:
           npm install
           npx playwright install chromium --with-deps
 
-      - name: Wait for CDN cache purge
+      - name: Wait for CDN propagation and verify content
         run: |
-          echo "Waiting 120s for GitHub Pages CDN to purge cached content..."
-          sleep 120
+          echo "Waiting for GitHub Pages CDN to serve fresh content..."
+          for i in $(seq 1 30); do
+            CONTENT=$(curl -sk "https://specifyjs.asymmetric-effort.com/?_cb=$(date +%s%N)" 2>/dev/null)
+            JS_FILE=$(echo "$CONTENT" | grep -oP 'assets/index-[^"]+\.js' || true)
+            if [ -n "$JS_FILE" ]; then
+              HAS_SPECIFY=$(curl -sk "https://specifyjs.asymmetric-effort.com/$JS_FILE" 2>/dev/null | grep -c 'SpecifyJS' || true)
+              if [ "$HAS_SPECIFY" -gt "0" ]; then
+                echo "CDN is serving fresh content (SpecifyJS found in $JS_FILE after ${i}0s)"
+                exit 0
+              fi
+            fi
+            echo "Attempt $i/30: CDN still serving stale content, waiting 10s..."
+            sleep 10
+          done
+          echo "WARNING: CDN may still be serving stale content after 300s"
 
       - name: Run post-deployment E2E tests
         id: e2e
