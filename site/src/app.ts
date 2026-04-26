@@ -13,6 +13,7 @@ import { ApiIntegration } from './screens/api-integration';
 import { ComponentReference } from './screens/component-reference';
 import { GettingStarted } from './screens/getting-started';
 import { FeatureFlagsDemo } from './screens/feature-flags-demo';
+import { DocsViewer } from './screens/docs-viewer';
 
 function AppContent() {
   const { pathname, navigate } = useRouter();
@@ -31,6 +32,7 @@ function AppContent() {
     { path: '/reference', title: 'Component Reference', content: createElement(ComponentReference, null), flag: 'component-reference' },
     { path: '/getting-started', title: 'Getting Started', content: createElement(GettingStarted, null), flag: 'getting-started' },
     { path: '/featureflags', title: 'Feature Flags', content: createElement(FeatureFlagsDemo, null) },
+    { path: '/docs', title: 'Documentation', content: createElement(DocsViewer, null) },
   ];
 
   let dialogTitle: string | null = null;

@@ -3,6 +3,7 @@
 
 import { createElement } from 'specifyjs';
 import { useState, useHead } from 'specifyjs/hooks';
+import { useRouter } from 'specifyjs';
 
 interface ComponentInfo {
   name: string;
@@ -54,6 +55,8 @@ const COMPONENTS: ComponentInfo[] = [
 ];
 
 export function ComponentReference() {
+  const { navigate } = useRouter();
+
   useHead({
     title: 'Component Reference — SpecifyJS',
     description: 'Complete API reference for SpecifyJS: 30+ APIs across Core, Hooks, Router, DOM, and Pre-rendering.',
@@ -84,6 +87,42 @@ export function ComponentReference() {
   });
 
   return createElement('div', null,
+    // Docs banner
+    createElement('div', {
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '14px 20px',
+        marginBottom: '20px',
+        background: 'linear-gradient(135deg, #6366f1 0%, #3b82f6 100%)',
+        borderRadius: '8px',
+        color: 'white',
+      },
+    },
+      createElement('div', null,
+        createElement('div', { style: { fontWeight: '600', fontSize: '15px' } }, 'Full Documentation Available'),
+        createElement('div', { style: { fontSize: '13px', opacity: '0.9', marginTop: '2px' } },
+          '78 pages of guides, API reference, architecture docs, and component library reference.',
+        ),
+      ),
+      createElement('button', {
+        onClick: () => navigate('/docs'),
+        style: {
+          padding: '8px 20px',
+          border: '2px solid rgba(255,255,255,0.8)',
+          borderRadius: '6px',
+          backgroundColor: 'rgba(255,255,255,0.15)',
+          color: 'white',
+          cursor: 'pointer',
+          fontFamily: 'inherit',
+          fontSize: '14px',
+          fontWeight: '600',
+          whiteSpace: 'nowrap',
+          transition: 'background 0.15s',
+        },
+      }, 'Browse Docs'),
+    ),
     createElement('div', { className: 'section' },
       createElement('h2', null, 'Component Reference'),
       createElement('p', { style: { color: '#64748b', marginBottom: '24px' } },
