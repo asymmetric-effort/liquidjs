@@ -60,7 +60,7 @@ function CardDemo() {
         shadow,
         padding,
         borderRadius,
-        image: showImage ? 'https://picsum.photos/seed/liquid1/400/200' : undefined,
+        image: showImage ? 'https://picsum.photos/seed/specifyjs1/400/200' : undefined,
         imageAlt: 'Getting started illustration',
         headerAction: createElement('button', { style: { padding: '4px 8px', borderRadius: '4px', border: '1px solid #e5e7eb', background: 'none', cursor: 'pointer' } }, 'Edit'),
         footer: showFooter ? createElement('div', { style: { display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#6b7280' } },
@@ -77,7 +77,7 @@ function CardDemo() {
         shadow,
         padding,
         borderRadius,
-        image: showImage ? 'https://picsum.photos/seed/liquid2/400/200' : undefined,
+        image: showImage ? 'https://picsum.photos/seed/specifyjs2/400/200' : undefined,
         footer: showFooter ? createElement('div', { style: { fontSize: '13px', color: '#6b7280' } }, 'Published yesterday') : undefined,
       }, createElement('p', null, 'Explore memoization, lazy loading, concurrent rendering, and more.')),
 
