@@ -5,6 +5,9 @@ import { createElement } from 'specifyjs';
 import { createRoot } from 'specifyjs/dom';
 import { App } from './app';
 
-// SpecifyJS v0.0.1 — Declarative TypeScript UI Framework
+if (typeof window !== 'undefined') {
+  (window as Record<string, unknown>).__SPECIFYJS_BUILD__ = '0.0.1-20260426';
+}
+
 const root = createRoot(document.getElementById('root')!);
 root.render(createElement(App, null));

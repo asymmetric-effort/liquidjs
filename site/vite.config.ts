@@ -62,6 +62,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         banner: JS_BANNER,
+        entryFileNames: 'assets/[name]-[hash].js',
       },
     },
   },
