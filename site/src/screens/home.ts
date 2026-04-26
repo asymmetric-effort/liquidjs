@@ -224,7 +224,7 @@ export function HomeScreen() {
       url: 'https://specifyjs.asymmetric-effort.com',
     },
     httpEquiv: {
-      csp: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'self'",
+      csp: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://app.fossa.com https://picsum.photos; connect-src 'self' https://app.fossa.com; base-uri 'self'; form-action 'self'",
       referrer: 'strict-origin-when-cross-origin',
     },
   });
