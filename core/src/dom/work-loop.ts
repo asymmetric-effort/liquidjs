@@ -48,6 +48,7 @@ import {
   type SchedulerCallback,
 } from '../core/scheduler-host-config';
 import { registerComponentInstance, getComponentName } from '../shared/component-registry';
+import { checkAriaCompliance } from '../shared/aria-warnings';
 
 // ---------------------------------------------------------------------------
 // Root container state
@@ -869,6 +870,7 @@ function completeWork(fiber: Fiber): void {
           ? document.createElementNS('http://www.w3.org/2000/svg', tag)
           : document.createElement(tag);
         updateDOMProperties(domNode as HTMLElement, {}, fiber.pendingProps);
+        checkAriaCompliance(tag, fiber.pendingProps as Record<string, unknown>);
         // Assign component ID to the wrapper element of a user component.
         // Walk up the fiber tree to find the nearest function/class component.
         // Only the first host child of that component gets an ID.

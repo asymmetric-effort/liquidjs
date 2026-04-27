@@ -1,116 +1,10 @@
 import { defineConfig, type Plugin } from 'vite';
 import path from 'path';
 import fs from 'fs';
+import { specifyJsSeoPlugin } from '../core/src/build/index';
 
-const SITE_URL = 'https://specifyjs.asymmetric-effort.com';
 const JS_BANNER = '/* (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE */';
 const CSS_BANNER = '/* (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE */';
-
-/**
- * Vite plugin to generate sitemap.xml, robots.txt, and llms.txt at build time.
- * Reads routes from the site and docs from docs/ to produce accurate files.
- */
-function seoFilesPlugin(): Plugin {
-  return {
-    name: 'seo-files',
-    closeBundle() {
-      const distDir = path.resolve(__dirname, 'dist');
-      const docsDir = path.resolve(__dirname, '..', 'docs');
-      const today = new Date().toISOString().split('T')[0];
-
-      // Collect all routes
-      const routes = [
-        '/',
-        '/#/components',
-        '/#/dashboard',
-        '/#/concurrent',
-        '/#/api',
-        '/#/docs',
-        '/#/getting-started',
-        '/#/featureflags',
-      ];
-
-      // Collect doc routes
-      const docPaths: string[] = [];
-      function walkDocs(dir: string, prefix: string) {
-        for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-          if (entry.isDirectory()) {
-            walkDocs(path.join(dir, entry.name), prefix + entry.name + '/');
-          } else if (entry.name.endsWith('.md')) {
-            docPaths.push(prefix + entry.name.replace('.md', ''));
-          }
-        }
-      }
-      if (fs.existsSync(docsDir)) {
-        walkDocs(docsDir, '');
-      }
-      for (const dp of docPaths) {
-        routes.push(`/#/docs/${dp}`);
-      }
-
-      // ── sitemap.xml ────────────────────────────────────────────────
-      const sitemapEntries = routes.map(
-        (r) => `  <url><loc>${SITE_URL}${r}</loc><lastmod>${today}</lastmod></url>`,
-      );
-      const sitemap = [
-        '<?xml version="1.0" encoding="UTF-8"?>',
-        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-        ...sitemapEntries,
-        '</urlset>',
-      ].join('\n');
-      fs.writeFileSync(path.join(distDir, 'sitemap.xml'), sitemap);
-
-      // ── robots.txt ─────────────────────────────────────────────────
-      const robots = [
-        'User-agent: *',
-        'Allow: /',
-        '',
-        `Sitemap: ${SITE_URL}/sitemap.xml`,
-      ].join('\n');
-      fs.writeFileSync(path.join(distDir, 'robots.txt'), robots);
-
-      // ── llms.txt ───────────────────────────────────────────────────
-      const guideNames = docPaths
-        .filter((p) => p.startsWith('guides/'))
-        .map((p) => p.replace('guides/', ''));
-      const apiNames = docPaths
-        .filter((p) => p.startsWith('api/'))
-        .map((p) => p.replace('api/', ''));
-
-      const llms = [
-        '# SpecifyJS',
-        '',
-        '> A declarative TypeScript UI framework built for performance,',
-        '> browser compatibility, and developer simplicity.',
-        '> Zero runtime dependencies. 4KB gzipped core.',
-        '',
-        `## Website: ${SITE_URL}`,
-        `## Repository: https://github.com/asymmetric-effort/specifyjs`,
-        `## npm: https://www.npmjs.com/package/@asymmetric-effort/specifyjs`,
-        '',
-        '## Documentation',
-        '',
-        ...guideNames.map((g) => `- ${g}: ${SITE_URL}/#/docs/guides/${g}`),
-        '',
-        '## API Reference',
-        '',
-        ...apiNames.map((a) => `- ${a}: ${SITE_URL}/#/docs/api/${a}`),
-        '',
-        '## Install',
-        '',
-        '```',
-        'npm install @asymmetric-effort/specifyjs',
-        '```',
-        '',
-        '## License: MIT',
-        '## Author: Asymmetric Effort, LLC',
-      ].join('\n');
-      fs.writeFileSync(path.join(distDir, 'llms.txt'), llms);
-
-      console.log(`Generated: sitemap.xml (${routes.length} URLs), robots.txt, llms.txt`);
-    },
-  };
-}
 
 /**
  * Vite plugin to prepend a copyright banner to CSS assets.
@@ -173,6 +67,19 @@ export default defineConfig({
       },
     },
   },
-  plugins: [cssBannerPlugin(), seoFilesPlugin()],
+  plugins: [
+    cssBannerPlugin(),
+    specifyJsSeoPlugin({
+      siteUrl: 'https://specifyjs.asymmetric-effort.com',
+      title: 'SpecifyJS',
+      description: 'A declarative TypeScript UI framework built for performance, browser compatibility, and developer simplicity. Zero runtime dependencies. 4KB gzipped core.',
+      routes: ['/', '/#/components', '/#/dashboard', '/#/concurrent', '/#/api', '/#/docs', '/#/getting-started', '/#/featureflags'],
+      docsDir: path.resolve(__dirname, '..', 'docs'),
+      npmPackage: '@asymmetric-effort/specifyjs',
+      author: 'Asymmetric Effort, LLC',
+      license: 'MIT',
+      repository: 'https://github.com/asymmetric-effort/specifyjs',
+    }),
+  ],
   base: './',
 });

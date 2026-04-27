@@ -1,6 +1,6 @@
 {
   "name": "@asymmetric-effort/specifyjs",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A declarative TypeScript UI framework built for performance and simplicity",
   "publishConfig": {
     "access": "public"
@@ -58,6 +58,11 @@
       "types": "./dist/specifyjs-components.d.ts",
       "import": "./dist/specifyjs-components.esm.js",
       "require": "./dist/specifyjs-components.cjs.js"
+    },
+    "./build": {
+      "types": "./dist/specifyjs-build.d.ts",
+      "import": "./dist/specifyjs-build.esm.js",
+      "require": "./dist/specifyjs-build.cjs.js"
     }
   },
   "files": [

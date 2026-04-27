@@ -52,6 +52,22 @@ const mainConfigs = [
   createConfig('src/components-barrel.ts', 'specifyjs-components', './tsconfig.components.json'),
 ];
 
+// Build tools entry (Node.js only, external deps)
+const buildConfig = {
+  input: 'src/build/index.ts',
+  output: [
+    { file: 'dist/specifyjs-build.cjs.js', format: 'cjs', sourcemap: true },
+    { file: 'dist/specifyjs-build.esm.js', format: 'esm', sourcemap: true },
+  ],
+  plugins: [
+    resolve(),
+    typescript({ tsconfig: './tsconfig.json', declaration: false }),
+    terser({ compress: { passes: 2, ecma: 2020 }, mangle: true, format: { comments: false } }),
+  ],
+  external: ['fs', 'path', 'vite', 'node:fs', 'node:path'],
+};
+mainConfigs.push(buildConfig);
+
 // Declaration bundling configs — one per sub-package
 const declarationConfigs = [
   { input: 'src/index.ts', output: [{ file: 'dist/specifyjs.d.ts', format: 'esm' }] },
@@ -60,6 +76,7 @@ const declarationConfigs = [
   { input: 'src/client/index.ts', output: [{ file: 'dist/specifyjs-client.d.ts', format: 'esm' }] },
   { input: 'src/telemetry/index.ts', output: [{ file: 'dist/specifyjs-telemetry.d.ts', format: 'esm' }] },
   { input: 'src/components-barrel.ts', output: [{ file: 'dist/specifyjs-components.d.ts', format: 'esm' }] },
+  { input: 'src/build/index.ts', output: [{ file: 'dist/specifyjs-build.d.ts', format: 'esm' }] },
 ].map(cfg => ({ ...cfg, plugins: [dts()] }));
 
 export default [...mainConfigs, ...declarationConfigs];

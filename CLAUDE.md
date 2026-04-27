@@ -218,6 +218,12 @@ Project-specific conventions:
 - Pure functions where possible
 - **No recursion** — use iterative approaches with explicit stacks to prevent stack overflow on deep component trees. Tail-call recursion is acceptable only where the engine guarantees TCO.
 
+### ARIA Compliance
+- All components must be ARIA-compliant per WAI-ARIA APG (https://www.w3.org/WAI/ARIA/apg/)
+- The framework emits development-time warnings for missing ARIA patterns
+- Interactive elements require accessible names (aria-label, aria-labelledby, or visible text)
+- Clickable non-interactive elements require role and keyboard support
+
 ### API Design
 - Use clear, intuitive API naming and signatures
 - Add SpecifyJS-specific extensions as separate named exports
