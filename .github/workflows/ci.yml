@@ -18,7 +18,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # ── Stage 1: Lint & Type Check ──────────────────────────────────────
+  # ── Stage 1: Lint ───────────────────────────────────────────────────
   lint:
     name: Lint & Type Check
     runs-on: ubuntu-latest
@@ -27,21 +27,14 @@ jobs:
         working-directory: core
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version: latest
+      - run: bun install --frozen-lockfile
+      - run: bun run typecheck
+      - run: bun run format:check
 
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-
-      - name: TypeScript type check
-        run: bun run typecheck
-
-      - name: Prettier format check
-        run: bun run format:check
-
-  # ── Stage 2: Unit & Integration Tests ───────────────────────────────
+  # ── Stage 2: Test ───────────────────────────────────────────────────
   test:
     name: Unit & Integration Tests
     needs: lint
@@ -51,18 +44,12 @@ jobs:
         working-directory: core
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version: latest
-
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-
-      - name: Run tests with coverage
-        run: bun run test:coverage
-
-      - name: Upload coverage report
+      - run: bun install --frozen-lockfile
+      - run: bun run test:coverage
+      - name: Upload coverage
         if: always() && !env.ACT
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -70,7 +57,7 @@ jobs:
           path: core/coverage/
           retention-days: 7
 
-  # ── Stage 3: Build Library ──────────────────────────────────────────
+  # ── Stage 3: Build ──────────────────────────────────────────────────
   build:
     name: Build
     needs: test
@@ -80,37 +67,20 @@ jobs:
         working-directory: core
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version: latest
-
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-
-      - name: Build library
-        run: bun run build
-
-      - name: Verify build output exists
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+      - name: Verify build
         run: |
-          test -f dist/specifyjs.esm.js || (echo "Missing ESM build" && exit 1)
-          test -f dist/specifyjs.cjs.js || (echo "Missing CJS build" && exit 1)
-          test -f dist/specifyjs.d.ts || (echo "Missing type declarations" && exit 1)
-          echo "Build artifacts verified"
-          ls -lh dist/
-
-      - name: Check bundle size (< 15KB gzipped)
-        run: |
+          test -f dist/specifyjs.esm.js && test -f dist/specifyjs.cjs.js && test -f dist/specifyjs.d.ts
           gzip -k dist/specifyjs.esm.js
           SIZE=$(wc -c < dist/specifyjs.esm.js.gz)
-          echo "ESM bundle gzipped: $SIZE bytes ($(( SIZE / 1024 ))KB)"
+          echo "ESM gzipped: $SIZE bytes"
           rm dist/specifyjs.esm.js.gz
-          if [ "$SIZE" -gt 15360 ]; then
-            echo "ERROR: Bundle exceeds 15KB gzipped"
-            exit 1
-          fi
-
-      - name: Upload build artifacts
+          [ "$SIZE" -le 15360 ] || (echo "ERROR: Bundle exceeds 15KB" && exit 1)
+      - name: Upload build
         if: ${{ !env.ACT }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -118,9 +88,9 @@ jobs:
           path: core/dist/
           retention-days: 7
 
-  # ── Stage 4: E2E Tests (browser matrix) ─────────────────────────────
+  # ── Stage 4: E2E ────────────────────────────────────────────────────
   e2e:
-    name: E2E Tests (${{ matrix.browser }})
+    name: E2E (${{ matrix.browser }})
     needs: build
     runs-on: ubuntu-latest
     strategy:
@@ -131,29 +101,14 @@ jobs:
         working-directory: core
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version: latest
+      - run: bun install --frozen-lockfile
+      - run: bun x playwright install ${{ matrix.browser }} --with-deps
+      - run: bun x playwright test --project=${{ matrix.browser }}
 
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-
-      - name: Install Playwright browsers
-        run: bun x playwright install ${{ matrix.browser }} --with-deps
-
-      - name: Run E2E tests (${{ matrix.browser }})
-        run: bun x playwright test --project=${{ matrix.browser }}
-
-      - name: Upload E2E report
-        if: always() && !env.ACT
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: playwright-report-${{ matrix.browser }}
-          path: core/playwright-report/
-          retention-days: 7
-
-  # ── Stage 5: Build Showcase Site ────────────────────────────────────
+  # ── Stage 5: Build Site (not on PRs) ────────────────────────────────
   build-site:
     name: Build Showcase Site
     needs: e2e
@@ -161,36 +116,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          fetch-depth: 2
-
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '22'
-
-      - name: Install site dependencies
+      - name: Build
         working-directory: site
-        run: npm install
-
-      - name: Build site
-        working-directory: site
-        run: npx vite build
-
-      - name: Verify copyright banners
+        run: |
+          npm install
+          npx vite build
+      - name: Verify banners
         working-directory: site/dist
         run: |
-          JS_FILE=$(ls assets/*.js | head -1)
-          CSS_FILE=$(ls assets/*.css | head -1)
-          head -1 "$JS_FILE" | grep -q "Asymmetric Effort" || (echo "Missing JS banner" && exit 1)
-          head -1 "$CSS_FILE" | grep -q "Asymmetric Effort" || (echo "Missing CSS banner" && exit 1)
-          echo "Copyright banners verified"
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
+          head -1 assets/*.js | grep -q "Asymmetric Effort" || exit 1
+          head -1 assets/*.css | grep -q "Asymmetric Effort" || exit 1
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
           path: site/dist
 
-  # ── Stage 6: Deploy to GitHub Pages ─────────────────────────────────
+  # ── Stage 6: Deploy Site (not on PRs) ───────────────────────────────
   deploy:
     name: Deploy Showcase Site
     needs: build-site
@@ -199,70 +142,48 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
 
-  # ── Stage 7: Post-Deployment Verification ───────────────────────────
+  # ── Stage 7: PDV (not on PRs) ──────────────────────────────────────
   pdv:
     name: Post-Deployment Verification
     needs: deploy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          fetch-depth: 2
-
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '22'
-
       - name: Install Playwright
         working-directory: site
         run: |
           npm install
           npx playwright install chromium --with-deps
-
-      - name: Wait for CDN propagation and verify content
+      - name: Wait for CDN
         run: |
-          echo "Waiting for GitHub Pages to serve fresh content..."
           for i in $(seq 1 30); do
-            CONTENT=$(curl -sk "https://specifyjs.asymmetric-effort.com/?_cb=$(date +%s%N)" 2>/dev/null)
-            JS_FILE=$(echo "$CONTENT" | grep -oP 'assets/index-[^"]+\.js' || true)
-            if [ -n "$JS_FILE" ]; then
-              HAS_SPECIFY=$(curl -sk "https://specifyjs.asymmetric-effort.com/$JS_FILE" 2>/dev/null | grep -c 'SpecifyJS' || true)
-              if [ "$HAS_SPECIFY" -gt "0" ]; then
-                echo "Site is serving fresh content (SpecifyJS found in $JS_FILE after ${i}0s)"
-                exit 0
+            JS=$(curl -sk "https://specifyjs.asymmetric-effort.com/?_cb=$(date +%s%N)" | grep -oP 'assets/index-[^"]+\.js' || true)
+            if [ -n "$JS" ]; then
+              if curl -sk "https://specifyjs.asymmetric-effort.com/$JS" | grep -q 'SpecifyJS'; then
+                echo "Fresh content confirmed after ${i}0s"; exit 0
               fi
             fi
-            echo "Attempt $i/30: waiting 10s..."
-            sleep 10
+            echo "Attempt $i/30..."; sleep 10
           done
-          echo "WARNING: Site may still be serving stale content after 300s"
-
-      - name: Run post-deployment E2E tests
+      - name: Run PDV E2E
         id: e2e
         working-directory: site
         run: npx playwright test --config=playwright.deploy.config.ts
-
-      - name: Upload test report
+      - name: Upload report
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: deployment-verification-report
+          name: pdv-report
           path: site/playwright-report/
           retention-days: 7
 
-      - name: Fail on verification failure
-        if: failure() && steps.e2e.outcome == 'failure'
-        run: |
-          echo "Post-deployment verification failed."
-          echo "::error::PDV E2E tests failed. Review the test report artifact."
-          exit 1
-
-  # ── Stage 8: Publish to npm (tagged releases only, after PDV) ───────
-  # Uses npm trusted publishing (OIDC) — no API token needed.
+  # ── Stage 8: Publish to npm (ONLY tagged builds, after PDV) ─────────
   publish:
     name: Publish to npm
     needs: pdv
@@ -274,50 +195,56 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '22'
-
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version: latest
 
-      - name: Configure npm for trusted publishing
+      - name: Configure npm for OIDC
         run: |
           echo "//registry.npmjs.org/:_authToken=" > ~/.npmrc
           echo "registry=https://registry.npmjs.org/" >> ~/.npmrc
 
-      - name: Install and build
+      - name: Build
         working-directory: core
         run: |
           bun install --frozen-lockfile
           bun run build
 
-      - name: Verify package version matches tag
+      - name: Verify version matches tag
         run: |
-          TAG_VERSION="${GITHUB_REF#refs/tags/v}"
-          PKG_VERSION=$(node -p "require('./core/package.json').version")
-          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
-            echo "ERROR: Tag v$TAG_VERSION does not match package.json version $PKG_VERSION"
-            exit 1
-          fi
-          echo "Version verified: $PKG_VERSION"
+          TAG="${GITHUB_REF#refs/tags/v}"
+          PKG=$(node -p "require('./core/package.json').version")
+          [ "$TAG" = "$PKG" ] || (echo "Tag v$TAG != package.json $PKG" && exit 1)
+          echo "Version: $PKG"
 
       - name: Publish @asymmetric-effort/specifyjs
         working-directory: core
         run: npx npm@latest publish --provenance --access public
 
-      - name: Sync wrapper package version
+      - name: Publish specifyjs alias
         run: |
-          PKG_VERSION=$(node -p "require('./core/package.json').version")
+          PKG=$(node -p "require('./core/package.json').version")
           node -e "
-            const pkg = require('./packages/specifyjs/package.json');
-            pkg.version = '$PKG_VERSION';
-            pkg.dependencies['@asymmetric-effort/specifyjs'] = '$PKG_VERSION';
-            require('fs').writeFileSync('./packages/specifyjs/package.json', JSON.stringify(pkg, null, 2) + '\n');
+            const pkg=require('./packages/specifyjs/package.json');
+            pkg.version='$PKG';
+            pkg.dependencies['@asymmetric-effort/specifyjs']='$PKG';
+            require('fs').writeFileSync('./packages/specifyjs/package.json',JSON.stringify(pkg,null,2)+'\n');
           "
+          cd packages/specifyjs && npx npm@latest publish --provenance --access public
 
-      - name: Publish specifyjs (alias package)
-        working-directory: packages/specifyjs
-        run: npx npm@latest publish --provenance --access public
+      - name: Verify npm publish
+        run: |
+          TAG="${GITHUB_REF#refs/tags/v}"
+          echo "Waiting for npm registry to reflect v$TAG..."
+          for i in $(seq 1 10); do
+            LATEST=$(npm view @asymmetric-effort/specifyjs version 2>/dev/null || echo "")
+            if [ "$LATEST" = "$TAG" ]; then
+              echo "Verified: @asymmetric-effort/specifyjs@$TAG is live on npm"
+              exit 0
+            fi
+            echo "Attempt $i/10: latest=$LATEST, expected=$TAG"; sleep 5
+          done
+          echo "WARNING: npm may still be propagating"
