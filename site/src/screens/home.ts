@@ -4,7 +4,6 @@
 import { createElement } from 'specifyjs';
 import { useState, useCallback } from 'specifyjs/hooks';
 import { useHead } from 'specifyjs/hooks';
-import { AdSense } from '../../../components/ad/adsense/src/index';
 
 // ─── Feature article content ──────────────────────────────────────────
 
@@ -303,19 +302,6 @@ export function HomeScreen() {
           ),
         ),
       ),
-    ),
-
-    // AdSense — configurable client/slot, test mode for development
-    createElement(
-      'div',
-      { style: { margin: '32px 0', textAlign: 'center' } },
-      createElement(AdSense, {
-        client: 'ca-pub-0000000000000000',
-        slot: '1234567890',
-        format: 'horizontal',
-        responsive: true,
-        testMode: true,
-      }),
     ),
 
     // Feature article dialog
