@@ -7,8 +7,17 @@ import { App } from './app';
 
 setComponentIdsEnabled(true);
 
+// Detect system dark mode preference and apply before first render
 if (typeof window !== 'undefined') {
-  (window as Record<string, unknown>).__SPECIFYJS_BUILD__ = '0.0.1-20260426';
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+
+  // Listen for system theme changes (unless user manually toggled)
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (document.documentElement.getAttribute('data-theme-manual') !== 'true') {
+      document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+    }
+  });
 }
 
 const root = createRoot(document.getElementById('root')!);

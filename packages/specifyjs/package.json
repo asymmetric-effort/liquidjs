@@ -1,6 +1,6 @@
 {
   "name": "specifyjs",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "A declarative TypeScript UI framework — alias for @asymmetric-effort/specifyjs",
   "type": "module",
   "main": "index.cjs",
@@ -28,6 +28,6 @@
     "typescript"
   ],
   "dependencies": {
-    "@asymmetric-effort/specifyjs": "0.0.9"
+    "@asymmetric-effort/specifyjs": "0.0.10"
   }
 }

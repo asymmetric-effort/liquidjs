@@ -37,6 +37,8 @@ function DarkModeToggle() {
     const next = !dark;
     setDark(next);
     document.documentElement.setAttribute('data-theme', next ? 'dark' : 'light');
+    // Mark as manually overridden so the system listener doesn't fight
+    document.documentElement.setAttribute('data-theme-manual', 'true');
   };
 
   return createElement(
