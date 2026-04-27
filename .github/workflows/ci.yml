@@ -27,7 +27,7 @@ jobs:
         working-directory: core
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - uses: asymmetric-effort/actions/actions/setup-bun@140e9f8400b24e9a8412d8ab5968e62052926c54 # main
         with:
           bun-version: latest
       - run: bun install --frozen-lockfile
@@ -44,7 +44,7 @@ jobs:
         working-directory: core
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - uses: asymmetric-effort/actions/actions/setup-bun@140e9f8400b24e9a8412d8ab5968e62052926c54 # main
         with:
           bun-version: latest
       - run: bun install --frozen-lockfile
@@ -67,7 +67,7 @@ jobs:
         working-directory: core
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - uses: asymmetric-effort/actions/actions/setup-bun@140e9f8400b24e9a8412d8ab5968e62052926c54 # main
         with:
           bun-version: latest
       - run: bun install --frozen-lockfile
@@ -101,7 +101,7 @@ jobs:
         working-directory: core
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - uses: asymmetric-effort/actions/actions/setup-bun@140e9f8400b24e9a8412d8ab5968e62052926c54 # main
         with:
           bun-version: latest
       - run: bun install --frozen-lockfile
@@ -198,7 +198,7 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '22'
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - uses: asymmetric-effort/actions/actions/setup-bun@140e9f8400b24e9a8412d8ab5968e62052926c54 # main
         with:
           bun-version: latest
 
