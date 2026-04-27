@@ -224,17 +224,6 @@ jobs:
         working-directory: core
         run: npx npm@latest publish --provenance --access public
 
-      - name: Publish specifyjs alias
-        run: |
-          PKG=$(node -p "require('./core/package.json').version")
-          node -e "
-            const pkg=require('./packages/specifyjs/package.json');
-            pkg.version='$PKG';
-            pkg.dependencies['@asymmetric-effort/specifyjs']='$PKG';
-            require('fs').writeFileSync('./packages/specifyjs/package.json',JSON.stringify(pkg,null,2)+'\n');
-          "
-          cd packages/specifyjs && npx npm@latest publish --provenance --access public
-
       - name: Verify npm publish
         run: |
           TAG="${GITHUB_REF#refs/tags/v}"
