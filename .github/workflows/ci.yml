@@ -316,6 +316,7 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
 
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
@@ -326,6 +327,11 @@ jobs:
         run: |
           bun install --frozen-lockfile
           bun run build
+
+      - name: Check npm version
+        run: |
+          echo "System npm: $(npm --version)"
+          echo "npx npm@latest: $(npx npm@latest --version)"
 
       - name: Verify package version matches tag
         run: |
@@ -339,7 +345,7 @@ jobs:
 
       - name: Publish @asymmetric-effort/specifyjs
         working-directory: core
-        run: npm publish --provenance --access public
+        run: npx npm@latest publish --provenance --access public
 
       - name: Sync wrapper package version
         run: |
@@ -353,4 +359,4 @@ jobs:
 
       - name: Publish specifyjs (alias package)
         working-directory: packages/specifyjs
-        run: npm publish --provenance --access public
+        run: npx npm@latest publish --provenance --access public
