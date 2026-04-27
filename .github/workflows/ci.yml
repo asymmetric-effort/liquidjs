@@ -157,7 +157,7 @@ jobs:
   build-site:
     name: Build Showcase Site
     needs: e2e
-    if: (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) && github.event_name != 'pull_request'
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -206,7 +206,8 @@ jobs:
   # ── Stage 7: Post-Deployment Verification ───────────────────────────
   pdv:
     name: Post-Deployment Verification
-    needs: deploy
+    needs: [deploy, e2e]
+    if: always() && (needs.deploy.result == 'success' || (startsWith(github.ref, 'refs/tags/v') && needs.e2e.result == 'success'))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
