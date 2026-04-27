@@ -153,11 +153,11 @@ jobs:
           path: core/playwright-report/
           retention-days: 7
 
-  # ── Stage 5: Build Showcase Site (main only) ────────────────────────
+  # ── Stage 5: Build Showcase Site ────────────────────────────────────
   build-site:
     name: Build Showcase Site
     needs: e2e
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -190,7 +190,7 @@ jobs:
         with:
           path: site/dist
 
-  # ── Stage 6: Deploy to GitHub Pages (main only) ─────────────────────
+  # ── Stage 6: Deploy to GitHub Pages ─────────────────────────────────
   deploy:
     name: Deploy Showcase Site
     needs: build-site
@@ -203,7 +203,7 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
 
-  # ── Stage 7a: Post-Deployment Verification (main — after deploy) ────
+  # ── Stage 7: Post-Deployment Verification ───────────────────────────
   pdv:
     name: Post-Deployment Verification
     needs: deploy
@@ -254,56 +254,18 @@ jobs:
           path: site/playwright-report/
           retention-days: 7
 
-      - name: Rollback on verification failure
+      - name: Fail on verification failure
         if: failure() && steps.e2e.outcome == 'failure'
         run: |
           echo "Post-deployment verification failed."
-          echo "Previous commit: $(git rev-parse HEAD~1)"
           echo "::error::PDV E2E tests failed. Review the test report artifact."
           exit 1
 
-  # ── Stage 7b: Release Verification (tags — PDV before publish) ──────
-  release-verify:
-    name: Release Verification (PDV)
-    needs: e2e
-    if: startsWith(github.ref, 'refs/tags/v')
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          fetch-depth: 2
-
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
-        with:
-          node-version: '22'
-
-      - name: Install Playwright
-        working-directory: site
-        run: |
-          npm install
-          npx playwright install chromium --with-deps
-
-      - name: Run E2E tests against live site
-        working-directory: site
-        run: npx playwright test --config=playwright.deploy.config.ts
-
-      - name: Upload test report
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: release-verification-report
-          path: site/playwright-report/
-          retention-days: 7
-
-  # ── Stage 8: Publish to npm (tags only, after release verification) ─
+  # ── Stage 8: Publish to npm (tagged releases only, after PDV) ───────
   # Uses npm trusted publishing (OIDC) — no API token needed.
-  # Setup: npmjs.com → package settings → Trusted Publishers → Add:
-  #   Repository: asymmetric-effort/specifyjs
-  #   Workflow: ci.yml
-  #   Environment: npm
   publish:
     name: Publish to npm
-    needs: release-verify
+    needs: pdv
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     environment: npm
@@ -321,11 +283,10 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Configure npm for trusted publishing (OIDC)
+      - name: Configure npm for trusted publishing
         run: |
           echo "//registry.npmjs.org/:_authToken=" > ~/.npmrc
           echo "registry=https://registry.npmjs.org/" >> ~/.npmrc
-          echo "System npm: $(npm --version)"
 
       - name: Install and build
         working-directory: core
