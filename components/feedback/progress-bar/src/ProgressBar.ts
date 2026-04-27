@@ -76,6 +76,7 @@ export function ProgressBar(props: ProgressBarProps) {
         'aria-valuenow': props.indeterminate ? undefined : String(Math.round(pct)),
         'aria-valuemin': '0',
         'aria-valuemax': '100',
+        'aria-label': 'Progress',
         style: { display: 'inline-flex', alignItems: 'center', gap: '8px' },
       },
       keyframes ? createElement('style', null, keyframes) : null,
@@ -172,6 +173,7 @@ export function ProgressBar(props: ProgressBarProps) {
       'aria-valuenow': props.indeterminate ? undefined : String(Math.round(pct)),
       'aria-valuemin': '0',
       'aria-valuemax': '100',
+      'aria-label': 'Progress',
       style: { width: '100%' },
     },
     shimmerKeyframes || indeterminateKeyframes

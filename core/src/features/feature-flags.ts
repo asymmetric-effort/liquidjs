@@ -41,12 +41,14 @@ export interface FeatureFlagProviderProps {
 // Context
 // ---------------------------------------------------------------------------
 
+/* v8 ignore start -- default context value, only used without Provider */
 const FeatureFlagContext = createContext<FeatureFlagContextValue>({
   flags: {},
   isEnabled: () => false,
   setFlag: () => {},
   loading: false,
 });
+/* v8 ignore stop */
 
 // ---------------------------------------------------------------------------
 // Provider

@@ -130,6 +130,7 @@ export function Tooltip(props: TooltipProps) {
   const [position, setPosition] = useState<Record<string, string> | null>(null);
   const triggerRef = useRef<HTMLDivElement | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const tooltipId = `tooltip-${Math.random().toString(36).slice(2, 9)}`;
 
   const show = useCallback(() => {
     timerRef.current = setTimeout(() => {
@@ -185,6 +186,7 @@ export function Tooltip(props: TooltipProps) {
         onMouseLeave: hide,
         onFocus: show,
         onBlur: hide,
+        'aria-describedby': visible ? tooltipId : undefined,
       },
       children,
     ),
@@ -194,7 +196,7 @@ export function Tooltip(props: TooltipProps) {
     elements.push(
       createElement(
         'div',
-        { style: tooltipStyle, role: 'tooltip' },
+        { id: tooltipId, style: tooltipStyle, role: 'tooltip' },
         text,
         createElement('div', { style: getArrowStyle(placement) }),
       ),

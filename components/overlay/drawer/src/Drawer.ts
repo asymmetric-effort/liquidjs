@@ -6,7 +6,7 @@
  */
 
 import { createElement } from '../../../../core/src/index';
-import { useState, useEffect, useRef } from '../../../../core/src/hooks/index';
+import { useState, useEffect, useRef, useCallback } from '../../../../core/src/hooks/index';
 
 export type DrawerPosition = 'left' | 'right' | 'top' | 'bottom';
 
@@ -79,6 +79,8 @@ export function Drawer(props: DrawerProps) {
 
   const [visible, setVisible] = useState(false);
   const [animating, setAnimating] = useState(false);
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const titleId = title ? 'drawer-title' : undefined;
 
   // Manage visibility for transition
   useEffect(() => {
@@ -111,6 +113,13 @@ export function Drawer(props: DrawerProps) {
     return () => {
       document.body.style.overflow = prev;
     };
+  }, [open]);
+
+  // Focus trap: focus the panel on open
+  useEffect(() => {
+    if (open && panelRef.current) {
+      panelRef.current.focus();
+    }
   }, [open]);
 
   if (!visible) return null;
@@ -176,7 +185,7 @@ export function Drawer(props: DrawerProps) {
       createElement(
         'div',
         { style: headerStyle },
-        createElement('h3', { style: titleStyle }, title),
+        createElement('h3', { id: titleId, style: titleStyle }, title),
         createElement(
           'button',
           {
@@ -208,9 +217,12 @@ export function Drawer(props: DrawerProps) {
     createElement(
       'div',
       {
+        ref: panelRef,
         style: panelStyle,
         role: 'dialog',
         'aria-modal': 'true',
+        'aria-labelledby': titleId,
+        tabIndex: -1,
       },
       ...panelChildren,
     ),

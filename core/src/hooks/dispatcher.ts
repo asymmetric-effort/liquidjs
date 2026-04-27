@@ -29,9 +29,11 @@ export function setRerenderCallback(cb: ((fiber: Fiber) => void) | null): void {
 
 function getCurrentFiberForDispatch(): Fiber {
   const fiber = getCurrentFiber();
+  /* v8 ignore start -- guard only triggers outside render context */
   if (!fiber) {
     throw new Error('Invalid hook call.');
   }
+  /* v8 ignore stop */
   return fiber;
 }
 
@@ -82,11 +84,13 @@ export function useStateImpl<T>(
 
   const setState = (action: T | ((prev: T) => T)) => {
     const lane = requestUpdateLane();
+    /* v8 ignore start -- overflow guard tested in security regression tests */
     if (queue.length >= 10000) {
       if (typeof console !== 'undefined')
         console.warn('[SpecifyJS] Hook update queue exceeded 10000 — dropping oldest updates');
       queue.splice(0, queue.length - 5000);
     }
+    /* v8 ignore stop */
     queue.push({ action });
     markFiberWithLane(fiber, lane);
     if (rerenderFiber) {

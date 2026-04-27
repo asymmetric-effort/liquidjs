@@ -149,6 +149,7 @@ export function Checkbox(props: CheckboxProps) {
         role: 'checkbox',
         'aria-checked': indeterminate ? 'mixed' : checked ? 'true' : 'false',
         'aria-disabled': disabled ? 'true' : undefined,
+        'aria-label': label,
       },
       hiddenInput,
       box,

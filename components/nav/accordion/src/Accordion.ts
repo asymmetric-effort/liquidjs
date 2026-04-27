@@ -179,8 +179,10 @@ function SectionHeader(props: SectionHeaderProps) {
   return createElement(
     'button',
     {
+      id: `accordion-header-${section.id}`,
       role: 'button',
       'aria-expanded': String(expanded),
+      'aria-controls': `accordion-panel-${section.id}`,
       'aria-disabled': disabled ? 'true' : undefined,
       'data-section-id': section.id,
       tabIndex: disabled ? -1 : 0,
@@ -228,7 +230,9 @@ function SectionContent(props: SectionContentProps) {
   return createElement(
     'div',
     {
+      id: `accordion-panel-${section.id}`,
       role: 'region',
+      'aria-labelledby': `accordion-header-${section.id}`,
       'aria-hidden': String(!expanded),
       'data-section-content': section.id,
       style,

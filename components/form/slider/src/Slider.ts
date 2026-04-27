@@ -173,6 +173,17 @@ export function Slider(props: SliderProps) {
     borderRadius: '3px',
   };
 
+  const thumbLabel = (handleType: 'single' | 'start' | 'end') => {
+    if (label) {
+      if (handleType === 'start') return `${label} minimum`;
+      if (handleType === 'end') return `${label} maximum`;
+      return label;
+    }
+    if (handleType === 'start') return 'Minimum value';
+    if (handleType === 'end') return 'Maximum value';
+    return 'Value';
+  };
+
   const createThumb = (pct: number, handleType: 'single' | 'start' | 'end', val: number) => {
     const thumbStyle: Record<string, string> = {
       position: 'absolute',
@@ -211,6 +222,7 @@ export function Slider(props: SliderProps) {
         'aria-valuenow': String(val),
         'aria-valuemin': String(min),
         'aria-valuemax': String(max),
+        'aria-label': thumbLabel(handleType),
         tabIndex: disabled ? -1 : 0,
         onKeyDown: handleKeyDown,
       },

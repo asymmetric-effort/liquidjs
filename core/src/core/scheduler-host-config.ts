@@ -67,10 +67,10 @@ function performWorkUntilDeadline(): void {
       } else {
         scheduledCallback = null;
       }
-      /* v8 ignore next 4 */
-    } catch (err) {
+    } catch (err) /* v8 ignore start */ {
       scheduledCallback = null;
       isMessageLoopRunning = false;
+      /* v8 ignore stop */
       throw err;
     }
     if (hasMoreWork) {
@@ -93,12 +93,11 @@ if (typeof MessageChannel !== 'undefined') {
   schedulePerformWorkUntilDeadline = () => {
     channel.port2.postMessage(null);
   };
-  /* v8 ignore next 5 */
-} else {
+} else /* v8 ignore start */ {
   schedulePerformWorkUntilDeadline = () => {
     setTimeout(performWorkUntilDeadline, 0);
   };
-}
+} /* v8 ignore stop */
 
 /**
  * Schedule a callback to run asynchronously. Returns a handle for cancellation.

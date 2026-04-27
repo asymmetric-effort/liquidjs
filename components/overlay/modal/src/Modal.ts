@@ -156,8 +156,9 @@ export function Modal(props: ModalProps) {
   };
 
   const headerChildren: unknown[] = [];
+  const titleId = title ? 'modal-title' : undefined;
   if (title) {
-    headerChildren.push(createElement('h2', { style: titleStyle }, title));
+    headerChildren.push(createElement('h2', { id: titleId, style: titleStyle }, title));
   } else {
     headerChildren.push(createElement('span', null));
   }
@@ -192,6 +193,7 @@ export function Modal(props: ModalProps) {
       onClick: handleOverlayClick,
       'aria-modal': 'true',
       role: 'dialog',
+      'aria-labelledby': titleId,
     },
     createElement(
       'div',

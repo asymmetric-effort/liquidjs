@@ -1,0 +1,8 @@
+{
+  "name": "@specifyjs/ad-adsense",
+  "version": "0.0.1",
+  "description": "Google AdSense component for SpecifyJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "specifyjs": "*" }
+}

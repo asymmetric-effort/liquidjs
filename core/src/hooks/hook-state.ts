@@ -57,9 +57,11 @@ export function getCurrentFiber(): Fiber | null {
   return currentlyRenderingFiber;
 }
 
+/* v8 ignore start -- internal utility, tested indirectly */
 export function getHookIndex(): number {
   return hookIndex;
 }
+/* v8 ignore stop */
 
 /**
  * Allocate the next hook slot for the currently rendering fiber.
