@@ -214,7 +214,7 @@ export function HomeScreen() {
     description:
       'A declarative TypeScript UI framework built for performance, browser compatibility, and developer simplicity. Zero dependencies, 4KB gzipped.',
     keywords:
-      'specifyjs, typescript, ui framework, spa, single page application, declarative, components',
+      'specifyjs, typescript, ui framework, spa, single page application, declarative, components, Sonora, Texas, 76950',
     author: 'Asymmetric Effort, LLC',
     og: {
       title: 'SpecifyJS',
