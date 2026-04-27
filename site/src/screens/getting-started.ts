@@ -21,7 +21,7 @@ export function GettingStarted() {
       'Get up and running with SpecifyJS in minutes. No build tools required for basic usage — just import and render.',
     ),
 
-    section('Install', createElement('pre', { className: 'code-block' }, 'npm install specifyjs-framework')),
+    section('Install', createElement('pre', { className: 'code-block' }, 'npm install @asymmetric-effort/specifyjs')),
 
     section(
       'Hello World',

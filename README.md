@@ -1,6 +1,13 @@
 # SpecifyJS
 
+[![npm version](https://img.shields.io/npm/v/@asymmetric-effort/specifyjs.svg)](https://www.npmjs.com/package/@asymmetric-effort/specifyjs)
+[![license](https://img.shields.io/npm/l/@asymmetric-effort/specifyjs.svg)](https://github.com/asymmetric-effort/specifyjs/blob/main/LICENSE)
+
 A declarative TypeScript UI framework built for performance, browser compatibility, and developer simplicity.
+
+```bash
+npm install @asymmetric-effort/specifyjs
+```
 
 ## Monorepo Structure
 
