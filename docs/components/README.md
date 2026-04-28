@@ -1,6 +1,6 @@
 # Component Library Reference
 
-56 components across 8 families. All zero-dependency, pure SpecifyJS, ARIA accessible, keyboard navigable.
+60 components across 9 families. All zero-dependency, pure SpecifyJS, ARIA accessible, keyboard navigable.
 
 ## Layout (7)
 
@@ -87,6 +87,15 @@
 | Image | Enhanced image with lazy loading and fallback | [media/image.md](media/image.md) |
 | Carousel | Image/content slider with arrows and dots | [media/carousel.md](media/carousel.md) |
 | VideoPlayer | Video player with custom controls overlay | [media/video-player.md](media/video-player.md) |
+
+## Page Layouts (4)
+
+| Component | Description | Docs |
+|-----------|-------------|------|
+| UnityDesktop | Ubuntu Unity-style desktop with launcher sidebar and top panel | [page/unity-desktop.md](page/unity-desktop.md) |
+| WordProcessor | Word processor layout with menu bar, toolbar, ruler, and document page | [page/word-processor.md](page/word-processor.md) |
+| IDE | VS Code-style IDE with file explorer, editor, terminal, and status bar | [page/ide.md](page/ide.md) |
+| TradingDashboard | Stock trading terminal with chart, order book, and watchlist grid | [page/trading-dashboard.md](page/trading-dashboard.md) |
 
 ## Visualization (5)
 

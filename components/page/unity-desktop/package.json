@@ -1,0 +1,8 @@
+{
+  "name": "@specifyjs/page-unity-desktop",
+  "version": "0.0.1",
+  "description": "Ubuntu Unity Desktop layout for SpecifyJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "specifyjs": "*" }
+}

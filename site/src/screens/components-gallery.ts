@@ -1,8 +1,12 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import { createElement } from 'specifyjs';
+import { createElement, FeatureGate, useFeatureFlags } from 'specifyjs';
 import { useState, useCallback, useEffect, useRef, useHead } from 'specifyjs/hooks';
+import { UnityDesktop } from '../../../components/page/unity-desktop/src/index';
+import { WordProcessor } from '../../../components/page/word-processor/src/index';
+import { IDE } from '../../../components/page/ide/src/index';
+import { TradingDashboard } from '../../../components/page/trading-dashboard/src/index';
 
 function preview(title: string, comp: () => ReturnType<typeof createElement>) {
   return createElement(PreviewCard, { title, component: comp });
@@ -167,6 +171,14 @@ export function ComponentsGallery() {
       preview('Hypercube (4D)', HypercubeDemo),
       preview('3D Layers', ThreeDLayersDemo),
     ]),
+    createElement(FeatureGate, { flag: 'page-layouts', fallback: null },
+      accordionSection('Page Layouts', '4 layouts', openSection, toggle, [
+        preview('Unity Desktop', UnityDesktopDemo),
+        preview('Word Processor', WordProcessorDemo),
+        preview('IDE', IDEDemo),
+        preview('Trading Dashboard', TradingDashboardDemo),
+      ]),
+    ),
   );
 }
 
@@ -2513,5 +2525,32 @@ function ThreeDLayersDemo() {
         hover === i ? createElement('text', { x: x + barW / 2, y: y - depth - 4, textAnchor: 'middle', fontSize: 10, fill: '#1e293b', fontWeight: 600 }, `${b.value}`) : null,
       );
     }),
+  );
+}
+
+// ─── Page Layouts ────────────────────────────────────────────────────
+const pageLayoutDemoStyle = { height: '500px', border: '1px solid #e2e8f0', borderRadius: '8px', overflow: 'hidden' };
+
+function UnityDesktopDemo() {
+  return createElement('div', { style: pageLayoutDemoStyle },
+    createElement(UnityDesktop, null),
+  );
+}
+
+function WordProcessorDemo() {
+  return createElement('div', { style: pageLayoutDemoStyle },
+    createElement(WordProcessor, null),
+  );
+}
+
+function IDEDemo() {
+  return createElement('div', { style: pageLayoutDemoStyle },
+    createElement(IDE, null),
+  );
+}
+
+function TradingDashboardDemo() {
+  return createElement('div', { style: pageLayoutDemoStyle },
+    createElement(TradingDashboard, null),
   );
 }

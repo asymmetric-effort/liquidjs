@@ -70,3 +70,7 @@ export * from '../../components/viz/graph/src/index';
 export * from '../../components/viz/wrapper/src/index';
 export * from '../../components/analytics/google-analytics/src/index';
 export * from '../../components/layout/footer/src/index';
+export * from '../../components/page/unity-desktop/src/index';
+export * from '../../components/page/word-processor/src/index';
+export * from '../../components/page/ide/src/index';
+export * from '../../components/page/trading-dashboard/src/index';

@@ -1,0 +1,8 @@
+{
+  "name": "@specifyjs/page-word-processor",
+  "version": "0.0.1",
+  "description": "Word processor layout for SpecifyJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "specifyjs": "*" }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "@specifyjs/page-trading-dashboard",
+  "version": "0.0.1",
+  "description": "Stock trading terminal dashboard layout for SpecifyJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "specifyjs": "*" }
+}

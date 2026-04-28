@@ -1,0 +1,8 @@
+{
+  "name": "@specifyjs/page-ide",
+  "version": "0.0.1",
+  "description": "IDE layout for SpecifyJS",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "specifyjs": "*" }
+}
