@@ -9,7 +9,7 @@
  */
 
 import { createElement } from '../../../../core/src/index';
-import { useCallback } from '../../../../core/src/hooks/index';
+import { useState, useCallback } from '../../../../core/src/hooks/index';
 import { NavWrapper, useHover } from '../../wrapper/src/NavWrapper';
 
 // -- Types ------------------------------------------------------------------
@@ -21,13 +21,13 @@ export interface ToolbarItem {
   label?: string;
   /** Icon text (emoji or character) */
   icon?: string;
-  /** Item type */
-  type: 'button' | 'separator' | 'dropdown' | 'spacer';
+  /** Item type — 'button' has momentary press, 'toggle' stays pressed until clicked again */
+  type: 'button' | 'toggle' | 'separator' | 'dropdown' | 'spacer';
   /** Click handler */
   onClick?: () => void;
   /** Whether the item is disabled */
   disabled?: boolean;
-  /** Whether the item is in an active/pressed state */
+  /** Whether the item is in an active/pressed state (used by toggle) */
   active?: boolean;
 }
 
@@ -62,13 +62,32 @@ function ToolbarButton(props: {
   const { hover, onMouseEnter, onMouseLeave } = useHover();
   const s = SIZE_MAP[size];
   const isDisabled = item.disabled === true;
-  const isActive = item.active === true;
+  const isToggle = item.type === 'toggle';
+
+  // For toggle buttons, active state comes from props (managed externally)
+  // For click buttons, pressed state is momentary (mousedown → mouseup)
+  const [pressed, setPressed] = useState(false);
+  const isActive = isToggle ? item.active === true : pressed;
 
   const handleClick = useCallback(() => {
     if (!isDisabled && item.onClick) {
       item.onClick();
     }
   }, [isDisabled, item]);
+
+  // Momentary press for non-toggle buttons
+  const handleMouseDown = useCallback(() => {
+    if (!isDisabled && !isToggle) setPressed(true);
+  }, [isDisabled, isToggle]);
+
+  const handleMouseUp = useCallback(() => {
+    if (!isToggle) setPressed(false);
+  }, [isToggle]);
+
+  const handleMouseLeaveBtn = useCallback(() => {
+    onMouseLeave();
+    if (!isToggle) setPressed(false);
+  }, [isToggle, onMouseLeave]);
 
   const style: Record<string, string> = {
     display: 'inline-flex',
@@ -121,10 +140,12 @@ function ToolbarButton(props: {
       type: 'button',
       style,
       onClick: handleClick,
+      onMouseDown: handleMouseDown,
+      onMouseUp: handleMouseUp,
       onMouseEnter,
-      onMouseLeave,
+      onMouseLeave: handleMouseLeaveBtn,
       disabled: isDisabled || undefined,
-      'aria-pressed': isActive || undefined,
+      'aria-pressed': isToggle ? isActive : undefined,
       'aria-label': item.label || item.id,
       title: item.label || item.id,
     },
@@ -169,7 +190,7 @@ export function Toolbar(props: ToolbarProps) {
       });
     }
 
-    // button or dropdown
+    // button, toggle, or dropdown
     return createElement(ToolbarButton, {
       key: item.id,
       item,
