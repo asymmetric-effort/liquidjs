@@ -265,3 +265,4 @@ All feature work must meet the following criteria before it is considered comple
 - Conventional commits (`feat:`, `fix:`, `test:`, `docs:`, `refactor:`, `perf:`, `chore:`)
 - All changes require tests
 - Feature branches merged via PR
+- **Every version bump must be tagged** — the CI/CD pipeline only publishes to npm on tagged builds (`v*`). After committing a version bump, immediately create and push an annotated tag (e.g., `git tag -a v0.1.3 -m "v0.1.3"` then push). Failing to tag means the version is never published.
