@@ -10,7 +10,7 @@
  */
 
 import { createElement } from '../../../../core/src/index';
-import { useMemo } from '../../../../core/src/hooks/index';
+import { useState, useEffect, useMemo, useCallback } from '../../../../core/src/hooks/index';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -83,18 +83,136 @@ const TERMINAL_LINES = [
   '  \u27A4  press h + enter to show help',
 ];
 
+const PROBLEMS_LINES = [
+  'No problems detected in workspace.',
+];
+
+const OUTPUT_LINES = [
+  '[Info] TypeScript compiler watching for changes...',
+  '[Info] Build completed successfully.',
+];
+
 const BOTTOM_TABS = ['Terminal', 'Problems', 'Output'];
 
+const BOTTOM_TAB_CONTENT: Record<string, Array<string>> = {
+  Terminal: TERMINAL_LINES,
+  Problems: PROBLEMS_LINES,
+  Output: OUTPUT_LINES,
+};
+
+// Current line highlight index (0-based)
+const CURRENT_LINE = 8;
+
+// Cursor position: line index and character offset
+const CURSOR_LINE = 8;
+
 // ---------------------------------------------------------------------------
-// Helpers
+// Syntax Highlighting
 // ---------------------------------------------------------------------------
 
-function syntaxColor(line: string): string {
-  if (line.startsWith('import') || line.startsWith('export')) return '#c586c0';
-  if (line.includes('interface') || line.includes('function')) return '#dcdcaa';
-  if (line.includes('const') || line.includes('return')) return '#569cd6';
-  if (line.includes('//')) return '#6a9955';
-  return '#d4d4d4';
+interface Token {
+  text: string;
+  color: string;
+}
+
+const KEYWORDS = new Set([
+  'import', 'export', 'from', 'const', 'let', 'var', 'function', 'return',
+  'if', 'else', 'for', 'while', 'class', 'new', 'throw', 'try', 'catch',
+  'finally', 'typeof', 'instanceof', 'in', 'of', 'default', 'switch', 'case',
+  'break', 'continue', 'do', 'void', 'delete', 'yield', 'async', 'await',
+]);
+
+const TYPES = new Set([
+  'string', 'number', 'boolean', 'void', 'null', 'undefined', 'any', 'never',
+  'unknown', 'object', 'interface', 'type', 'enum',
+]);
+
+const COL_KEYWORD = '#569cd6';
+const COL_STRING = '#ce9178';
+const COL_TYPE = '#4ec9b0';
+const COL_COMMENT = '#6a9955';
+const COL_FUNCTION = '#dcdcaa';
+const COL_DEFAULT = '#d4d4d4';
+const COL_PUNCTUATION = '#d4d4d4';
+const COL_NUMBER = '#b5cea8';
+
+function tokenizeLine(line: string): Array<Token> {
+  if (!line.trim()) return [{ text: '\u00A0', color: COL_DEFAULT }];
+
+  const tokens: Array<Token> = [];
+  let i = 0;
+
+  while (i < line.length) {
+    // Comments
+    if (line[i] === '/' && line[i + 1] === '/') {
+      tokens.push({ text: line.slice(i), color: COL_COMMENT });
+      break;
+    }
+
+    // Strings (double or single quoted)
+    if (line[i] === '"' || line[i] === "'" || line[i] === '`') {
+      const quote = line[i];
+      let j = i + 1;
+      while (j < line.length && line[j] !== quote) {
+        if (line[j] === '\\') j++; // skip escaped
+        j++;
+      }
+      j = Math.min(j + 1, line.length);
+      tokens.push({ text: line.slice(i, j), color: COL_STRING });
+      i = j;
+      continue;
+    }
+
+    // Numbers
+    if (/[0-9]/.test(line[i]) && (i === 0 || /[\s(,=:[\]{}+\-*/]/.test(line[i - 1]))) {
+      let j = i;
+      while (j < line.length && /[0-9.]/.test(line[j])) j++;
+      tokens.push({ text: line.slice(i, j), color: COL_NUMBER });
+      i = j;
+      continue;
+    }
+
+    // Identifiers / keywords
+    if (/[a-zA-Z_$]/.test(line[i])) {
+      let j = i;
+      while (j < line.length && /[a-zA-Z0-9_$]/.test(line[j])) j++;
+      const word = line.slice(i, j);
+
+      // Check if followed by '(' to detect function calls
+      let nextNonSpace = j;
+      while (nextNonSpace < line.length && line[nextNonSpace] === ' ') nextNonSpace++;
+      const isCall = nextNonSpace < line.length && line[nextNonSpace] === '(';
+
+      let color = COL_DEFAULT;
+      if (KEYWORDS.has(word)) {
+        color = COL_KEYWORD;
+      } else if (TYPES.has(word)) {
+        color = COL_TYPE;
+      } else if (isCall) {
+        color = COL_FUNCTION;
+      } else if (word === 'true' || word === 'false') {
+        color = COL_KEYWORD;
+      }
+      tokens.push({ text: word, color });
+      i = j;
+      continue;
+    }
+
+    // Whitespace
+    if (line[i] === ' ' || line[i] === '\t') {
+      let j = i;
+      while (j < line.length && (line[j] === ' ' || line[j] === '\t')) j++;
+      tokens.push({ text: line.slice(i, j), color: COL_DEFAULT });
+      i = j;
+      continue;
+    }
+
+    // Punctuation / operators
+    tokens.push({ text: line[i], color: COL_PUNCTUATION });
+    i++;
+  }
+
+  return tokens;
 }
 
 // ---------------------------------------------------------------------------
@@ -102,6 +220,21 @@ function syntaxColor(line: string): string {
 // ---------------------------------------------------------------------------
 
 export function IDE(props: IDEProps) {
+  const [activeBottomTab, setActiveBottomTab] = useState('Terminal');
+  const [cursorVisible, setCursorVisible] = useState(true);
+
+  // Blinking cursor effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCursorVisible((prev: boolean) => !prev);
+    }, 530);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleBottomTabClick = useCallback((tab: string) => {
+    setActiveBottomTab(tab);
+  }, []);
+
   const containerStyle = useMemo<Record<string, string>>(() => ({
     width: '100%',
     height: '100%',
@@ -124,7 +257,7 @@ export function IDE(props: IDEProps) {
     fontSize: '12px',
     color: '#999',
     flexShrink: '0',
-    borderBottom: '1px solid #252526',
+    borderBottom: '1px solid var(--color-border, #252526)',
   };
 
   const menuBarStyle: Record<string, string> = {
@@ -156,11 +289,20 @@ export function IDE(props: IDEProps) {
   const sidebarStyle: Record<string, string> = {
     width: '220px',
     backgroundColor: '#252526',
-    borderRight: '1px solid #1e1e1e',
+    borderRight: 'none',
     display: 'flex',
     flexDirection: 'column',
     flexShrink: '0',
     overflowY: 'auto',
+  };
+
+  const sidebarResizeHandleStyle: Record<string, string> = {
+    width: '1px',
+    backgroundColor: '#007acc',
+    cursor: 'col-resize',
+    flexShrink: '0',
+    opacity: '0.4',
+    transition: 'opacity 0.2s',
   };
 
   const sidebarHeaderStyle: Record<string, string> = {
@@ -181,6 +323,9 @@ export function IDE(props: IDEProps) {
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+    borderRadius: '3px',
+    margin: '0 4px',
+    transition: 'background-color 0.1s',
   });
 
   const editorAreaStyle: Record<string, string> = {
@@ -205,10 +350,10 @@ export function IDE(props: IDEProps) {
     backgroundColor: '#1e1e1e',
     color: '#ffffff',
     fontSize: '13px',
-    borderTop: '1px solid #007acc',
     cursor: 'pointer',
     border: 'none',
-    borderBottom: 'none',
+    borderBottom: '2px solid #007acc',
+    boxSizing: 'border-box',
   };
 
   const editorContentStyle: Record<string, string> = {
@@ -242,18 +387,19 @@ export function IDE(props: IDEProps) {
   const minimapStyle: Record<string, string> = {
     width: '60px',
     backgroundColor: '#1e1e1e',
-    borderLeft: '1px solid #252526',
+    borderLeft: '1px solid var(--color-border, #252526)',
     flexShrink: '0',
     padding: '8px 4px',
     display: 'flex',
     flexDirection: 'column',
     gap: '2px',
+    position: 'relative',
   };
 
   const bottomPanelStyle: Record<string, string> = {
     height: '120px',
     backgroundColor: '#1e1e1e',
-    borderTop: '1px solid #007acc',
+    borderTop: '1px solid var(--color-border, #007acc)',
     display: 'flex',
     flexDirection: 'column',
     flexShrink: '0',
@@ -268,7 +414,7 @@ export function IDE(props: IDEProps) {
     flexShrink: '0',
   };
 
-  const bottomTabStyle = (active: boolean): Record<string, string> => ({
+  const bottomTabStyleFn = (active: boolean): Record<string, string> => ({
     padding: '0 12px',
     height: '28px',
     lineHeight: '28px',
@@ -278,6 +424,7 @@ export function IDE(props: IDEProps) {
     borderBottom: active ? '1px solid #007acc' : '1px solid transparent',
     backgroundColor: 'transparent',
     border: 'none',
+    transition: 'color 0.15s',
   });
 
   const terminalContentStyle: Record<string, string> = {
@@ -302,6 +449,74 @@ export function IDE(props: IDEProps) {
     color: '#ffffff',
     flexShrink: '0',
   };
+
+  const statusItemStyle: Record<string, string> = {
+    cursor: 'pointer',
+    padding: '0 6px',
+    borderRadius: '3px',
+    transition: 'background-color 0.15s',
+  };
+
+  // Minimap viewport indicator position (approx lines 1-15 visible out of 25)
+  const viewportTop = 8;
+  const viewportHeight = 30;
+
+  // Get the content lines for the active bottom tab
+  const activeContent = BOTTOM_TAB_CONTENT[activeBottomTab] ?? TERMINAL_LINES;
+
+  // Build code lines with syntax highlighting and cursor
+  const codeLines = SAMPLE_CODE.map((line, i) => {
+    const tokens = tokenizeLine(line);
+    const spans: Array<unknown> = [];
+    let spanIdx = 0;
+    for (const token of tokens) {
+      spans.push(
+        createElement('span', {
+          key: String(spanIdx++),
+          style: { color: token.color },
+        }, token.text),
+      );
+    }
+
+    // Add blinking cursor at end of cursor line
+    if (i === CURSOR_LINE) {
+      spans.push(
+        createElement('span', {
+          key: 'cursor',
+          style: {
+            borderLeft: '2px solid #aeafad',
+            marginLeft: '1px',
+            visibility: cursorVisible ? 'visible' : 'hidden',
+          },
+        }, ''),
+      );
+    }
+
+    const isCurrentLine = i === CURRENT_LINE;
+    return createElement(
+      'div',
+      {
+        key: String(i),
+        style: {
+          backgroundColor: isCurrentLine ? 'rgba(255,255,255,0.04)' : 'transparent',
+          minHeight: '20px',
+        },
+      },
+      ...spans,
+    );
+  });
+
+  // Build line number elements with current line highlight
+  const lineNumbers = SAMPLE_CODE.map((_, i) => {
+    const isCurrentLine = i === CURRENT_LINE;
+    return createElement('div', {
+      key: String(i),
+      style: {
+        color: isCurrentLine ? '#c6c6c6' : '#858585',
+        backgroundColor: isCurrentLine ? 'rgba(255,255,255,0.04)' : 'transparent',
+      },
+    }, String(i + 1));
+  });
 
   return createElement(
     'div',
@@ -345,6 +560,8 @@ export function IDE(props: IDEProps) {
           ),
         ),
       ),
+      // Resize handle between sidebar and editor
+      createElement('div', { style: sidebarResizeHandleStyle }),
       // Editor Area
       createElement(
         'div',
@@ -363,21 +580,13 @@ export function IDE(props: IDEProps) {
           createElement(
             'div',
             { style: lineNumbersStyle, 'aria-hidden': 'true' },
-            ...SAMPLE_CODE.map((_, i) =>
-              createElement('div', { key: String(i) }, String(i + 1)),
-            ),
+            ...lineNumbers,
           ),
           // Code
           createElement(
             'code',
             { style: codeAreaStyle },
-            ...SAMPLE_CODE.map((line, i) =>
-              createElement(
-                'div',
-                { key: String(i), style: { color: syntaxColor(line) } },
-                line || '\u00A0',
-              ),
-            ),
+            ...codeLines,
           ),
         ),
       ),
@@ -385,6 +594,20 @@ export function IDE(props: IDEProps) {
       createElement(
         'div',
         { className: 'ide__minimap', style: minimapStyle, 'aria-hidden': 'true' },
+        // Viewport indicator
+        createElement('div', {
+          style: {
+            position: 'absolute',
+            top: `${viewportTop}px`,
+            left: '0',
+            right: '0',
+            height: `${viewportHeight}px`,
+            backgroundColor: 'rgba(100, 100, 200, 0.15)',
+            border: '1px solid rgba(100, 100, 200, 0.3)',
+            borderRadius: '2px',
+            pointerEvents: 'none',
+          },
+        }),
         ...SAMPLE_CODE.map((line, i) =>
           createElement('div', {
             key: String(i),
@@ -410,10 +633,11 @@ export function IDE(props: IDEProps) {
             'button',
             {
               key: String(i),
-              style: bottomTabStyle(i === 0),
+              style: bottomTabStyleFn(tab === activeBottomTab),
               role: 'tab',
-              'aria-selected': i === 0 ? 'true' : 'false',
+              'aria-selected': tab === activeBottomTab ? 'true' : 'false',
               'aria-label': tab,
+              onClick: () => handleBottomTabClick(tab),
             },
             tab,
           ),
@@ -422,7 +646,7 @@ export function IDE(props: IDEProps) {
       createElement(
         'div',
         { style: terminalContentStyle, role: 'log' },
-        ...TERMINAL_LINES.map((line, i) =>
+        ...activeContent.map((line, i) =>
           createElement('div', { key: String(i) }, line || '\u00A0'),
         ),
       ),
@@ -434,16 +658,16 @@ export function IDE(props: IDEProps) {
       createElement(
         'div',
         { style: { display: 'flex', gap: '16px' } },
-        createElement('span', null, '\u{2387} main'),
-        createElement('span', null, '0 errors'),
-        createElement('span', null, '0 warnings'),
+        createElement('span', { style: statusItemStyle }, '\u{2387} main'),
+        createElement('span', { style: statusItemStyle }, '0 errors'),
+        createElement('span', { style: statusItemStyle }, '0 warnings'),
       ),
       createElement(
         'div',
         { style: { display: 'flex', gap: '16px' } },
-        createElement('span', null, 'Ln 1, Col 1'),
-        createElement('span', null, 'UTF-8'),
-        createElement('span', null, 'TypeScript'),
+        createElement('span', { style: statusItemStyle }, 'Ln 1, Col 1'),
+        createElement('span', { style: statusItemStyle }, 'UTF-8'),
+        createElement('span', { style: statusItemStyle }, 'TypeScript'),
       ),
     ),
   );

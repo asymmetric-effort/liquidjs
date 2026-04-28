@@ -6,11 +6,13 @@
  *
  * Features a left sidebar launcher bar with icon buttons, a top panel bar
  * with Activities, clock, and system tray, and a main desktop area with
- * an aubergine gradient background.
+ * an aubergine gradient background. Includes a mock active window,
+ * real-time clock, hover states, keyboard navigation, and dark-mode
+ * CSS variable support.
  */
 
 import { createElement } from '../../../../core/src/index';
-import { useMemo } from '../../../../core/src/hooks/index';
+import { useMemo, useState, useEffect, useCallback } from '../../../../core/src/hooks/index';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -30,15 +32,15 @@ export interface UnityDesktopProps {
 const LAUNCHER_WIDTH = '48px';
 const TOP_PANEL_HEIGHT = '28px';
 
-const LAUNCHER_ICONS: Array<{ emoji: string; label: string }> = [
-  { emoji: '\u{1F4C1}', label: 'Files' },
-  { emoji: '\u{1F310}', label: 'Browser' },
-  { emoji: '\u{1F4BB}', label: 'Terminal' },
-  { emoji: '\u{2709}\uFE0F', label: 'Mail' },
-  { emoji: '\u{1F3B5}', label: 'Music' },
-  { emoji: '\u{1F4F7}', label: 'Photos' },
-  { emoji: '\u{1F4E6}', label: 'Software' },
-  { emoji: '\u{2699}\uFE0F', label: 'Settings' },
+const LAUNCHER_ICONS: Array<{ letter: string; color: string; label: string }> = [
+  { letter: 'F', color: '#3465a4', label: 'Files' },
+  { letter: 'W', color: '#e67e22', label: 'Browser' },
+  { letter: 'T', color: '#2ecc71', label: 'Terminal' },
+  { letter: 'M', color: '#3498db', label: 'Mail' },
+  { letter: 'N', color: '#e74c3c', label: 'Music' },
+  { letter: 'P', color: '#9b59b6', label: 'Photos' },
+  { letter: 'S', color: '#f39c12', label: 'Software' },
+  { letter: 'G', color: '#7f8c8d', label: 'Settings' },
 ];
 
 const TRAY_ICONS = ['\u{1F50A}', '\u{1F4F6}', '\u{1F50B}'];
@@ -48,6 +50,32 @@ const TRAY_ICONS = ['\u{1F50A}', '\u{1F4F6}', '\u{1F50B}'];
 // ---------------------------------------------------------------------------
 
 export function UnityDesktop(props: UnityDesktopProps) {
+  const [hoveredIndex, setHoveredIndex] = useState<number>(-1);
+  const [clockText, setClockText] = useState<string>(() => {
+    const now = new Date();
+    return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+  });
+  const [dateText, setDateText] = useState<string>(() => {
+    return new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  });
+
+  useEffect(() => {
+    const updateClock = () => {
+      const now = new Date();
+      setClockText(`${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`);
+      setDateText(now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }));
+    };
+    const id = setInterval(updateClock, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const handleIconKeyDown = useCallback((index: number, e: KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      // activate action (no-op in mock)
+    }
+  }, []);
+
   const containerStyle = useMemo<Record<string, string>>(() => ({
     width: '100%',
     height: '100%',
@@ -56,7 +84,7 @@ export function UnityDesktop(props: UnityDesktopProps) {
     flexDirection: 'column',
     fontFamily: 'Ubuntu, "Segoe UI", sans-serif',
     fontSize: '13px',
-    color: '#ffffff',
+    color: 'var(--color-text, #ffffff)',
     overflow: 'hidden',
     position: 'relative',
   }), []);
@@ -64,7 +92,7 @@ export function UnityDesktop(props: UnityDesktopProps) {
   const topPanelStyle: Record<string, string> = {
     width: '100%',
     height: TOP_PANEL_HEIGHT,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: 'var(--color-bg, #1a1a1a)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -73,6 +101,7 @@ export function UnityDesktop(props: UnityDesktopProps) {
     fontSize: '12px',
     zIndex: '10',
     flexShrink: '0',
+    borderBottom: '1px solid var(--color-border, #333)',
   };
 
   const bodyStyle: Record<string, string> = {
@@ -83,7 +112,7 @@ export function UnityDesktop(props: UnityDesktopProps) {
 
   const launcherStyle: Record<string, string> = {
     width: LAUNCHER_WIDTH,
-    backgroundColor: '#2c2c2c',
+    backgroundColor: 'var(--color-bg, #2c2c2c)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -93,20 +122,7 @@ export function UnityDesktop(props: UnityDesktopProps) {
     flexShrink: '0',
     overflowY: 'auto',
     boxSizing: 'border-box',
-  };
-
-  const iconButtonStyle: Record<string, string> = {
-    width: '40px',
-    height: '40px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontSize: '18px',
-    backgroundColor: 'transparent',
-    border: 'none',
-    transition: 'background-color 0.15s',
+    borderRight: '1px solid var(--color-border, #444)',
   };
 
   const desktopStyle: Record<string, string> = {
@@ -119,15 +135,97 @@ export function UnityDesktop(props: UnityDesktopProps) {
     position: 'relative',
   };
 
-  const gridButtonStyle: Record<string, string> = {
-    ...iconButtonStyle,
-    marginTop: 'auto',
-    fontSize: '20px',
+  // Mock window styles
+  const windowStyle: Record<string, string> = {
+    width: '420px',
+    minHeight: '280px',
+    backgroundColor: '#ffffff',
+    borderRadius: '6px',
+    boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+    display: 'flex',
+    flexDirection: 'column',
+    overflow: 'hidden',
+    position: 'absolute',
   };
 
-  const now = new Date();
-  const clockText = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-  const dateText = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  const windowTitleBarStyle: Record<string, string> = {
+    height: '32px',
+    backgroundColor: '#3c3c3c',
+    display: 'flex',
+    alignItems: 'center',
+    padding: '0 10px',
+    gap: '6px',
+    flexShrink: '0',
+  };
+
+  const windowBodyStyle: Record<string, string> = {
+    flex: '1',
+    padding: '16px',
+    fontSize: '13px',
+    color: '#333',
+    lineHeight: '1.5',
+  };
+
+  function makeCircleStyle(color: string): Record<string, string> {
+    return {
+      width: '12px',
+      height: '12px',
+      borderRadius: '50%',
+      backgroundColor: color,
+      cursor: 'pointer',
+    };
+  }
+
+  function makeIconButtonStyle(index: number): Record<string, string> {
+    const isHovered = hoveredIndex === index;
+    return {
+      width: '40px',
+      height: '40px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: '4px',
+      cursor: 'pointer',
+      fontSize: '14px',
+      fontWeight: '700',
+      backgroundColor: isHovered ? 'rgba(255,255,255,0.15)' : 'transparent',
+      border: 'none',
+      color: '#ffffff',
+      transition: 'background 0.15s',
+    };
+  }
+
+  function makeIconCircleStyle(color: string): Record<string, string> {
+    return {
+      width: '28px',
+      height: '28px',
+      borderRadius: '50%',
+      backgroundColor: color,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: '13px',
+      fontWeight: '700',
+      color: '#ffffff',
+      lineHeight: '1',
+    };
+  }
+
+  const gridButtonStyle: Record<string, string> = {
+    width: '40px',
+    height: '40px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '20px',
+    backgroundColor: hoveredIndex === LAUNCHER_ICONS.length ? 'rgba(255,255,255,0.15)' : 'transparent',
+    border: 'none',
+    color: '#ffffff',
+    transition: 'background 0.15s',
+    marginTop: 'auto',
+  };
 
   return createElement(
     'div',
@@ -141,7 +239,15 @@ export function UnityDesktop(props: UnityDesktopProps) {
       { className: 'unity-desktop__top-panel', style: topPanelStyle },
       createElement(
         'span',
-        { style: { fontWeight: '600', cursor: 'pointer' } },
+        {
+          style: {
+            fontWeight: '600',
+            cursor: 'pointer',
+            padding: '2px 8px',
+            borderRadius: '3px',
+            transition: 'background 0.15s',
+          },
+        },
         'Activities',
       ),
       createElement(
@@ -175,11 +281,15 @@ export function UnityDesktop(props: UnityDesktopProps) {
             'button',
             {
               key: String(i),
-              style: iconButtonStyle,
+              style: makeIconButtonStyle(i),
               title: item.label,
               'aria-label': item.label,
+              tabIndex: 0,
+              onMouseEnter: () => setHoveredIndex(i),
+              onMouseLeave: () => setHoveredIndex(-1),
+              onKeyDown: (e: KeyboardEvent) => handleIconKeyDown(i, e),
             },
-            item.emoji,
+            createElement('span', { style: makeIconCircleStyle(item.color) }, item.letter),
           ),
         ),
         // Show Applications grid button
@@ -189,6 +299,9 @@ export function UnityDesktop(props: UnityDesktopProps) {
             style: gridButtonStyle,
             title: 'Show Applications',
             'aria-label': 'Show Applications',
+            tabIndex: 0,
+            onMouseEnter: () => setHoveredIndex(LAUNCHER_ICONS.length),
+            onMouseLeave: () => setHoveredIndex(-1),
           },
           '\u{2630}',
         ),
@@ -200,6 +313,37 @@ export function UnityDesktop(props: UnityDesktopProps) {
           className: 'unity-desktop__desktop',
           style: desktopStyle,
         },
+        // Mock active window
+        createElement(
+          'div',
+          { className: 'unity-desktop__window', style: windowStyle },
+          createElement(
+            'div',
+            { style: windowTitleBarStyle },
+            createElement('span', { style: makeCircleStyle('#e74c3c') }),
+            createElement('span', { style: makeCircleStyle('#f39c12') }),
+            createElement('span', { style: makeCircleStyle('#2ecc71') }),
+            createElement(
+              'span',
+              {
+                style: {
+                  flex: '1',
+                  textAlign: 'center',
+                  fontSize: '12px',
+                  color: '#ccc',
+                  marginRight: '40px',
+                },
+              },
+              'Terminal',
+            ),
+          ),
+          createElement(
+            'div',
+            { style: windowBodyStyle },
+            createElement('span', { style: { color: '#2ecc71' } }, 'user@desktop:~$ '),
+            createElement('span', { style: { color: '#666' } }, 'Welcome to SpecifyJS Desktop'),
+          ),
+        ),
         props.children,
       ),
     ),

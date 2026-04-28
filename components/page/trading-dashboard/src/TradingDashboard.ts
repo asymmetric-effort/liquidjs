@@ -10,7 +10,7 @@
  */
 
 import { createElement } from '../../../../core/src/index';
-import { useState, useEffect, useMemo } from '../../../../core/src/hooks/index';
+import { useState, useEffect, useMemo, useCallback } from '../../../../core/src/hooks/index';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -26,12 +26,12 @@ export interface TradingDashboardProps {
 // ---------------------------------------------------------------------------
 
 const WATCHLIST = [
-  { symbol: 'AAPL', price: 189.42, change: 1.23, volume: '52.3M' },
-  { symbol: 'GOOGL', price: 141.80, change: -0.87, volume: '23.1M' },
-  { symbol: 'MSFT', price: 378.91, change: 2.45, volume: '18.7M' },
-  { symbol: 'AMZN', price: 185.63, change: -1.12, volume: '31.4M' },
-  { symbol: 'TSLA', price: 248.50, change: 3.78, volume: '67.2M' },
-  { symbol: 'NVDA', price: 875.30, change: 12.50, volume: '41.8M' },
+  { symbol: 'AAPL', price: 189.42, change: 1.23, volume: 52300000, spark: [186, 187, 188, 187, 189] },
+  { symbol: 'GOOGL', price: 141.80, change: -0.87, volume: 23100000, spark: [143, 142, 141, 142, 141] },
+  { symbol: 'MSFT', price: 378.91, change: 2.45, volume: 18700000, spark: [375, 376, 378, 377, 379] },
+  { symbol: 'AMZN', price: 185.63, change: -1.12, volume: 31400000, spark: [187, 186, 186, 185, 185] },
+  { symbol: 'TSLA', price: 248.50, change: 3.78, volume: 67200000, spark: [244, 245, 247, 246, 249] },
+  { symbol: 'NVDA', price: 875.30, change: 12.50, volume: 41800000, spark: [860, 865, 870, 868, 876] },
 ];
 
 const ORDER_BOOK_BIDS = [
@@ -88,6 +88,27 @@ const DEPTH_ASKS = [
   { price: 189.65, volume: 3100 },
 ];
 
+// Time axis labels for chart
+const TIME_LABELS = ['09:30', '10:00', '10:30', '11:00', '11:30', '12:00'];
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function formatVolume(n: number): string {
+  if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`;
+  if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
+  return String(n);
+}
+
+function formatWithCommas(n: number): string {
+  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function formatPrice(n: number): string {
+  return n.toFixed(2);
+}
+
 // ---------------------------------------------------------------------------
 // Styles
 // ---------------------------------------------------------------------------
@@ -134,55 +155,162 @@ const tdStyle: Record<string, string> = {
   fontSize: '12px',
 };
 
+const hoverRowStyle: Record<string, string> = {
+  cursor: 'default',
+  transition: 'background-color 0.1s',
+};
+
+// ---------------------------------------------------------------------------
+// Sparkline builder
+// ---------------------------------------------------------------------------
+
+function buildSparkline(data: Array<number>, isPositive: boolean): unknown {
+  const w = 40;
+  const h = 14;
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  const range = max - min || 1;
+  const points = data.map((v, i) => {
+    const x = (i / (data.length - 1)) * w;
+    const y = h - ((v - min) / range) * h;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+
+  const color = isPositive ? '#00c853' : '#ff1744';
+
+  return createElement(
+    'svg',
+    {
+      viewBox: `0 0 ${w} ${h}`,
+      style: {
+        width: '40px',
+        height: '14px',
+        display: 'inline-block',
+        verticalAlign: 'middle',
+        marginLeft: '4px',
+      },
+      'aria-hidden': 'true',
+    },
+    createElement('polyline', {
+      points,
+      fill: 'none',
+      stroke: color,
+      strokeWidth: '1.5',
+      strokeLinecap: 'round',
+      strokeLinejoin: 'round',
+    }),
+  );
+}
+
 // ---------------------------------------------------------------------------
 // Sub-components
 // ---------------------------------------------------------------------------
 
 function buildPriceChart(data: Array<number>, currentPrice: number): unknown {
   const width = 360;
-  const height = 140;
-  const padX = 10;
-  const padY = 10;
+  const height = 160;
+  const padX = 40;  // more room for Y axis labels
+  const padY = 15;
+  const padBottom = 25; // room for X axis labels
+  const chartHeight = height - padY - padBottom;
+  const chartWidth = width - padX - 10;
   const min = Math.min(...data);
   const max = Math.max(...data);
   const range = max - min || 1;
-  const stepX = (width - padX * 2) / (data.length - 1);
+  const stepX = chartWidth / (data.length - 1);
 
   const points = data.map((v, i) => {
     const x = padX + i * stepX;
-    const y = padY + (1 - (v - min) / range) * (height - padY * 2);
-    return `${x},${y}`;
+    const y = padY + (1 - (v - min) / range) * chartHeight;
+    return { x, y };
   });
 
-  const linePath = `M${points.join(' L')}`;
+  const polylinePoints = points.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
 
-  // Candlestick-like coloring: green if up, red if down from previous
+  // Area fill path (polygon under the line)
+  const areaPath = `M${padX},${padY + chartHeight} ` +
+    points.map(p => `L${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ') +
+    ` L${points[points.length - 1].x.toFixed(1)},${padY + chartHeight} Z`;
+
+  // Line segments colored green/red
   const segments: Array<unknown> = [];
   for (let i = 1; i < data.length; i++) {
-    const x1 = padX + (i - 1) * stepX;
-    const y1 = padY + (1 - (data[i - 1] - min) / range) * (height - padY * 2);
-    const x2 = padX + i * stepX;
-    const y2 = padY + (1 - (data[i] - min) / range) * (height - padY * 2);
     const color = data[i] >= data[i - 1] ? '#00c853' : '#ff1744';
     segments.push(
       createElement('line', {
         key: String(i),
-        x1: String(x1),
-        y1: String(y1),
-        x2: String(x2),
-        y2: String(y2),
+        x1: String(points[i - 1].x.toFixed(1)),
+        y1: String(points[i - 1].y.toFixed(1)),
+        x2: String(points[i].x.toFixed(1)),
+        y2: String(points[i].y.toFixed(1)),
         stroke: color,
         strokeWidth: '2',
+        strokeLinecap: 'round',
       }),
     );
   }
+
+  // Horizontal grid lines with price labels (5 lines)
+  const gridLines: Array<unknown> = [];
+  for (let i = 0; i < 5; i++) {
+    const y = padY + (i / 4) * chartHeight;
+    const priceVal = max - (i / 4) * range;
+    gridLines.push(
+      createElement('line', {
+        key: `g${i}`,
+        x1: String(padX),
+        y1: String(y.toFixed(1)),
+        x2: String(width - 10),
+        y2: String(y.toFixed(1)),
+        stroke: '#2a2a4a',
+        strokeWidth: '0.5',
+        strokeDasharray: '3,3',
+      }),
+    );
+    // Y axis price label
+    gridLines.push(
+      createElement('text', {
+        key: `yl${i}`,
+        x: String(padX - 4),
+        y: String((y + 3).toFixed(1)),
+        fill: '#6666aa',
+        fontSize: '8',
+        textAnchor: 'end',
+        fontFamily: 'monospace',
+      }, formatPrice(priceVal)),
+    );
+  }
+
+  // X axis time labels
+  const timeLabels: Array<unknown> = [];
+  const labelCount = Math.min(TIME_LABELS.length, data.length);
+  const labelStep = (data.length - 1) / (labelCount - 1);
+  for (let i = 0; i < labelCount; i++) {
+    const idx = Math.round(i * labelStep);
+    const x = padX + idx * stepX;
+    timeLabels.push(
+      createElement('text', {
+        key: `tl${i}`,
+        x: String(x.toFixed(1)),
+        y: String(height - 4),
+        fill: '#6666aa',
+        fontSize: '8',
+        textAnchor: 'middle',
+        fontFamily: 'monospace',
+      }, TIME_LABELS[i]),
+    );
+  }
+
+  // Gradient definition for area fill
+  const gradientId = 'chartGrad';
 
   return createElement(
     'div',
     { style: cellStyle },
     createElement('div', { style: cellTitleStyle },
       'AAPL ',
-      createElement('span', { style: { color: '#00c853', fontSize: '14px', fontWeight: '700' } }, `$${currentPrice.toFixed(2)}`),
+      createElement('span', { style: { color: '#00c853', fontSize: '14px', fontWeight: '700' } }, `$${formatPrice(currentPrice)}`),
+      createElement('span', { style: { color: '#00c853', fontSize: '11px', marginLeft: '8px' } }, '+1.23%'),
     ),
     createElement(
       'svg',
@@ -192,21 +320,39 @@ function buildPriceChart(data: Array<number>, currentPrice: number): unknown {
         'aria-label': 'Price chart',
         role: 'img',
       },
-      // Grid lines
-      ...Array.from({ length: 5 }, (_, i) => {
-        const y = padY + (i / 4) * (height - padY * 2);
-        return createElement('line', {
-          key: `g${i}`,
-          x1: String(padX),
-          y1: String(y),
-          x2: String(width - padX),
-          y2: String(y),
-          stroke: '#2a2a4a',
-          strokeWidth: '0.5',
-        });
+      // Gradient definition
+      createElement(
+        'defs',
+        null,
+        createElement(
+          'linearGradient',
+          { id: gradientId, x1: '0', y1: '0', x2: '0', y2: '1' },
+          createElement('stop', { offset: '0%', stopColor: '#00c853', stopOpacity: '0.3' }),
+          createElement('stop', { offset: '100%', stopColor: '#00c853', stopOpacity: '0.02' }),
+        ),
+      ),
+      // Area fill under the line
+      createElement('path', {
+        d: areaPath,
+        fill: `url(#${gradientId})`,
       }),
-      // Price line segments
+      // Grid lines + labels
+      ...gridLines,
+      // Time labels
+      ...timeLabels,
+      // Price line segments (colored)
       ...segments,
+      // Current price dotted line
+      createElement('line', {
+        x1: String(padX),
+        y1: String((padY + (1 - (currentPrice - min) / range) * chartHeight).toFixed(1)),
+        x2: String(width - 10),
+        y2: String((padY + (1 - (currentPrice - min) / range) * chartHeight).toFixed(1)),
+        stroke: '#00c853',
+        strokeWidth: '0.5',
+        strokeDasharray: '4,2',
+        opacity: '0.6',
+      }),
     ),
   );
 }
@@ -241,17 +387,44 @@ function buildOrderBook(): unknown {
         null,
         ...ORDER_BOOK_BIDS.map((bid, i) => {
           const ask = ORDER_BOOK_ASKS[i];
+          const bidIntensity = (bid.qty / maxQty) * 0.25;
+          const askIntensity = ((ask?.qty ?? 0) / maxQty) * 0.25;
           return createElement(
             'tr',
-            { key: String(i) },
+            {
+              key: String(i),
+              style: hoverRowStyle,
+            },
             createElement('td', {
-              style: { ...tdStyle, color: '#00c853', background: `rgba(0,200,83,${bid.qty / maxQty * 0.2})` },
-            }, bid.price.toFixed(2)),
-            createElement('td', { style: tdStyle }, String(bid.qty)),
+              style: {
+                ...tdStyle,
+                color: '#00c853',
+                backgroundColor: `rgba(0,200,83,${bidIntensity.toFixed(3)})`,
+                fontFamily: 'monospace',
+              },
+            }, formatPrice(bid.price)),
             createElement('td', {
-              style: { ...tdStyle, color: '#ff1744', background: `rgba(255,23,68,${(ask?.qty ?? 0) / maxQty * 0.2})` },
-            }, ask ? ask.price.toFixed(2) : ''),
-            createElement('td', { style: tdStyle }, ask ? String(ask.qty) : ''),
+              style: {
+                ...tdStyle,
+                backgroundColor: `rgba(0,200,83,${(bidIntensity * 0.5).toFixed(3)})`,
+                fontFamily: 'monospace',
+              },
+            }, formatWithCommas(bid.qty)),
+            createElement('td', {
+              style: {
+                ...tdStyle,
+                color: '#ff1744',
+                backgroundColor: `rgba(255,23,68,${askIntensity.toFixed(3)})`,
+                fontFamily: 'monospace',
+              },
+            }, ask ? formatPrice(ask.price) : ''),
+            createElement('td', {
+              style: {
+                ...tdStyle,
+                backgroundColor: `rgba(255,23,68,${(askIntensity * 0.5).toFixed(3)})`,
+                fontFamily: 'monospace',
+              },
+            }, ask ? formatWithCommas(ask.qty) : ''),
           );
         }),
       ),
@@ -287,13 +460,19 @@ function buildWatchlist(priceOffset: number): unknown {
           const isPositive = item.change >= 0;
           return createElement(
             'tr',
-            { key: String(i) },
-            createElement('td', { style: { ...tdStyle, fontWeight: '600', color: '#ffffff' } }, item.symbol),
-            createElement('td', { style: tdStyle }, adjustedPrice.toFixed(2)),
+            {
+              key: String(i),
+              style: hoverRowStyle,
+            },
+            createElement('td', { style: { ...tdStyle, fontWeight: '600', color: '#ffffff' } },
+              item.symbol,
+              buildSparkline(item.spark, isPositive),
+            ),
+            createElement('td', { style: { ...tdStyle, fontFamily: 'monospace' } }, formatPrice(adjustedPrice)),
             createElement('td', {
-              style: { ...tdStyle, color: isPositive ? '#00c853' : '#ff1744' },
-            }, `${isPositive ? '+' : ''}${item.change.toFixed(2)}%`),
-            createElement('td', { style: tdStyle }, item.volume),
+              style: { ...tdStyle, color: isPositive ? '#00c853' : '#ff1744', fontWeight: '600' },
+            }, `${isPositive ? '+' : ''}${formatPrice(item.change)}%`),
+            createElement('td', { style: { ...tdStyle, fontFamily: 'monospace', color: '#8888aa' } }, formatVolume(item.volume)),
           );
         }),
       ),
@@ -302,10 +481,23 @@ function buildWatchlist(priceOffset: number): unknown {
 }
 
 function buildPositions(): unknown {
+  const totalPnl = POSITIONS.reduce((sum, p) => sum + p.pnl, 0);
+  const totalPositive = totalPnl >= 0;
+
   return createElement(
     'div',
     { style: cellStyle },
-    createElement('div', { style: cellTitleStyle }, 'Positions'),
+    createElement('div', { style: cellTitleStyle },
+      'Positions',
+      createElement('span', {
+        style: {
+          marginLeft: '12px',
+          color: totalPositive ? '#00c853' : '#ff1744',
+          fontWeight: '700',
+          fontSize: '12px',
+        },
+      }, `${totalPositive ? '+' : ''}$${formatPrice(totalPnl)}`),
+    ),
     createElement(
       'table',
       { style: tableStyle },
@@ -328,13 +520,26 @@ function buildPositions(): unknown {
           const isPositive = pos.pnl >= 0;
           return createElement(
             'tr',
-            { key: String(i) },
+            {
+              key: String(i),
+              style: {
+                ...hoverRowStyle,
+                backgroundColor: isPositive
+                  ? 'rgba(0,200,83,0.04)'
+                  : 'rgba(255,23,68,0.04)',
+              },
+            },
             createElement('td', { style: { ...tdStyle, fontWeight: '600', color: '#ffffff' } }, pos.symbol),
-            createElement('td', { style: tdStyle }, String(pos.qty)),
-            createElement('td', { style: tdStyle }, pos.avgPrice.toFixed(2)),
+            createElement('td', { style: { ...tdStyle, fontFamily: 'monospace' } }, String(pos.qty)),
+            createElement('td', { style: { ...tdStyle, fontFamily: 'monospace' } }, formatPrice(pos.avgPrice)),
             createElement('td', {
-              style: { ...tdStyle, color: isPositive ? '#00c853' : '#ff1744', fontWeight: '600' },
-            }, `${isPositive ? '+' : ''}$${pos.pnl.toFixed(2)}`),
+              style: {
+                ...tdStyle,
+                color: isPositive ? '#00c853' : '#ff1744',
+                fontWeight: '700',
+                fontFamily: 'monospace',
+              },
+            }, `${isPositive ? '+' : ''}$${formatPrice(pos.pnl)}`),
           );
         }),
       ),
@@ -370,14 +575,17 @@ function buildRecentTrades(): unknown {
           const isBuy = trade.side === 'BUY';
           return createElement(
             'tr',
-            { key: String(i) },
-            createElement('td', { style: { ...tdStyle, color: '#8888aa' } }, trade.time),
+            {
+              key: String(i),
+              style: hoverRowStyle,
+            },
+            createElement('td', { style: { ...tdStyle, color: '#8888aa', fontFamily: 'monospace' } }, trade.time),
             createElement('td', { style: { ...tdStyle, fontWeight: '600', color: '#ffffff' } }, trade.symbol),
             createElement('td', {
               style: { ...tdStyle, color: isBuy ? '#00c853' : '#ff1744', fontWeight: '600' },
             }, trade.side),
-            createElement('td', { style: tdStyle }, String(trade.qty)),
-            createElement('td', { style: tdStyle }, trade.price.toFixed(2)),
+            createElement('td', { style: { ...tdStyle, fontFamily: 'monospace' } }, formatWithCommas(trade.qty)),
+            createElement('td', { style: { ...tdStyle, fontFamily: 'monospace' } }, formatPrice(trade.price)),
           );
         }),
       ),
@@ -408,7 +616,7 @@ function buildMarketDepth(): unknown {
             key: `b${i}`,
             style: { display: 'flex', alignItems: 'center', gap: '6px' },
           },
-          createElement('span', { style: { width: '52px', fontSize: '11px', color: '#8888aa', textAlign: 'right' } }, bid.price.toFixed(2)),
+          createElement('span', { style: { width: '52px', fontSize: '11px', color: '#8888aa', textAlign: 'right', fontFamily: 'monospace' } }, formatPrice(bid.price)),
           createElement('div', {
             style: {
               height: barHeight,
@@ -417,9 +625,10 @@ function buildMarketDepth(): unknown {
               opacity: '0.6',
               borderRadius: '2px',
               maxWidth: '60%',
+              transition: 'width 0.3s',
             },
           }),
-          createElement('span', { style: { fontSize: '11px', color: '#ccccdd' } }, String(bid.volume)),
+          createElement('span', { style: { fontSize: '11px', color: '#ccccdd', fontFamily: 'monospace' } }, formatWithCommas(bid.volume)),
         ),
       ),
       // Separator
@@ -432,7 +641,7 @@ function buildMarketDepth(): unknown {
             key: `a${i}`,
             style: { display: 'flex', alignItems: 'center', gap: '6px' },
           },
-          createElement('span', { style: { width: '52px', fontSize: '11px', color: '#8888aa', textAlign: 'right' } }, ask.price.toFixed(2)),
+          createElement('span', { style: { width: '52px', fontSize: '11px', color: '#8888aa', textAlign: 'right', fontFamily: 'monospace' } }, formatPrice(ask.price)),
           createElement('div', {
             style: {
               height: barHeight,
@@ -441,9 +650,10 @@ function buildMarketDepth(): unknown {
               opacity: '0.6',
               borderRadius: '2px',
               maxWidth: '60%',
+              transition: 'width 0.3s',
             },
           }),
-          createElement('span', { style: { fontSize: '11px', color: '#ccccdd' } }, String(ask.volume)),
+          createElement('span', { style: { fontSize: '11px', color: '#ccccdd', fontFamily: 'monospace' } }, formatWithCommas(ask.volume)),
         ),
       ),
     ),
@@ -456,7 +666,10 @@ function buildMarketDepth(): unknown {
 
 export function TradingDashboard(props: TradingDashboardProps) {
   const [priceOffset, setPriceOffset] = useState(0);
+  const [clockTime, setClockTime] = useState('--:--:--');
+  const [liveVisible, setLiveVisible] = useState(true);
 
+  // Price ticker effect
   useEffect(() => {
     const interval = setInterval(() => {
       setPriceOffset((_prev: number) => {
@@ -464,6 +677,28 @@ export function TradingDashboard(props: TradingDashboardProps) {
         return Math.round(delta * 100) / 100;
       });
     }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Live clock effect
+  useEffect(() => {
+    const updateClock = () => {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      setClockTime(`${h}:${m}:${s}`);
+    };
+    updateClock();
+    const interval = setInterval(updateClock, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Blinking LIVE indicator
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLiveVisible((prev: boolean) => !prev);
+    }, 800);
     return () => clearInterval(interval);
   }, []);
 
@@ -496,6 +731,9 @@ export function TradingDashboard(props: TradingDashboardProps) {
     fontWeight: '700',
     color: '#ffffff',
     letterSpacing: '0.5px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
   };
 
   const gridStyle: Record<string, string> = {
@@ -503,12 +741,24 @@ export function TradingDashboard(props: TradingDashboardProps) {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr 1fr',
     gridTemplateRows: '1fr 1fr',
-    gap: '6px',
-    padding: '6px',
+    gap: '8px',
+    padding: '8px',
     overflow: 'hidden',
   };
 
   const currentPrice = 189.42 + priceOffset;
+
+  // LIVE dot style
+  const liveDotStyle: Record<string, string> = {
+    width: '8px',
+    height: '8px',
+    borderRadius: '50%',
+    backgroundColor: '#00c853',
+    display: 'inline-block',
+    marginRight: '4px',
+    opacity: liveVisible ? '1' : '0.3',
+    transition: 'opacity 0.3s',
+  };
 
   return createElement(
     'div',
@@ -520,10 +770,26 @@ export function TradingDashboard(props: TradingDashboardProps) {
     createElement(
       'header',
       { className: 'trading-dashboard__header', style: headerStyle },
-      createElement('span', { style: headerTitleStyle }, 'SpecifyJS Trading Platform'),
+      createElement('span', { style: headerTitleStyle },
+        'SpecifyJS Trading Platform',
+        createElement('span', {
+          style: {
+            display: 'flex',
+            alignItems: 'center',
+            fontSize: '11px',
+            color: '#00c853',
+            fontWeight: '600',
+            marginLeft: '8px',
+          },
+        },
+          createElement('span', { style: liveDotStyle }),
+          'LIVE',
+        ),
+      ),
       createElement(
         'div',
         { style: { display: 'flex', alignItems: 'center', gap: '16px', fontSize: '12px' } },
+        createElement('span', { style: { color: '#ffffff', fontFamily: 'monospace', fontWeight: '600', fontSize: '13px' } }, clockTime),
         createElement('span', { style: { color: '#8888aa' } }, 'Account: SJS-28401'),
         createElement('span', { style: { color: '#00c853' } }, 'Balance: $124,582.30'),
         createElement('span', { style: { color: '#8888aa' } }, 'Status: Connected'),
