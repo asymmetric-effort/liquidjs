@@ -38,7 +38,7 @@ body {
 /* Dark mode overrides */
 [data-theme="dark"] .code-block { background: #0f172a; border: 1px solid #334155; }
 [data-theme="dark"] .feature-card--clickable:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
-[data-theme="dark"] .dialog-panel { box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05); }
+[data-theme="dark"] .dialog-panel { box-shadow: 6px 8px 24px rgba(0,0,0,0.5), 2px 3px 8px rgba(0,0,0,0.3); border-color: #475569; }
 
 /* Dark mode toggle button */
 .dark-mode-toggle {
@@ -317,7 +317,10 @@ body {
 .dialog-panel {
   background: var(--color-bg);
   border-radius: 12px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--color-border);
+  border-bottom: 3px solid rgba(0, 0, 0, 0.15);
+  border-right: 2px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 6px 8px 24px rgba(0, 0, 0, 0.25), 2px 3px 8px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: var(--max-width);
   max-height: calc(100vh - 56px - 48px);
@@ -345,17 +348,18 @@ body {
   width: 36px;
   height: 36px;
   border: none;
-  background: var(--color-bg-muted);
+  background: #dc2626;
   border-radius: 50%;
-  font-size: 20px;
+  font-size: 18px;
+  font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-text-muted);
-  transition: background 0.15s, color 0.15s;
+  color: white;
+  transition: background 0.15s;
 }
-.dialog-close:hover { background: var(--color-border); color: var(--color-text); }
+.dialog-close:hover { background: #b91c1c; }
 .dialog-body {
   padding: 24px;
 }

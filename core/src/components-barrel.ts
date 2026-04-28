@@ -69,3 +69,4 @@ export * from '../../components/viz/2D-polar-graph/src/index';
 export * from '../../components/viz/graph/src/index';
 export * from '../../components/viz/wrapper/src/index';
 export * from '../../components/analytics/google-analytics/src/index';
+export * from '../../components/layout/footer/src/index';

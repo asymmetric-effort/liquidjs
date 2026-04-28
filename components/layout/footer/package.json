@@ -1,0 +1,8 @@
+{
+  "name": "@specifyjs/layout-footer",
+  "version": "0.0.1",
+  "description": "Footer component with left, center, and right content areas",
+  "type": "module",
+  "main": "src/index.ts",
+  "peerDependencies": { "specifyjs": "*" }
+}
