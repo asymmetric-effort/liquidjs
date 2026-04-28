@@ -173,10 +173,7 @@ export function ComponentsGallery() {
     ]),
     createElement(FeatureGate, { flag: 'page-layouts', fallback: null },
       accordionSection('Page Layouts', '4 layouts', openSection, toggle, [
-        preview('Unity Desktop', UnityDesktopDemo),
-        preview('Word Processor', WordProcessorDemo),
-        preview('IDE', IDEDemo),
-        preview('Trading Dashboard', TradingDashboardDemo),
+        createElement(PageLayoutSelector, null),
       ]),
     ),
   );
@@ -2529,28 +2526,102 @@ function ThreeDLayersDemo() {
 }
 
 // ─── Page Layouts ────────────────────────────────────────────────────
-const pageLayoutDemoStyle = { height: '500px', border: '1px solid #e2e8f0', borderRadius: '8px', overflow: 'hidden' };
 
-function UnityDesktopDemo() {
-  return createElement('div', { style: pageLayoutDemoStyle },
-    createElement(UnityDesktop, null),
-  );
-}
+const PAGE_LAYOUTS = [
+  { id: 'unity', label: 'Unity Desktop', desc: 'Ubuntu Unity-style desktop with launcher and window management', component: UnityDesktop },
+  { id: 'word', label: 'Word Processor', desc: 'Full-featured word processor with live editing and formatting', component: WordProcessor },
+  { id: 'ide', label: 'IDE', desc: 'VS Code-style IDE with file tree, syntax highlighting, and editing', component: IDE },
+  { id: 'trading', label: 'Trading Dashboard', desc: 'Stock trading terminal with live price ticker and market data', component: TradingDashboard },
+];
 
-function WordProcessorDemo() {
-  return createElement('div', { style: pageLayoutDemoStyle },
-    createElement(WordProcessor, null),
-  );
-}
+function PageLayoutSelector() {
+  const [activeLayout, setActiveLayout] = useState<string | null>(null);
+  const active = PAGE_LAYOUTS.find((l) => l.id === activeLayout);
 
-function IDEDemo() {
-  return createElement('div', { style: pageLayoutDemoStyle },
-    createElement(IDE, null),
-  );
-}
+  const btnStyle: Record<string, string> = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    padding: '14px 18px',
+    border: '1px solid var(--color-border, #e2e8f0)',
+    borderRadius: '8px',
+    background: 'var(--color-bg-subtle, #f8fafc)',
+    cursor: 'pointer',
+    fontSize: '14px',
+    fontFamily: 'inherit',
+    textAlign: 'left',
+    transition: 'border-color 0.15s, box-shadow 0.15s',
+    marginBottom: '8px',
+  };
 
-function TradingDashboardDemo() {
-  return createElement('div', { style: pageLayoutDemoStyle },
-    createElement(TradingDashboard, null),
+  return createElement('div', null,
+    ...PAGE_LAYOUTS.map((layout) =>
+      createElement('button', {
+        key: layout.id,
+        style: btnStyle,
+        onClick: () => setActiveLayout(layout.id),
+        onMouseEnter: (e: Event) => { (e.currentTarget as HTMLElement).style.borderColor = '#3b82f6'; },
+        onMouseLeave: (e: Event) => { (e.currentTarget as HTMLElement).style.borderColor = ''; },
+      },
+        createElement('div', null,
+          createElement('div', { style: { fontWeight: '600', color: 'var(--color-text, #0f172a)' } }, layout.label),
+          createElement('div', { style: { fontSize: '12px', color: 'var(--color-text-muted, #64748b)', marginTop: '2px' } }, layout.desc),
+        ),
+        createElement('span', { style: { fontSize: '18px', color: 'var(--color-text-muted, #94a3b8)' } }, '\u2192'),
+      ),
+    ),
+
+    // Layout dialog overlay
+    active
+      ? createElement('div', {
+          style: {
+            position: 'fixed',
+            inset: '0',
+            zIndex: '300',
+            background: 'rgba(0,0,0,0.6)',
+            display: 'flex',
+            flexDirection: 'column',
+          },
+          onClick: (e: Event) => { if (e.target === e.currentTarget) setActiveLayout(null); },
+        },
+          // Header bar
+          createElement('div', {
+            style: {
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              padding: '10px 20px',
+              background: 'var(--color-bg, #fff)',
+              borderBottom: '1px solid var(--color-border, #e2e8f0)',
+            },
+          },
+            createElement('span', { style: { fontWeight: '700', fontSize: '16px' } }, active.label),
+            createElement('button', {
+              onClick: () => setActiveLayout(null),
+              style: {
+                width: '32px',
+                height: '32px',
+                border: 'none',
+                background: '#dc2626',
+                borderRadius: '50%',
+                color: 'white',
+                fontWeight: '700',
+                fontSize: '16px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              },
+            }, '\u00d7'),
+          ),
+          // Layout content
+          createElement('div', {
+            style: { flex: '1', overflow: 'auto' },
+          },
+            createElement(active.component, null),
+          ),
+        )
+      : null,
   );
 }

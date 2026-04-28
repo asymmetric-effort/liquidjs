@@ -4,13 +4,14 @@
 /**
  * IDE -- Full-screen layout resembling a programmer's IDE (VS Code style).
  *
- * Features a title bar, menu bar, left sidebar file explorer, main editor
- * area with line numbers and syntax-highlighted TypeScript, a right minimap
- * strip, a bottom terminal panel, and a status bar.
+ * Features a title bar, menu bar with working dropdowns, left sidebar file
+ * explorer with expandable/collapsible folders, main editor area with
+ * contentEditable editing, dynamic line numbers, a right minimap strip,
+ * and a status bar.
  */
 
 import { createElement } from '../../../../core/src/index';
-import { useState, useEffect, useMemo, useCallback } from '../../../../core/src/hooks/index';
+import { useState, useMemo, useCallback, useRef } from '../../../../core/src/hooks/index';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -27,84 +28,183 @@ export interface IDEProps {
 
 const MENUS = ['File', 'Edit', 'Selection', 'View', 'Go', 'Run', 'Terminal', 'Help'];
 
-const FILE_TREE: Array<{ name: string; indent: number; isFolder: boolean }> = [
+const MENU_ITEMS: Record<string, Array<{ label: string; action: string }>> = {
+  File: [
+    { label: 'New File', action: 'newFile' },
+    { label: 'Open', action: 'open' },
+    { label: 'Save', action: 'save' },
+    { label: 'Save As', action: 'saveAs' },
+  ],
+  Edit: [
+    { label: 'Undo', action: 'undo' },
+    { label: 'Redo', action: 'redo' },
+    { label: 'Cut', action: 'cut' },
+    { label: 'Copy', action: 'copy' },
+    { label: 'Paste', action: 'paste' },
+  ],
+  View: [
+    { label: 'Command Palette', action: 'commandPalette' },
+    { label: 'Explorer', action: 'explorer' },
+    { label: 'Search', action: 'search' },
+  ],
+};
+
+interface FileEntry {
+  name: string;
+  indent: number;
+  isFolder: boolean;
+  parent?: string;
+}
+
+const FILE_TREE: Array<FileEntry> = [
   { name: 'src', indent: 0, isFolder: true },
-  { name: 'components', indent: 1, isFolder: true },
-  { name: 'App.ts', indent: 2, isFolder: false },
-  { name: 'Header.ts', indent: 2, isFolder: false },
-  { name: 'hooks', indent: 1, isFolder: true },
-  { name: 'useAuth.ts', indent: 2, isFolder: false },
-  { name: 'index.ts', indent: 1, isFolder: false },
-  { name: 'main.ts', indent: 1, isFolder: false },
-  { name: 'types.ts', indent: 1, isFolder: false },
+  { name: 'components', indent: 1, isFolder: true, parent: 'src' },
+  { name: 'App.ts', indent: 2, isFolder: false, parent: 'components' },
+  { name: 'Header.ts', indent: 2, isFolder: false, parent: 'components' },
+  { name: 'hooks', indent: 1, isFolder: true, parent: 'src' },
+  { name: 'useAuth.ts', indent: 2, isFolder: false, parent: 'hooks' },
+  { name: 'index.ts', indent: 1, isFolder: false, parent: 'src' },
+  { name: 'main.ts', indent: 1, isFolder: false, parent: 'src' },
+  { name: 'types.ts', indent: 1, isFolder: false, parent: 'src' },
   { name: 'package.json', indent: 0, isFolder: false },
   { name: 'tsconfig.json', indent: 0, isFolder: false },
 ];
 
-const SAMPLE_CODE = [
-  'import { createElement, useState } from "specifyjs";',
-  '',
-  'interface AppProps {',
-  '  title: string;',
-  '  version?: number;',
-  '}',
-  '',
-  'export function App(props: AppProps) {',
-  '  const [count, setCount] = useState(0);',
-  '',
-  '  const increment = () => {',
-  '    setCount((prev: number) => prev + 1);',
-  '  };',
-  '',
-  '  return createElement(',
-  '    "div",',
-  '    { className: "app" },',
-  '    createElement("h1", null, props.title),',
-  '    createElement("p", null, `Count: ${count}`),',
-  '    createElement(',
-  '      "button",',
-  '      { onClick: increment },',
-  '      "Increment",',
-  '    ),',
-  '  );',
-  '}',
-];
-
-const TERMINAL_LINES = [
-  '$ npm run dev',
-  '',
-  '> specifyjs-app@1.0.0 dev',
-  '> vite',
-  '',
-  '  VITE v5.4.0  ready in 234ms',
-  '',
-  '  \u27A4  Local:   http://localhost:5173/',
-  '  \u27A4  Network: http://192.168.1.42:5173/',
-  '  \u27A4  press h + enter to show help',
-];
-
-const PROBLEMS_LINES = [
-  'No problems detected in workspace.',
-];
-
-const OUTPUT_LINES = [
-  '[Info] TypeScript compiler watching for changes...',
-  '[Info] Build completed successfully.',
-];
-
-const BOTTOM_TABS = ['Terminal', 'Problems', 'Output'];
-
-const BOTTOM_TAB_CONTENT: Record<string, Array<string>> = {
-  Terminal: TERMINAL_LINES,
-  Problems: PROBLEMS_LINES,
-  Output: OUTPUT_LINES,
+const FILE_CONTENTS: Record<string, Array<string>> = {
+  'App.ts': [
+    'import { createElement, useState } from "specifyjs";',
+    '',
+    'interface AppProps {',
+    '  title: string;',
+    '  version?: number;',
+    '}',
+    '',
+    'export function App(props: AppProps) {',
+    '  const [count, setCount] = useState(0);',
+    '',
+    '  const increment = () => {',
+    '    setCount((prev: number) => prev + 1);',
+    '  };',
+    '',
+    '  return createElement(',
+    '    "div",',
+    '    { className: "app" },',
+    '    createElement("h1", null, props.title),',
+    '    createElement("p", null, `Count: ${count}`),',
+    '    createElement(',
+    '      "button",',
+    '      { onClick: increment },',
+    '      "Increment",',
+    '    ),',
+    '  );',
+    '}',
+  ],
+  'Header.ts': [
+    'import { createElement } from "specifyjs";',
+    '',
+    'interface HeaderProps {',
+    '  title: string;',
+    '  subtitle?: string;',
+    '}',
+    '',
+    'export function Header(props: HeaderProps) {',
+    '  return createElement(',
+    '    "header",',
+    '    { className: "header" },',
+    '    createElement("h1", null, props.title),',
+    '    props.subtitle',
+    '      ? createElement("p", null, props.subtitle)',
+    '      : null,',
+    '  );',
+    '}',
+  ],
+  'useAuth.ts': [
+    'import { useState, useCallback } from "specifyjs";',
+    '',
+    'interface AuthState {',
+    '  user: string | null;',
+    '  isLoggedIn: boolean;',
+    '}',
+    '',
+    'export function useAuth() {',
+    '  const [auth, setAuth] = useState<AuthState>({',
+    '    user: null,',
+    '    isLoggedIn: false,',
+    '  });',
+    '',
+    '  const login = useCallback((username: string) => {',
+    '    setAuth({ user: username, isLoggedIn: true });',
+    '  }, []);',
+    '',
+    '  const logout = useCallback(() => {',
+    '    setAuth({ user: null, isLoggedIn: false });',
+    '  }, []);',
+    '',
+    '  return { ...auth, login, logout };',
+    '}',
+  ],
+  'index.ts': [
+    'export { App } from "./components/App";',
+    'export { Header } from "./components/Header";',
+    'export { useAuth } from "./hooks/useAuth";',
+  ],
+  'main.ts': [
+    'import { createElement, createRoot } from "specifyjs";',
+    'import { App } from "./components/App";',
+    '',
+    'const root = createRoot(',
+    '  document.getElementById("root")!',
+    ');',
+    '',
+    'root.render(',
+    '  createElement(App, {',
+    '    title: "My SpecifyJS App",',
+    '    version: 1,',
+    '  }),',
+    ');',
+  ],
+  'types.ts': [
+    'export interface User {',
+    '  id: string;',
+    '  name: string;',
+    '  email: string;',
+    '  role: "admin" | "user" | "guest";',
+    '}',
+    '',
+    'export interface Config {',
+    '  apiUrl: string;',
+    '  debug: boolean;',
+    '  maxRetries: number;',
+    '}',
+    '',
+    'export type EventHandler<T = void> = (event: T) => void;',
+  ],
+  'package.json': [
+    '{',
+    '  "name": "specifyjs-app",',
+    '  "version": "1.0.0",',
+    '  "scripts": {',
+    '    "dev": "vite",',
+    '    "build": "tsc && vite build",',
+    '    "preview": "vite preview"',
+    '  }',
+    '}',
+  ],
+  'tsconfig.json': [
+    '{',
+    '  "compilerOptions": {',
+    '    "target": "ES2020",',
+    '    "module": "ESNext",',
+    '    "strict": true,',
+    '    "jsx": "preserve"',
+    '  },',
+    '  "include": ["src"]',
+    '}',
+  ],
 };
 
-// Current line highlight index (0-based)
-const CURRENT_LINE = 8;
-
-// Cursor position: line index and character offset
-const CURSOR_LINE = 8;
+// Use App.ts as the default sample code (same as original SAMPLE_CODE)
+const SAMPLE_CODE = FILE_CONTENTS['App.ts'];
 
 // ---------------------------------------------------------------------------
 // Syntax Highlighting
@@ -220,19 +320,80 @@ function tokenizeLine(line: string): Array<Token> {
 // ---------------------------------------------------------------------------
 
 export function IDE(props: IDEProps) {
-  const [activeBottomTab, setActiveBottomTab] = useState('Terminal');
-  const [cursorVisible, setCursorVisible] = useState(true);
+  const [activeFile, setActiveFile] = useState<string>('App.ts');
+  const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({
+    src: true,
+    components: true,
+    hooks: true,
+  });
+  const [activeMenu, setActiveMenu] = useState<number>(-1);
+  const [lineCount, setLineCount] = useState<number>(SAMPLE_CODE.length);
 
-  // Blinking cursor effect
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCursorVisible((prev: boolean) => !prev);
-    }, 530);
-    return () => clearInterval(interval);
+  const editorRef = useRef<HTMLElement | null>(null);
+
+  const handleFileClick = useCallback((fileName: string) => {
+    setActiveFile(fileName);
+    const content = FILE_CONTENTS[fileName];
+    if (content) {
+      setLineCount(content.length);
+    }
   }, []);
 
-  const handleBottomTabClick = useCallback((tab: string) => {
-    setActiveBottomTab(tab);
+  const handleFolderToggle = useCallback((folderName: string) => {
+    setExpandedFolders((prev: Record<string, boolean>) => {
+      const next: Record<string, boolean> = {};
+      const keys = Object.keys(prev);
+      for (let i = 0; i < keys.length; i++) {
+        next[keys[i]] = prev[keys[i]];
+      }
+      next[folderName] = !prev[folderName];
+      return next;
+    });
+  }, []);
+
+  const handleMenuClick = useCallback((index: number) => {
+    setActiveMenu((prev: number) => prev === index ? -1 : index);
+  }, []);
+
+  const handleMenuAction = useCallback((action: string) => {
+    switch (action) {
+      case 'undo':
+        document.execCommand('undo', false);
+        break;
+      case 'redo':
+        document.execCommand('redo', false);
+        break;
+      case 'cut':
+        document.execCommand('cut', false);
+        break;
+      case 'copy':
+        document.execCommand('copy', false);
+        break;
+      case 'paste':
+        document.execCommand('paste', false);
+        break;
+      case 'newFile':
+        // Clear editor
+        if (editorRef.current) {
+          editorRef.current.textContent = '';
+          setLineCount(1);
+        }
+        break;
+      default:
+        break;
+    }
+    setActiveMenu(-1);
+    if (editorRef.current) {
+      editorRef.current.focus();
+    }
+  }, []);
+
+  const handleEditorInput = useCallback(() => {
+    if (editorRef.current) {
+      const text = editorRef.current.textContent ?? '';
+      const lines = text.split('\n');
+      setLineCount(Math.max(lines.length, 1));
+    }
   }, []);
 
   const containerStyle = useMemo<Record<string, string>>(() => ({
@@ -268,9 +429,10 @@ export function IDE(props: IDEProps) {
     padding: '0 8px',
     gap: '2px',
     flexShrink: '0',
+    position: 'relative',
   };
 
-  const menuItemStyle: Record<string, string> = {
+  const menuItemStyleBase: Record<string, string> = {
     padding: '3px 8px',
     fontSize: '12px',
     color: '#cccccc',
@@ -278,6 +440,38 @@ export function IDE(props: IDEProps) {
     borderRadius: '3px',
     backgroundColor: 'transparent',
     border: 'none',
+    position: 'relative',
+  };
+
+  const menuItemStyleActive: Record<string, string> = {
+    ...menuItemStyleBase,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+  };
+
+  const dropdownStyle: Record<string, string> = {
+    position: 'absolute',
+    top: '100%',
+    left: '0',
+    minWidth: '180px',
+    backgroundColor: '#2d2d2d',
+    border: '1px solid #454545',
+    borderRadius: '4px',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+    padding: '4px 0',
+    zIndex: '1000',
+  };
+
+  const dropdownItemStyle: Record<string, string> = {
+    display: 'block',
+    width: '100%',
+    padding: '6px 16px',
+    fontSize: '12px',
+    color: '#cccccc',
+    backgroundColor: 'transparent',
+    border: 'none',
+    textAlign: 'left',
+    cursor: 'pointer',
+    transition: 'background 0.1s',
   };
 
   const mainAreaStyle: Record<string, string> = {
@@ -314,7 +508,7 @@ export function IDE(props: IDEProps) {
     color: '#bbbbbb',
   };
 
-  const fileItemStyle = (indent: number, isFolder: boolean): Record<string, string> => ({
+  const fileItemStyle = (indent: number, isFolder: boolean, isActive: boolean): Record<string, string> => ({
     padding: '3px 8px',
     paddingLeft: `${12 + indent * 16}px`,
     fontSize: '13px',
@@ -326,6 +520,7 @@ export function IDE(props: IDEProps) {
     borderRadius: '3px',
     margin: '0 4px',
     transition: 'background-color 0.1s',
+    backgroundColor: isActive ? 'rgba(255,255,255,0.08)' : 'transparent',
   });
 
   const editorAreaStyle: Record<string, string> = {
@@ -382,6 +577,8 @@ export function IDE(props: IDEProps) {
     flex: '1',
     whiteSpace: 'pre',
     overflowX: 'auto',
+    outline: 'none',
+    color: '#d4d4d4',
   };
 
   const minimapStyle: Record<string, string> = {
@@ -394,48 +591,6 @@ export function IDE(props: IDEProps) {
     flexDirection: 'column',
     gap: '2px',
     position: 'relative',
-  };
-
-  const bottomPanelStyle: Record<string, string> = {
-    height: '120px',
-    backgroundColor: '#1e1e1e',
-    borderTop: '1px solid var(--color-border, #007acc)',
-    display: 'flex',
-    flexDirection: 'column',
-    flexShrink: '0',
-  };
-
-  const bottomTabBarStyle: Record<string, string> = {
-    height: '28px',
-    backgroundColor: '#252526',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0',
-    flexShrink: '0',
-  };
-
-  const bottomTabStyleFn = (active: boolean): Record<string, string> => ({
-    padding: '0 12px',
-    height: '28px',
-    lineHeight: '28px',
-    fontSize: '12px',
-    color: active ? '#ffffff' : '#999999',
-    cursor: 'pointer',
-    borderBottom: active ? '1px solid #007acc' : '1px solid transparent',
-    backgroundColor: 'transparent',
-    border: 'none',
-    transition: 'color 0.15s',
-  });
-
-  const terminalContentStyle: Record<string, string> = {
-    flex: '1',
-    padding: '4px 12px',
-    fontFamily: '"Cascadia Code", "Fira Code", "Consolas", monospace',
-    fontSize: '12px',
-    lineHeight: '18px',
-    color: '#cccccc',
-    overflowY: 'auto',
-    whiteSpace: 'pre',
   };
 
   const statusBarStyle: Record<string, string> = {
@@ -457,15 +612,15 @@ export function IDE(props: IDEProps) {
     transition: 'background-color 0.15s',
   };
 
-  // Minimap viewport indicator position (approx lines 1-15 visible out of 25)
+  // Minimap viewport indicator position
   const viewportTop = 8;
   const viewportHeight = 30;
 
-  // Get the content lines for the active bottom tab
-  const activeContent = BOTTOM_TAB_CONTENT[activeBottomTab] ?? TERMINAL_LINES;
+  // Get current file content
+  const currentCode = FILE_CONTENTS[activeFile] ?? SAMPLE_CODE;
 
-  // Build code lines with syntax highlighting and cursor
-  const codeLines = SAMPLE_CODE.map((line, i) => {
+  // Build code lines with syntax highlighting
+  const codeLines = currentCode.map((line, i) => {
     const tokens = tokenizeLine(line);
     const spans: Array<unknown> = [];
     let spanIdx = 0;
@@ -478,27 +633,11 @@ export function IDE(props: IDEProps) {
       );
     }
 
-    // Add blinking cursor at end of cursor line
-    if (i === CURSOR_LINE) {
-      spans.push(
-        createElement('span', {
-          key: 'cursor',
-          style: {
-            borderLeft: '2px solid #aeafad',
-            marginLeft: '1px',
-            visibility: cursorVisible ? 'visible' : 'hidden',
-          },
-        }, ''),
-      );
-    }
-
-    const isCurrentLine = i === CURRENT_LINE;
     return createElement(
       'div',
       {
         key: String(i),
         style: {
-          backgroundColor: isCurrentLine ? 'rgba(255,255,255,0.04)' : 'transparent',
           minHeight: '20px',
         },
       },
@@ -506,17 +645,97 @@ export function IDE(props: IDEProps) {
     );
   });
 
-  // Build line number elements with current line highlight
-  const lineNumbers = SAMPLE_CODE.map((_, i) => {
-    const isCurrentLine = i === CURRENT_LINE;
-    return createElement('div', {
+  // Build line number elements -- reflect actual content lines
+  const actualLineCount = Math.max(lineCount, currentCode.length);
+  const lineNumbers: Array<unknown> = [];
+  for (let i = 0; i < actualLineCount; i++) {
+    lineNumbers.push(createElement('div', {
       key: String(i),
-      style: {
-        color: isCurrentLine ? '#c6c6c6' : '#858585',
-        backgroundColor: isCurrentLine ? 'rgba(255,255,255,0.04)' : 'transparent',
+    }, String(i + 1)));
+  }
+
+  // Determine which file tree items are visible based on expanded folders
+  const isItemVisible = (item: FileEntry): boolean => {
+    if (!item.parent) return true;
+    // Check if parent folder is expanded
+    if (!expandedFolders[item.parent]) return false;
+    // Check the parent's parent recursively via the tree
+    const parentEntry = FILE_TREE.find((e) => e.name === item.parent && e.isFolder);
+    if (parentEntry) return isItemVisible(parentEntry);
+    return true;
+  };
+
+  // Build menu elements with dropdowns
+  const menuElements = MENUS.map((menu, i) => {
+    const children: Array<unknown> = [menu];
+    const isActive = activeMenu === i;
+
+    if (isActive && MENU_ITEMS[menu]) {
+      children.push(
+        createElement(
+          'div',
+          {
+            key: 'dropdown',
+            style: dropdownStyle,
+            className: 'ide__menu-dropdown',
+          },
+          ...MENU_ITEMS[menu].map((item, j) =>
+            createElement(
+              'button',
+              {
+                key: String(j),
+                style: dropdownItemStyle,
+                onClick: (e: Event) => {
+                  e.stopPropagation();
+                  handleMenuAction(item.action);
+                },
+                role: 'menuitem',
+              },
+              item.label,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return createElement(
+      'button',
+      {
+        key: String(i),
+        style: isActive ? menuItemStyleActive : menuItemStyleBase,
+        role: 'menuitem',
+        'aria-label': menu,
+        onClick: () => handleMenuClick(i),
       },
-    }, String(i + 1));
+      ...children,
+    );
   });
+
+  // Build file tree elements with visibility
+  const fileTreeElements = FILE_TREE.map((item, i) => {
+    if (!isItemVisible(item)) return null;
+
+    const isActiveFile = !item.isFolder && item.name === activeFile;
+    const folderIcon = item.isFolder
+      ? (expandedFolders[item.name] ? '\u{1F4C2} ' : '\u{1F4C1} ')
+      : '\u{1F4C4} ';
+
+    return createElement(
+      'div',
+      {
+        key: String(i),
+        style: fileItemStyle(item.indent, item.isFolder, isActiveFile),
+        onClick: item.isFolder
+          ? () => handleFolderToggle(item.name)
+          : () => handleFileClick(item.name),
+      },
+      folderIcon,
+      item.name,
+    );
+  });
+
+  // Filter out nulls
+  const visibleFileTreeElements = fileTreeElements.filter((el) => el !== null);
 
   return createElement(
     'div',
@@ -534,13 +753,7 @@ export function IDE(props: IDEProps) {
     createElement(
       'div',
       { className: 'ide__menu-bar', style: menuBarStyle, role: 'menubar' },
-      ...MENUS.map((menu, i) =>
-        createElement(
-          'button',
-          { key: String(i), style: menuItemStyle, role: 'menuitem', 'aria-label': menu },
-          menu,
-        ),
-      ),
+      ...menuElements,
     ),
     // Main Area
     createElement(
@@ -551,14 +764,7 @@ export function IDE(props: IDEProps) {
         'nav',
         { className: 'ide__sidebar', style: sidebarStyle, 'aria-label': 'File explorer' },
         createElement('div', { style: sidebarHeaderStyle }, 'Explorer'),
-        ...FILE_TREE.map((item, i) =>
-          createElement(
-            'div',
-            { key: String(i), style: fileItemStyle(item.indent, item.isFolder) },
-            item.isFolder ? '\u{1F4C1} ' : '\u{1F4C4} ',
-            item.name,
-          ),
-        ),
+        ...visibleFileTreeElements,
       ),
       // Resize handle between sidebar and editor
       createElement('div', { style: sidebarResizeHandleStyle }),
@@ -566,11 +772,11 @@ export function IDE(props: IDEProps) {
       createElement(
         'div',
         { style: editorAreaStyle },
-        // Tab Bar
+        // Tab Bar -- shows active file name
         createElement(
           'div',
           { style: editorTabBarStyle },
-          createElement('button', { style: activeTabStyle, 'aria-label': 'App.ts' }, 'App.ts'),
+          createElement('button', { style: activeTabStyle, 'aria-label': activeFile }, activeFile),
         ),
         // Editor Content
         createElement(
@@ -582,10 +788,16 @@ export function IDE(props: IDEProps) {
             { style: lineNumbersStyle, 'aria-hidden': 'true' },
             ...lineNumbers,
           ),
-          // Code
+          // Code - contentEditable
           createElement(
             'code',
-            { style: codeAreaStyle },
+            {
+              style: codeAreaStyle,
+              contentEditable: 'true',
+              ref: editorRef,
+              onInput: handleEditorInput,
+              suppressContentEditableWarning: true,
+            },
             ...codeLines,
           ),
         ),
@@ -608,7 +820,7 @@ export function IDE(props: IDEProps) {
             pointerEvents: 'none',
           },
         }),
-        ...SAMPLE_CODE.map((line, i) =>
+        ...currentCode.map((line, i) =>
           createElement('div', {
             key: String(i),
             style: {
@@ -618,36 +830,6 @@ export function IDE(props: IDEProps) {
               width: `${Math.min(100, line.length * 2)}%`,
             },
           }),
-        ),
-      ),
-    ),
-    // Bottom Panel
-    createElement(
-      'div',
-      { className: 'ide__bottom-panel', style: bottomPanelStyle },
-      createElement(
-        'div',
-        { style: bottomTabBarStyle, role: 'tablist' },
-        ...BOTTOM_TABS.map((tab, i) =>
-          createElement(
-            'button',
-            {
-              key: String(i),
-              style: bottomTabStyleFn(tab === activeBottomTab),
-              role: 'tab',
-              'aria-selected': tab === activeBottomTab ? 'true' : 'false',
-              'aria-label': tab,
-              onClick: () => handleBottomTabClick(tab),
-            },
-            tab,
-          ),
-        ),
-      ),
-      createElement(
-        'div',
-        { style: terminalContentStyle, role: 'log' },
-        ...activeContent.map((line, i) =>
-          createElement('div', { key: String(i) }, line || '\u00A0'),
         ),
       ),
     ),

@@ -76,10 +76,10 @@ describe('IDE', () => {
     expect(minimap?.getAttribute('aria-hidden')).toBe('true');
   });
 
-  it('contains bottom panel', () => {
+  it('does not contain bottom panel (removed)', () => {
     const el = render(createElement(IDE, null));
     const bottomPanel = el.querySelector('.ide__bottom-panel');
-    expect(bottomPanel).not.toBeNull();
+    expect(bottomPanel).toBeNull();
   });
 
   it('contains status bar', () => {
@@ -91,12 +91,10 @@ describe('IDE', () => {
     expect(text).toContain('UTF-8');
   });
 
-  it('has terminal output in bottom panel', () => {
+  it('no longer has terminal output (bottom panel removed)', () => {
     const el = render(createElement(IDE, null));
     const bottomPanel = el.querySelector('.ide__bottom-panel');
-    const text = bottomPanel?.textContent ?? '';
-    expect(text).toContain('npm run dev');
-    expect(text).toContain('localhost:5173');
+    expect(bottomPanel).toBeNull();
   });
 
   it('applies className', () => {
@@ -124,14 +122,9 @@ describe('IDE', () => {
     expect(text).toContain('src');
   });
 
-  it('bottom panel has tab buttons', () => {
+  it('no longer has bottom panel tab buttons (bottom panel removed)', () => {
     const el = render(createElement(IDE, null));
     const bottomPanel = el.querySelector('.ide__bottom-panel');
-    const tabs = bottomPanel?.querySelectorAll('[role="tab"]');
-    expect(tabs?.length).toBe(3);
-    const labels = Array.from(tabs ?? []).map((t) => t.getAttribute('aria-label'));
-    expect(labels).toContain('Terminal');
-    expect(labels).toContain('Problems');
-    expect(labels).toContain('Output');
+    expect(bottomPanel).toBeNull();
   });
 });

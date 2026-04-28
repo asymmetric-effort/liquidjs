@@ -4,15 +4,16 @@
 /**
  * WordProcessor -- Full-screen layout resembling a word processor application.
  *
- * Features a menu bar, formatting toolbar with toggle states, ruler bar,
- * centered document page on a gray background with drop shadow, and a
+ * Features a menu bar with working dropdowns, formatting toolbar with toggle
+ * states that apply formatting via execCommand, ruler bar, centered
+ * contentEditable document page on a gray background with drop shadow, and a
  * status bar with live word count and zoom display. Supports dark mode
  * via CSS variables and provides hover/transition polish on interactive
  * elements.
  */
 
 import { createElement } from '../../../../core/src/index';
-import { useMemo, useState, useCallback } from '../../../../core/src/hooks/index';
+import { useMemo, useState, useCallback, useRef } from '../../../../core/src/hooks/index';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -31,17 +32,61 @@ export interface WordProcessorProps {
 
 const MENUS = ['File', 'Edit', 'View', 'Insert', 'Format', 'Tools', 'Help'];
 
+const MENU_ITEMS: Record<string, Array<{ label: string; action: string }>> = {
+  File: [
+    { label: 'New', action: 'new' },
+    { label: 'Open', action: 'open' },
+    { label: 'Save', action: 'save' },
+    { label: 'Print', action: 'print' },
+  ],
+  Edit: [
+    { label: 'Undo', action: 'undo' },
+    { label: 'Redo', action: 'redo' },
+    { label: 'Cut', action: 'cut' },
+    { label: 'Copy', action: 'copy' },
+    { label: 'Paste', action: 'paste' },
+  ],
+  View: [
+    { label: 'Zoom In', action: 'zoomIn' },
+    { label: 'Zoom Out', action: 'zoomOut' },
+    { label: 'Full Screen', action: 'fullScreen' },
+  ],
+  Insert: [
+    { label: 'Image', action: 'insertImage' },
+    { label: 'Table', action: 'insertTable' },
+    { label: 'Link', action: 'insertLink' },
+  ],
+  Format: [
+    { label: 'Bold', action: 'bold' },
+    { label: 'Italic', action: 'italic' },
+    { label: 'Underline', action: 'underline' },
+  ],
+  Tools: [
+    { label: 'Word Count', action: 'wordCount' },
+    { label: 'Spell Check', action: 'spellCheck' },
+  ],
+  Help: [
+    { label: 'About', action: 'about' },
+    { label: 'Keyboard Shortcuts', action: 'shortcuts' },
+  ],
+};
+
 const FORMAT_BUTTONS: Array<{ id: string; label: string; text: string; shortcut?: string; style?: Record<string, string> }> = [
   { id: 'bold', label: 'Bold', text: 'B', shortcut: 'Ctrl+B', style: { fontWeight: '700' } },
   { id: 'italic', label: 'Italic', text: 'I', shortcut: 'Ctrl+I', style: { fontStyle: 'italic' } },
   { id: 'underline', label: 'Underline', text: 'U', shortcut: 'Ctrl+U', style: { textDecoration: 'underline' } },
 ];
 
-const ALIGN_BUTTONS: Array<{ label: string; text: string }> = [
-  { label: 'Align left', text: '\u2261' },
-  { label: 'Align center', text: '\u2263' },
-  { label: 'Align right', text: '\u2262' },
+const ALIGN_BUTTONS: Array<{ label: string; text: string; command: string }> = [
+  { label: 'Align left', text: '\u2261', command: 'justifyLeft' },
+  { label: 'Align center', text: '\u2263', command: 'justifyCenter' },
+  { label: 'Align right', text: '\u2262', command: 'justifyRight' },
 ];
+
+const FONT_SIZES = ['1', '2', '3', '4', '5', '6', '7'];
+const FONT_SIZE_LABELS: Record<string, string> = {
+  '1': '8', '2': '10', '3': '12', '4': '14', '5': '18', '6': '24', '7': '36',
+};
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -97,11 +142,40 @@ export function WordProcessor(props: WordProcessorProps) {
   const [underlineActive, setUnderlineActive] = useState<boolean>(false);
   const [hoveredMenuIndex, setHoveredMenuIndex] = useState<number>(-1);
   const [hoveredToolBtn, setHoveredToolBtn] = useState<string>('');
+  const [activeMenu, setActiveMenu] = useState<number>(-1);
+  const [wordCount, setWordCount] = useState<number>(0);
+  const [fontSize, setFontSize] = useState<string>('3');
+
+  const editorRef = useRef<HTMLDivElement | null>(null);
+
+  const handleBoldClick = useCallback(() => {
+    document.execCommand('bold', false);
+    setBoldActive((prev: boolean) => !prev);
+    if (editorRef.current) {
+      editorRef.current.focus();
+    }
+  }, []);
+
+  const handleItalicClick = useCallback(() => {
+    document.execCommand('italic', false);
+    setItalicActive((prev: boolean) => !prev);
+    if (editorRef.current) {
+      editorRef.current.focus();
+    }
+  }, []);
+
+  const handleUnderlineClick = useCallback(() => {
+    document.execCommand('underline', false);
+    setUnderlineActive((prev: boolean) => !prev);
+    if (editorRef.current) {
+      editorRef.current.focus();
+    }
+  }, []);
 
   const togglers: Record<string, () => void> = {
-    bold: useCallback(() => setBoldActive((prev: boolean) => !prev), []),
-    italic: useCallback(() => setItalicActive((prev: boolean) => !prev), []),
-    underline: useCallback(() => setUnderlineActive((prev: boolean) => !prev), []),
+    bold: handleBoldClick,
+    italic: handleItalicClick,
+    underline: handleUnderlineClick,
   };
 
   const activeStates: Record<string, boolean> = {
@@ -109,6 +183,83 @@ export function WordProcessor(props: WordProcessorProps) {
     italic: italicActive,
     underline: underlineActive,
   };
+
+  const handleAlignClick = useCallback((command: string) => {
+    document.execCommand(command, false);
+    if (editorRef.current) {
+      editorRef.current.focus();
+    }
+  }, []);
+
+  const handleFontSizeChange = useCallback((size: string) => {
+    document.execCommand('fontSize', false, size);
+    setFontSize(size);
+    if (editorRef.current) {
+      editorRef.current.focus();
+    }
+  }, []);
+
+  const handleMenuClick = useCallback((index: number) => {
+    setActiveMenu((prev: number) => prev === index ? -1 : index);
+  }, []);
+
+  const handleMenuAction = useCallback((action: string) => {
+    switch (action) {
+      case 'undo':
+        document.execCommand('undo', false);
+        break;
+      case 'redo':
+        document.execCommand('redo', false);
+        break;
+      case 'cut':
+        document.execCommand('cut', false);
+        break;
+      case 'copy':
+        document.execCommand('copy', false);
+        break;
+      case 'paste':
+        document.execCommand('paste', false);
+        break;
+      case 'bold':
+        document.execCommand('bold', false);
+        break;
+      case 'italic':
+        document.execCommand('italic', false);
+        break;
+      case 'underline':
+        document.execCommand('underline', false);
+        break;
+      case 'print':
+        if (typeof window !== 'undefined' && window.print) {
+          window.print();
+        }
+        break;
+      case 'new':
+        if (editorRef.current) {
+          editorRef.current.innerHTML = '';
+          setWordCount(0);
+        }
+        break;
+      default:
+        break;
+    }
+    setActiveMenu(-1);
+    if (editorRef.current) {
+      editorRef.current.focus();
+    }
+  }, []);
+
+  const handleInput = useCallback(() => {
+    if (editorRef.current) {
+      const text = editorRef.current.textContent ?? '';
+      setWordCount(computeWordCount(text));
+    }
+  }, []);
+
+  const handleDocumentAreaClick = useCallback(() => {
+    // Close menu when clicking the document area
+    setActiveMenu(-1);
+  }, []);
 
   const containerStyle = useMemo<Record<string, string>>(() => ({
     width: '100%',
@@ -132,6 +283,7 @@ export function WordProcessor(props: WordProcessorProps) {
     padding: '0 8px',
     gap: '2px',
     flexShrink: '0',
+    position: 'relative',
   };
 
   const toolbarStyle: Record<string, string> = {
@@ -177,6 +329,7 @@ export function WordProcessor(props: WordProcessorProps) {
     color: '#222',
     fontFamily: '"Times New Roman", Georgia, serif',
     cursor: 'text',
+    outline: 'none',
   };
 
   const statusBarStyle: Record<string, string> = {
@@ -195,22 +348,53 @@ export function WordProcessor(props: WordProcessorProps) {
   const rulerTicks = useMemo(() => buildRulerTicks(), []);
 
   const displayContent = props.content ?? 'Start typing...';
-  const wordCount = computeWordCount(displayContent);
+
+  // Compute initial word count from content prop
+  const initialWordCount = computeWordCount(displayContent);
+  const displayWordCount = wordCount > 0 ? wordCount : initialWordCount;
 
   function makeMenuItemStyle(index: number): Record<string, string> {
     const isHovered = hoveredMenuIndex === index;
+    const isActive = activeMenu === index;
     return {
       padding: '4px 10px',
       cursor: 'pointer',
       borderRadius: '3px',
       fontSize: '13px',
       color: 'var(--color-text, #333)',
-      backgroundColor: isHovered ? 'rgba(0,0,0,0.08)' : 'transparent',
+      backgroundColor: isActive ? 'rgba(0,0,0,0.12)' : (isHovered ? 'rgba(0,0,0,0.08)' : 'transparent'),
       border: 'none',
       lineHeight: '1',
       transition: 'background 0.15s',
+      position: 'relative',
     };
   }
+
+  const dropdownStyle: Record<string, string> = {
+    position: 'absolute',
+    top: '100%',
+    left: '0',
+    minWidth: '160px',
+    backgroundColor: '#ffffff',
+    border: '1px solid #d0d0d0',
+    borderRadius: '4px',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+    padding: '4px 0',
+    zIndex: '1000',
+  };
+
+  const dropdownItemStyle: Record<string, string> = {
+    display: 'block',
+    width: '100%',
+    padding: '6px 16px',
+    fontSize: '13px',
+    color: '#333',
+    backgroundColor: 'transparent',
+    border: 'none',
+    textAlign: 'left',
+    cursor: 'pointer',
+    transition: 'background 0.1s',
+  };
 
   function makeToolBtnStyle(id: string, extraStyle?: Record<string, string>): Record<string, string> {
     const isActive = activeStates[id] ?? false;
@@ -246,6 +430,68 @@ export function WordProcessor(props: WordProcessorProps) {
     gap: '4px',
   };
 
+  const fontSizeSelectStyle: Record<string, string> = {
+    padding: '2px 4px',
+    border: '1px solid var(--color-border, #ccc)',
+    borderRadius: '3px',
+    fontSize: '12px',
+    color: 'var(--color-text, #444)',
+    backgroundColor: 'transparent',
+    cursor: 'pointer',
+    height: '24px',
+    outline: 'none',
+  };
+
+  // Build menu items with dropdowns
+  const menuElements = MENUS.map((menu, i) => {
+    const children: Array<unknown> = [menu];
+
+    if (activeMenu === i && MENU_ITEMS[menu]) {
+      children.push(
+        createElement(
+          'div',
+          {
+            key: 'dropdown',
+            style: dropdownStyle,
+            className: 'word-processor__menu-dropdown',
+          },
+          ...MENU_ITEMS[menu].map((item, j) =>
+            createElement(
+              'button',
+              {
+                key: String(j),
+                style: dropdownItemStyle,
+                onClick: (e: Event) => {
+                  e.stopPropagation();
+                  handleMenuAction(item.action);
+                },
+                role: 'menuitem',
+              },
+              item.label,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return createElement(
+      'button',
+      {
+        key: String(i),
+        style: makeMenuItemStyle(i),
+        role: 'menuitem',
+        'aria-label': menu,
+        onClick: () => handleMenuClick(i),
+        onMouseEnter: () => {
+          setHoveredMenuIndex(i);
+          // If a menu is already open, switch to this one on hover
+        },
+        onMouseLeave: () => setHoveredMenuIndex(-1),
+      },
+      ...children,
+    );
+  });
+
   return createElement(
     'div',
     {
@@ -256,20 +502,7 @@ export function WordProcessor(props: WordProcessorProps) {
     createElement(
       'div',
       { className: 'word-processor__menu-bar', style: menuBarStyle, role: 'menubar' },
-      ...MENUS.map((menu, i) =>
-        createElement(
-          'button',
-          {
-            key: String(i),
-            style: makeMenuItemStyle(i),
-            role: 'menuitem',
-            'aria-label': menu,
-            onMouseEnter: () => setHoveredMenuIndex(i),
-            onMouseLeave: () => setHoveredMenuIndex(-1),
-          },
-          menu,
-        ),
-      ),
+      ...menuElements,
     ),
     // Toolbar
     createElement(
@@ -314,7 +547,7 @@ export function WordProcessor(props: WordProcessorProps) {
           ),
         ),
       ),
-      // Font size
+      // Font size selector
       createElement(
         'div',
         {
@@ -324,19 +557,27 @@ export function WordProcessor(props: WordProcessorProps) {
             gap: '2px',
             borderLeft: '1px solid var(--color-border, #ccc)',
             paddingLeft: '10px',
+            alignItems: 'center',
           },
         },
         createElement(
-          'button',
+          'select',
           {
-            key: '0',
-            style: makeToolBtnStyle('fontsize'),
-            title: 'Font size',
+            style: fontSizeSelectStyle,
             'aria-label': 'Font size',
-            onMouseEnter: () => setHoveredToolBtn('fontsize'),
-            onMouseLeave: () => setHoveredToolBtn(''),
+            value: fontSize,
+            onChange: (e: Event) => {
+              const target = e.target as HTMLSelectElement;
+              handleFontSizeChange(target.value);
+            },
           },
-          '11',
+          ...FONT_SIZES.map((size) =>
+            createElement(
+              'option',
+              { key: size, value: size },
+              FONT_SIZE_LABELS[size],
+            ),
+          ),
         ),
       ),
       // Align buttons
@@ -359,6 +600,7 @@ export function WordProcessor(props: WordProcessorProps) {
               style: makeToolBtnStyle(`align-${bi}`),
               title: btn.label,
               'aria-label': btn.label,
+              onClick: () => handleAlignClick(btn.command),
               onMouseEnter: () => setHoveredToolBtn(`align-${bi}`),
               onMouseLeave: () => setHoveredToolBtn(''),
             },
@@ -376,10 +618,21 @@ export function WordProcessor(props: WordProcessorProps) {
     // Document Area
     createElement(
       'main',
-      { className: 'word-processor__document-area', style: documentAreaStyle },
+      {
+        className: 'word-processor__document-area',
+        style: documentAreaStyle,
+        onClick: handleDocumentAreaClick,
+      },
       createElement(
         'div',
-        { className: 'word-processor__page', style: pageStyle },
+        {
+          className: 'word-processor__page',
+          style: pageStyle,
+          contentEditable: 'true',
+          ref: editorRef,
+          onInput: handleInput,
+          suppressContentEditableWarning: true,
+        },
         displayContent,
       ),
     ),
@@ -388,7 +641,7 @@ export function WordProcessor(props: WordProcessorProps) {
       'div',
       { className: 'word-processor__status-bar', style: statusBarStyle },
       createElement('span', null, 'Page 1 of 1'),
-      createElement('span', null, `${wordCount} words`),
+      createElement('span', null, `${displayWordCount} words`),
       createElement('span', null, '100%'),
     ),
   );

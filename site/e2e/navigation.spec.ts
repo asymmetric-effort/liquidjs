@@ -20,15 +20,6 @@ test.describe('Navigation', () => {
   });
 
 
-  test('navigates to Dashboard via nav link', async ({ page }) => {
-    const errors: string[] = [];
-    page.on('pageerror', (err) => errors.push(err.message));
-    await page.goto('/');
-    await page.click('.nav-links >> text=Dashboard');
-    await expect(page.locator('.dialog-title')).toContainText('Economic Dashboard');
-    expect(page.url()).toContain('#/dashboard');
-    expect(errors).toEqual([]);
-  });
 
   test('navigates to Concurrent via nav link', async ({ page }) => {
     const errors: string[] = [];
@@ -88,6 +79,6 @@ test.describe('Navigation', () => {
   test('all nav links are visible', async ({ page }) => {
     await page.goto('/');
     const links = page.locator('.nav-links .nav-link');
-    await expect(links).toHaveCount(8);
+    await expect(links).toHaveCount(7);
   });
 });

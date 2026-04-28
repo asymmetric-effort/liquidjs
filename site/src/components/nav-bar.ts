@@ -55,7 +55,6 @@ function DarkModeToggle() {
 const navItems: { to: string; label: string; flag?: string; exact?: boolean }[] = [
   { to: '/', label: 'Home', exact: true },
   { to: '/components', label: 'Components' },
-  { to: '/dashboard', label: 'Dashboard', flag: 'dashboard' },
   { to: '/concurrent', label: 'Concurrent', flag: 'concurrent-rendering' },
   { to: '/api', label: 'API' },
   { to: '/docs', label: 'Docs' },

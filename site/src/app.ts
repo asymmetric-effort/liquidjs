@@ -7,7 +7,6 @@ import { NavBar } from './components/nav-bar';
 import { Footer } from './components/footer';
 import { HomeScreen } from './screens/home';
 import { ComponentsGallery } from './screens/components-gallery';
-import { EconomicDashboard } from './screens/economic-dashboard';
 import { ConcurrentDemo } from './screens/concurrent-demo';
 import { ApiIntegration } from './screens/api-integration';
 import { ComponentReference } from './screens/component-reference';
@@ -26,7 +25,6 @@ function AppContent() {
   // Route → { title, component, flag? }
   const routes: { path: string; title: string; content: ReturnType<typeof createElement>; flag?: string }[] = [
     { path: '/components', title: 'Component Gallery', content: createElement(ComponentsGallery, null) },
-    { path: '/dashboard', title: 'Economic Dashboard', content: createElement(EconomicDashboard, null), flag: 'dashboard' },
     { path: '/concurrent', title: 'Concurrent Rendering', content: createElement(ConcurrentDemo, null), flag: 'concurrent-rendering' },
     { path: '/api', title: 'API Integration', content: createElement(ApiIntegration, null) },
     { path: '/reference', title: 'Component Reference', content: createElement(ComponentReference, null) },
@@ -102,7 +100,7 @@ function AppContent() {
 export function App() {
   return createElement(
     FeatureFlagProvider,
-    { url: './features.json', defaults: { dashboard: true } },
+    { url: './features.json' },
     createElement(
       Router,
       null,

@@ -1,5 +1,4 @@
 {
-  "dashboard": true,
   "concurrent-rendering": true,
   "component-reference": true,
   "getting-started": true,
