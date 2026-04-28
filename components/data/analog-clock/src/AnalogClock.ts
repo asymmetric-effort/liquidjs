@@ -111,10 +111,8 @@ export function AnalogClock(props: AnalogClockProps) {
 
   // ── Hand angles ──────────────────────────────────────────────────────
 
-  const hourAngle =
-    format === '24h'
-      ? (hours % 24) * 15 + minutes * 0.25
-      : (hours % 12) * 30 + minutes * 0.5;
+  // Hour hand always sweeps 360° per 12 hours (same as standard clock)
+  const hourAngle = (hours % 12) * 30 + minutes * 0.5;
 
   const minuteAngle = minutes * 6 + seconds * 0.1;
   const secondAngle = seconds * 6;
@@ -143,15 +141,14 @@ export function AnalogClock(props: AnalogClockProps) {
     }),
   );
 
-  // Hour markers & numbers
-  const totalMarkers = format === '24h' ? 24 : 12;
-  for (let i = 0; i < totalMarkers; i++) {
-    const angle = (i * 360) / totalMarkers - 90; // -90 so 12/0 is at top
+  // Hour markers & numbers — always 12 divisions
+  // In 24h mode: outer ring 12/1-11, inner ring 0/13-23
+  for (let i = 0; i < 12; i++) {
+    const angle = (i * 30) - 90; // 30° per hour, -90 so 12 is at top
     const rad = (angle * Math.PI) / 180;
 
     // Tick mark
-    const tickLen = format === '24h' ? 4 : 6;
-    const innerR = tickOuter - tickLen;
+    const innerR = tickOuter - 6;
     svgChildren.push(
       createElement('line', {
         x1: String(cx + innerR * Math.cos(rad)),
@@ -163,9 +160,8 @@ export function AnalogClock(props: AnalogClockProps) {
       }),
     );
 
-    // Number label
-    const label = format === '24h' ? String(i) : String(i === 0 ? 12 : i);
-    const numFontSize = format === '24h' ? size * 0.055 : size * 0.08;
+    // Outer ring number (1-12)
+    const outerLabel = String(i === 0 ? 12 : i);
     svgChildren.push(
       createElement('text', {
         x: String(cx + numberRadius * Math.cos(rad)),
@@ -173,10 +169,29 @@ export function AnalogClock(props: AnalogClockProps) {
         'text-anchor': 'middle',
         'dominant-baseline': 'central',
         fill: COLORS.numbers,
-        'font-size': String(numFontSize),
+        'font-size': String(size * 0.08),
         'font-family': 'sans-serif',
-      }, label),
+        'font-weight': '600',
+      }, outerLabel),
     );
+
+    // Inner ring (13-23, 0) — only in 24h mode
+    if (format === '24h') {
+      const innerNumberRadius = radius - 38;
+      const innerLabel = String(i === 0 ? 0 : i + 12);
+      svgChildren.push(
+        createElement('text', {
+          x: String(cx + innerNumberRadius * Math.cos(rad)),
+          y: String(cy + innerNumberRadius * Math.sin(rad)),
+          'text-anchor': 'middle',
+          'dominant-baseline': 'central',
+          fill: COLORS.numbers,
+          'font-size': String(size * 0.055),
+          'font-family': 'sans-serif',
+          opacity: '0.6',
+        }, innerLabel),
+      );
+    }
   }
 
   // ── Hand helper ──────────────────────────────────────────────────────
@@ -246,6 +261,10 @@ export function AnalogClock(props: AnalogClockProps) {
 
   return createElement('div', {
     className,
-    style: { display: 'inline-block' },
+    style: {
+      display: 'inline-flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+    },
   }, ...wrapperChildren);
 }
