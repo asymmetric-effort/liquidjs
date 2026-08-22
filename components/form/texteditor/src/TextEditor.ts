@@ -111,19 +111,111 @@ const BUTTON_META: Record<ToolbarButton, { label: string; icon: string; command:
 };
 
 /**
- * Sanitize rich text HTML by stripping script tags and event handler attributes.
- * This is a defense-in-depth measure — consumers should also sanitize input
- * before passing it to the TextEditor component.
+ * Sanitize rich text HTML using a DOM-based allowlist approach.
+ *
+ * Regex-based sanitization is fundamentally unsafe — crafted input can bypass
+ * pattern matching (e.g., `</script >`, nested tags, encoded characters).
+ * Instead, we parse the HTML into a DOM tree, walk it iteratively, and only
+ * keep elements and attributes on the allowlist. Everything else is removed.
  */
-const STRIP_SCRIPTS = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
-const STRIP_EVENTS_QUOTED = /\s+on\w+\s*=\s*(['"])[^'"]*\1/gi;
-const STRIP_EVENTS_UNQUOTED = /\s+on\w+\s*=\s*[^\s>]+/gi;
+
+const ALLOWED_TAGS = new Set([
+  'p', 'br', 'b', 'strong', 'i', 'em', 'u', 's', 'strike', 'del',
+  'sub', 'sup', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+  'ul', 'ol', 'li', 'blockquote', 'pre', 'code',
+  'a', 'img', 'span', 'div', 'table', 'thead', 'tbody', 'tr', 'th', 'td',
+  'hr', 'abbr', 'mark', 'small', 'figure', 'figcaption',
+]);
+
+const ALLOWED_ATTRS = new Set([
+  'href', 'src', 'alt', 'title', 'width', 'height',
+  'class', 'id', 'style', 'colspan', 'rowspan', 'scope',
+  'target', 'rel',
+]);
+
+const DANGEROUS_URL_PATTERN = /^\s*(javascript|vbscript|data\s*:(?!image\/))/i;
 
 function sanitizeRichText(html: string): string {
-  return html
-    .replace(STRIP_SCRIPTS, '')
-    .replace(STRIP_EVENTS_QUOTED, '')
-    .replace(STRIP_EVENTS_UNQUOTED, '');
+  if (typeof document === 'undefined') return '';
+  const container = document.createElement('div');
+  container.innerHTML = html;
+
+  // Iterative tree walk — process nodes using an explicit stack
+  const stack: Node[] = [];
+  for (let i = container.childNodes.length - 1; i >= 0; i--) {
+    stack.push(container.childNodes[i]!);
+  }
+
+  while (stack.length > 0) {
+    const node = stack.pop()!;
+
+    // Keep text nodes as-is
+    if (node.nodeType === 3) continue;
+
+    // Remove non-element nodes (comments, processing instructions, etc.)
+    if (node.nodeType !== 1) {
+      node.parentNode?.removeChild(node);
+      continue;
+    }
+
+    const el = node as Element;
+    const tag = el.tagName.toLowerCase();
+
+    // Remove disallowed elements — replace with their children (keep text content)
+    if (!ALLOWED_TAGS.has(tag)) {
+      const parent = el.parentNode;
+      if (parent) {
+        while (el.firstChild) {
+          parent.insertBefore(el.firstChild, el);
+        }
+        // Push the newly promoted children onto the stack for further processing
+        let sibling = parent.firstChild;
+        const promoted: Node[] = [];
+        while (sibling) {
+          if (sibling !== el) promoted.push(sibling);
+          sibling = sibling.nextSibling;
+        }
+        parent.removeChild(el);
+        for (let i = promoted.length - 1; i >= 0; i--) {
+          stack.push(promoted[i]!);
+        }
+      }
+      continue;
+    }
+
+    // Remove disallowed attributes
+    const attrs = el.attributes;
+    const toRemove: string[] = [];
+    for (let i = 0; i < attrs.length; i++) {
+      const name = attrs[i]!.name.toLowerCase();
+      // Remove any attribute starting with 'on' (event handlers)
+      if (name.startsWith('on')) {
+        toRemove.push(attrs[i]!.name);
+      } else if (!ALLOWED_ATTRS.has(name)) {
+        toRemove.push(attrs[i]!.name);
+      }
+    }
+    for (const name of toRemove) {
+      el.removeAttribute(name);
+    }
+
+    // Sanitize URL attributes
+    const href = el.getAttribute('href');
+    if (href && DANGEROUS_URL_PATTERN.test(href)) {
+      el.removeAttribute('href');
+    }
+    const src = el.getAttribute('src');
+    if (src && DANGEROUS_URL_PATTERN.test(src)) {
+      el.removeAttribute('src');
+    }
+
+    // Push children onto stack for processing
+    for (let i = el.childNodes.length - 1; i >= 0; i--) {
+      stack.push(el.childNodes[i]!);
+    }
+  }
+
+  return container.innerHTML;
 }
 
 export function TextEditor(props: TextEditorProps) {
