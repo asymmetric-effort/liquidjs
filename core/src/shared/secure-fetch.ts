@@ -54,15 +54,26 @@ export function assertSecureUrl(url: string): void {
     return;
   }
 
-  // Allow localhost for development (any protocol) — covers IPv4/IPv6 loopback
+  // Allow exact localhost for development (any protocol) — covers IPv4/IPv6 loopback.
+  // Block subdomains of localhost (e.g., a.localhost) which resolve to 127.0.0.1
+  // and can be used to bypass SSRF protections (GHSA-864j-qcr9-jrwh).
+  const hostname = parsed.hostname.toLowerCase();
   if (
-    parsed.hostname === 'localhost' ||
-    parsed.hostname === '127.0.0.1' ||
-    parsed.hostname === '[::1]' ||
-    parsed.hostname === '0.0.0.0' ||
-    parsed.hostname.startsWith('127.')
+    hostname === 'localhost' ||
+    hostname === '127.0.0.1' ||
+    hostname === '[::1]' ||
+    hostname === '0.0.0.0' ||
+    hostname.startsWith('127.')
   ) {
     return;
+  }
+
+  // Block .localhost TLD subdomains (RFC 6761 — resolve to loopback)
+  if (hostname.endsWith('.localhost')) {
+    throw new Error(
+      `[SpecifyJS] SSRF protection: "${url}" uses a .localhost subdomain ` +
+        `which resolves to the loopback interface. Use exact "localhost" instead.`,
+    );
   }
 
   // Reject HTTP and other insecure protocols

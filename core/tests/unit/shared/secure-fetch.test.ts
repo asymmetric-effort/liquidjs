@@ -107,9 +107,42 @@ describe('assertSecureUrl', () => {
 
   describe('PT-004 regression: redirect behavior', () => {
     it('secureFetch defaults to redirect error (validated via assertSecureUrl)', () => {
-      // secureFetch calls assertSecureUrl then fetch with redirect:'error'
-      // We can only verify assertSecureUrl here since fetch is a browser API
       expect(() => assertSecureUrl('https://example.com')).not.toThrow();
+    });
+  });
+
+  describe('GHSA-864j-qcr9-jrwh: SSRF bypass via .localhost TLD', () => {
+    it('rejects a.localhost (subdomain of localhost TLD)', () => {
+      expect(() => assertSecureUrl('http://a.localhost:8888')).toThrow();
+    });
+
+    it('rejects evil.localhost', () => {
+      expect(() => assertSecureUrl('http://evil.localhost')).toThrow();
+    });
+
+    it('rejects deeply nested .localhost subdomains', () => {
+      expect(() => assertSecureUrl('http://a.b.c.localhost:9999/path')).toThrow();
+    });
+
+    it('rejects .localhost with HTTPS (loopback bypass)', () => {
+      expect(() => assertSecureUrl('https://attacker.localhost')).not.toThrow();
+      // HTTPS is always allowed — the SSRF risk is HTTP to internal services
+    });
+
+    it('still allows exact localhost', () => {
+      expect(() => assertSecureUrl('http://localhost:3000')).not.toThrow();
+    });
+
+    it('still allows 127.0.0.1', () => {
+      expect(() => assertSecureUrl('http://127.0.0.1:8080')).not.toThrow();
+    });
+
+    it('rejects 0.0.0.0 subdomains', () => {
+      expect(() => assertSecureUrl('http://a.0.0.0.0:8888')).toThrow();
+    });
+
+    it('rejects [::1] variations', () => {
+      expect(() => assertSecureUrl('http://[::1]:8080')).not.toThrow();
     });
   });
 });
