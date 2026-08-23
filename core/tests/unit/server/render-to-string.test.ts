@@ -324,3 +324,56 @@ describe('edge cases', () => {
 
 // Type import for edge case test
 import type { SpecNode } from '../../../src/shared/types';
+
+describe('GHSA-5m8c-jcpx-h89h: style attribute escaping', () => {
+  it('escapes double quotes in style values to prevent attribute breakout', () => {
+    const html = renderToString(
+      createElement('div', { style: { color: 'red" onmouseover="alert(1)' } }),
+    );
+    // The quote must be escaped so the style attribute isn't broken out of
+    expect(html).toContain('&quot;');
+    // The output must NOT contain an unescaped onmouseover attribute
+    expect(html).not.toContain('" onmouseover="');
+  });
+
+  it('escapes double quotes in style property names', () => {
+    const html = renderToString(
+      createElement('div', {
+        style: { 'color" onmouseover="alert(1)//': '' } as Record<string, string>,
+      }),
+    );
+    expect(html).not.toContain('onmouseover');
+  });
+
+  it('preserves legitimate style values after escaping', () => {
+    const html = renderToString(
+      createElement('div', { style: { color: 'red', fontSize: '14px', margin: 0 } }),
+    );
+    expect(html).toContain('style="');
+    expect(html).toContain('color:red');
+    expect(html).toContain('font-size:14px');
+    expect(html).toContain('margin:0');
+  });
+
+  it('rejects style property names with invalid characters', () => {
+    const html = renderToString(
+      createElement('div', {
+        style: { 'valid-prop': 'ok', '<script>': 'bad' } as Record<string, string>,
+      }),
+    );
+    expect(html).toContain('valid-prop:ok');
+    expect(html).not.toContain('<script>');
+  });
+
+  it('escapes angle brackets in style values', () => {
+    const html = renderToString(
+      createElement('div', { style: { background: 'url("</style><script>alert(1)</script>")' } }),
+    );
+    expect(html).not.toContain('<script>');
+  });
+
+  it('escapes ampersands in style values', () => {
+    const html = renderToString(createElement('div', { style: { content: 'a&b' } }));
+    expect(html).toContain('&amp;');
+  });
+});

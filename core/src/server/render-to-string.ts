@@ -252,7 +252,7 @@ function renderHostElement(tag: string, props: Props, includeDataAttrs: boolean)
     if (!/^[a-zA-Z_][\w\-:.]*$/.test(attrName)) continue;
 
     if (key === 'style') {
-      html += ` style="${renderStyle(value as Record<string, string | number>)}"`;
+      html += ` style="${escapeHtml(renderStyle(value as Record<string, string | number>))}"`;
     } else if (key === 'value' || key === 'checked' || key === 'selected') {
       if (value === true) {
         html += ` ${attrName}`;
@@ -299,6 +299,9 @@ function renderStyle(style: Record<string, string | number>): string {
 
     // Convert camelCase to kebab-case
     const cssProp = prop.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
+
+    // Reject property names with characters outside valid CSS identifier range
+    if (!/^-{0,2}[a-zA-Z][a-zA-Z0-9-]*$/.test(cssProp)) continue;
     let cssValue =
       typeof value === 'number' && value !== 0 && !isUnitlessProp(prop)
         ? `${value}px`
