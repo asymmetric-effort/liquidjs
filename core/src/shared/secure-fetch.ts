@@ -14,6 +14,20 @@
  */
 
 /**
+ * Check if a hostname is a valid IPv4 loopback address (127.0.0.0/8).
+ * Only matches actual dotted-decimal IPv4 addresses in the 127.x.x.x range,
+ * NOT DNS names that happen to start with "127." (e.g., 127.evil.com).
+ * Fix for GHSA-4j4w-6h62-75jh.
+ */
+const IPV4_LOOPBACK = /^127\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/;
+function isLoopbackIPv4(hostname: string): boolean {
+  const m = IPV4_LOOPBACK.exec(hostname);
+  if (!m) return false;
+  // Validate each octet is 0-255
+  return Number(m[1]) <= 255 && Number(m[2]) <= 255 && Number(m[3]) <= 255;
+}
+
+/**
  * Validate that a URL uses HTTPS or is a relative/localhost URL.
  * Throws if the URL uses plaintext HTTP.
  */
@@ -63,7 +77,7 @@ export function assertSecureUrl(url: string): void {
     hostname === '127.0.0.1' ||
     hostname === '[::1]' ||
     hostname === '0.0.0.0' ||
-    hostname.startsWith('127.')
+    isLoopbackIPv4(hostname)
   ) {
     return;
   }

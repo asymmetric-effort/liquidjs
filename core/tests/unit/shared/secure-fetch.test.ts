@@ -145,4 +145,38 @@ describe('assertSecureUrl', () => {
       expect(() => assertSecureUrl('http://[::1]:8080')).not.toThrow();
     });
   });
+
+  describe('GHSA-4j4w-6h62-75jh: startsWith 127. bypass', () => {
+    it('rejects 127.evil.com (DNS name starting with 127.)', () => {
+      expect(() => assertSecureUrl('http://127.evil.com/endpoint')).toThrow();
+    });
+
+    it('rejects 127.0.0.1.evil.com', () => {
+      expect(() => assertSecureUrl('http://127.0.0.1.evil.com')).toThrow();
+    });
+
+    it('rejects 127.attacker.org', () => {
+      expect(() => assertSecureUrl('http://127.attacker.org:8080/path')).toThrow();
+    });
+
+    it('still allows 127.0.0.1 (actual loopback)', () => {
+      expect(() => assertSecureUrl('http://127.0.0.1:3000')).not.toThrow();
+    });
+
+    it('still allows 127.0.0.2 (loopback range)', () => {
+      expect(() => assertSecureUrl('http://127.0.0.2')).not.toThrow();
+    });
+
+    it('still allows 127.255.255.255 (end of loopback range)', () => {
+      expect(() => assertSecureUrl('http://127.255.255.255')).not.toThrow();
+    });
+
+    it('rejects 127.0.0.256 (invalid octet)', () => {
+      expect(() => assertSecureUrl('http://127.0.0.256')).toThrow();
+    });
+
+    it('allows 127.0.0 (URL parser normalizes to 127.0.0.0 — valid loopback)', () => {
+      expect(() => assertSecureUrl('http://127.0.0')).not.toThrow();
+    });
+  });
 });
