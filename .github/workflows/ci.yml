@@ -79,20 +79,24 @@ jobs:
         with:
           bun-version: latest
       - run: bun install --frozen-lockfile
-      - name: Run coverage and check threshold (>=97.8% lines)
+      - name: Run coverage and check threshold (>=98% lines)
         run: |
           bun run test:coverage 2>&1 | tee coverage-output.txt
-          # Extract coverage percentage from bun test output
-          # Bun reports: "X.XX% line coverage"
-          COVERAGE=$(grep -oP '[\d.]+(?=% line coverage)' coverage-output.txt | tail -1 || echo "0")
+          # Extract "All files" line coverage from bun's table output
+          # Format: "All files  | XX.XX | YY.YY |"
+          # The second percentage column is line coverage
+          COVERAGE=$(grep 'All files' coverage-output.txt | grep -oP '[\d.]+' | tail -1)
           echo "Line coverage: ${COVERAGE}%"
-          # Fail if coverage is below 97.8%
-          if [ -n "$COVERAGE" ]; then
-            PASS=$(echo "$COVERAGE >= 97.8" | bc -l 2>/dev/null || echo "1")
-            if [ "$PASS" = "0" ]; then
-              echo "ERROR: Line coverage ${COVERAGE}% is below the 97.8% threshold"
-              exit 1
-            fi
+          # Fail if coverage could not be extracted
+          if [ -z "$COVERAGE" ]; then
+            echo "ERROR: Could not extract coverage percentage from test output"
+            exit 1
+          fi
+          # Fail if coverage is below 98%
+          PASS=$(echo "$COVERAGE >= 98.0" | bc -l 2>/dev/null || echo "1")
+          if [ "$PASS" = "0" ]; then
+            echo "ERROR: Line coverage ${COVERAGE}% is below the 98% threshold"
+            exit 1
           fi
           echo "Coverage check passed: ${COVERAGE}%"
 
