@@ -81,7 +81,7 @@ jobs:
       - run: bun install --frozen-lockfile
       - name: Run coverage and check threshold (>=98% lines)
         run: |
-          bun test --coverage --preload ./tests/setup-nogginlessdom.ts --preload ./tests/setup.ts tests/ ../components/ 2>&1 | tee coverage-output.txt
+          bun test --coverage --preload ./tests/setup-nogginlessdom.ts --preload ./tests/setup.ts tests/unit/ tests/integration/ ../components/ 2>&1 | tee coverage-output.txt
           # Extract "All files" line coverage from bun's table output
           # Strip ANSI codes first, then parse "All files | XX.XX | YY.YY |"
           sed -i 's/\x1b\[[0-9;]*m//g' coverage-output.txt
