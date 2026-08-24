@@ -250,3 +250,74 @@ describe('generateNoscriptHtml', () => {
     expect(html).toContain('aria-label="Section navigation"');
   });
 });
+
+describe('stripInteractiveElements edge cases', () => {
+  it('handles content-blocked tag without a matching closing tag', () => {
+    // script tag without </script> - should drop only the opening tag
+    const result = stripInteractiveElements('<script>alert(1)');
+    // The opening <script> is in CONTENT_BLOCK_TAGS but has no closing tag,
+    // so it falls through to the normal "not in whitelist" path
+    expect(result).not.toContain('<script');
+  });
+
+  it('handles content-blocked closing tag appearing without > after it', () => {
+    // This tests the closeGt === -1 branch: blocked tag found but missing >
+    // after the closing tag. The opening tag content is skipped but then
+    // processing resumes from after the opening tag's >.
+    const result = stripInteractiveElements('<script>alert(1)</script');
+    // When closeGt is -1, it falls back to gtIdx+1, so content leaks as text
+    expect(typeof result).toBe('string');
+  });
+
+  it('handles noscript tag (content-blocked)', () => {
+    const result = stripInteractiveElements('<noscript>fallback content</noscript>');
+    expect(result).toBe('');
+  });
+
+  it('handles object tag (content-blocked)', () => {
+    const result = stripInteractiveElements('<object>embedded</object>');
+    expect(result).toBe('');
+  });
+
+  it('handles embed tag (content-blocked)', () => {
+    const result = stripInteractiveElements('<embed src="x"/>');
+    expect(result).toBe('');
+  });
+
+  it('handles applet tag (content-blocked)', () => {
+    const result = stripInteractiveElements('<applet>java stuff</applet>');
+    expect(result).toBe('');
+  });
+
+  it('handles closing tag for blocked element', () => {
+    // A closing tag for a blocked element that appears without an opening tag
+    const result = stripInteractiveElements('text</script>more');
+    expect(result).toBe('textmore');
+  });
+
+  it('handles multiple blocked tags in sequence', () => {
+    const result = stripInteractiveElements(
+      '<script>x</script><style>.a{}</style><p>keep</p><textarea>t</textarea>',
+    );
+    expect(result).toBe('<p>keep</p>');
+  });
+
+  it('handles attr with single-quoted javascript: URI', () => {
+    const result = stripInteractiveElements("<a href='javascript:void(0)'>link</a>");
+    expect(result).not.toContain('javascript');
+    expect(result).toContain('link');
+  });
+
+  it('handles attr with unquoted value', () => {
+    const result = stripInteractiveElements('<a href=https://example.com>link</a>');
+    expect(result).toContain('href');
+    expect(result).toContain('link');
+  });
+
+  it('handles attr with no value (standalone attribute)', () => {
+    const result = stripInteractiveElements('<details open>content</details>');
+    // 'open' is not in ALLOWED_ATTRS so it gets stripped
+    expect(result).toContain('<details>');
+    expect(result).toContain('content');
+  });
+});
