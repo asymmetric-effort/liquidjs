@@ -256,6 +256,118 @@ describe('reconcileChildren', () => {
       expect(updated!.tag).toBe(FiberTag.HostText);
     });
 
+    it('handles single child key mismatch — deletes non-matching key siblings', () => {
+      const parent = createHostRootFiber();
+
+      // Create initial children: key 'a' then key 'b' (siblings)
+      const first = reconcileChildren(
+        parent,
+        null,
+        [createElement('div', { key: 'a' }), createElement('span', { key: 'b' })],
+        0,
+      );
+
+      // Now reconcile with a single child with key 'b'
+      // This forces the reconciler to skip key 'a' (deleteChild) and find key 'b'
+      const updated = reconcileChildren(
+        parent,
+        first,
+        createElement('span', { key: 'b', className: 'updated' }),
+        0,
+      );
+
+      expect(updated).not.toBeNull();
+      expect(updated!.type).toBe('span');
+      expect(updated!.pendingProps.className).toBe('updated');
+    });
+
+    it('handles single child key match but type differs', () => {
+      const parent = createHostRootFiber();
+
+      // Create initial child with key 'k'
+      const first = reconcileChildren(parent, null, createElement('div', { key: 'k' }), 0);
+
+      // Reconcile with same key but different type — should delete old and create new
+      const updated = reconcileChildren(parent, first, createElement('span', { key: 'k' }), 0);
+
+      expect(updated).not.toBeNull();
+      expect(updated!.type).toBe('span');
+      expect(updated!.alternate).toBeNull(); // new fiber
+      expect(updated!.effectTag).toBe(EffectTag.Placement);
+    });
+
+    it('handles updateSlot returning null — key mismatch triggers pass 2', () => {
+      const parent = createHostRootFiber();
+
+      // Create keyed children
+      const first = reconcileChildren(
+        parent,
+        null,
+        [createElement('div', { key: 'a' }), createElement('span', { key: 'b' })],
+        0,
+      );
+
+      // Reorder with different keys first — key mismatch in pass 1 triggers pass 2
+      const updated = reconcileChildren(
+        parent,
+        first,
+        [createElement('span', { key: 'b' }), createElement('div', { key: 'a' })],
+        0,
+      );
+
+      const children = collectChildren(updated);
+      expect(children).toHaveLength(2);
+      expect(children[0]!.key).toBe('b');
+      expect(children[1]!.key).toBe('a');
+    });
+
+    it('handles text node in multi-child reconciliation with existing text', () => {
+      const parent = createHostRootFiber();
+
+      // Initial: text nodes
+      const first = reconcileChildren(parent, null, ['hello', 'world'], 0);
+
+      // Update text
+      const updated = reconcileChildren(parent, first, ['updated', 'text'], 0);
+
+      const children = collectChildren(updated);
+      expect(children).toHaveLength(2);
+      expect(children[0]!.tag).toBe(FiberTag.HostText);
+      expect(children[1]!.tag).toBe(FiberTag.HostText);
+    });
+
+    it('handles pass 1 with oldFiber.index > newIdx (null oldFiber reset)', () => {
+      const parent = createHostRootFiber();
+
+      // Create children with specific indices
+      const first = reconcileChildren(
+        parent,
+        null,
+        [
+          createElement('div', { key: 'a' }),
+          createElement('div', { key: 'b' }),
+          createElement('div', { key: 'c' }),
+        ],
+        0,
+      );
+
+      // Manipulate the fiber index to be ahead
+      // This simulates the oldFiber.index > newIdx condition (line 141-143)
+      if (first) {
+        first.index = 5; // Set high index
+      }
+
+      const updated = reconcileChildren(
+        parent,
+        first,
+        [createElement('div', { key: 'x' }), createElement('div', { key: 'y' })],
+        0,
+      );
+
+      const children = collectChildren(updated);
+      expect(children.length).toBeGreaterThanOrEqual(2);
+    });
+
     it('deletes all children when new children is null', () => {
       const parent = createHostRootFiber();
       parent.updateQueue = null;

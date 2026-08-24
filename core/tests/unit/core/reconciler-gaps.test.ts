@@ -36,6 +36,41 @@ async function flush() {
   }
 }
 
+describe('reconciler — single child key mismatch', () => {
+  it('deletes non-matching key children before finding match', async () => {
+    const clock = useFakeTimers({ shouldAdvanceTime: true });
+    let setUseAlt: (v: boolean) => void;
+    function App() {
+      const [useAlt, su] = useState(false);
+      setUseAlt = su;
+      // First render: key='x', then update to key='y' — forces key mismatch path
+      // This exercises lines 80-84 in reconciler (else branch: deleteChild for non-matching key)
+      return createElement(
+        'div',
+        null,
+        useAlt
+          ? createElement('span', { key: 'y' }, 'alt')
+          : createElement(
+              Fragment,
+              null,
+              createElement('span', { key: 'x' }, 'original'),
+              createElement('span', { key: 'z' }, 'sibling'),
+            ),
+      );
+    }
+    const root = createRoot(container);
+    root.render(createElement(App, null));
+    expect(container.textContent).toContain('original');
+
+    setUseAlt!(true);
+    clock.advanceTimersByTime(50);
+    await flush();
+    expect(container.textContent).toContain('alt');
+    root.unmount();
+    useRealTimers();
+  });
+});
+
 describe('reconciler — array child reconciliation edge cases', () => {
   it('handles array with mixed element types and nulls', async () => {
     const clock = useFakeTimers({ shouldAdvanceTime: true });

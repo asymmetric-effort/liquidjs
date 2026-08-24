@@ -191,6 +191,109 @@ describe('Link', () => {
   });
 });
 
+describe('Link — click handler', () => {
+  it('calls preventDefault and navigates on click', () => {
+    window.location.hash = '#/';
+    __resetSnapshot();
+    const root = createRoot(container);
+    root.render(
+      createElement(Router, null, createElement(Link, { to: '/target', id: 'nav-link' }, 'Go')),
+    );
+
+    const anchor = container.querySelector('#nav-link') as HTMLAnchorElement;
+    expect(anchor).toBeTruthy();
+
+    // Simulate click event
+    const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
+    anchor.dispatchEvent(clickEvent);
+
+    // After click, the hash should be updated
+    expect(window.location.hash).toBe('#/target');
+    root.unmount();
+  });
+
+  it('renders with exact activeClassName matching', () => {
+    window.location.hash = '#/about';
+    __resetSnapshot();
+    const root = createRoot(container);
+    root.render(
+      createElement(
+        Router,
+        null,
+        createElement(
+          Link,
+          {
+            to: '/',
+            exact: true,
+            activeClassName: 'exact-active',
+            id: 'exact-link',
+          },
+          'Home',
+        ),
+      ),
+    );
+    const anchor = container.querySelector('#exact-link')!;
+    // / does not exactly match /about
+    expect(anchor.className).not.toContain('exact-active');
+    root.unmount();
+  });
+});
+
+describe('Route — parent params merge', () => {
+  it('merges parent params with matched params', () => {
+    window.location.hash = '#/users/42/posts/7';
+    __resetSnapshot();
+    let capturedParams: any = null;
+    function PostViewer() {
+      capturedParams = useParams();
+      return createElement('div', null, 'post');
+    }
+    const root = createRoot(container);
+    root.render(
+      createElement(
+        Router,
+        null,
+        createElement(
+          Route,
+          { path: '/users/:userId' },
+          createElement(Route, { path: '/users/:userId/posts/:postId', component: PostViewer }),
+        ),
+      ),
+    );
+    expect(capturedParams).toBeDefined();
+    expect(capturedParams.userId).toBe('42');
+    expect(capturedParams.postId).toBe('7');
+    root.unmount();
+  });
+});
+
+describe('Router — subscribe callback updates pathname', () => {
+  it('re-renders when hash changes via navigate', async () => {
+    window.location.hash = '#/';
+    __resetSnapshot();
+    let capturedPathname = '';
+    function PathDisplay() {
+      const router = useRouter();
+      capturedPathname = router.pathname;
+      return createElement('div', null, router.pathname);
+    }
+    const root = createRoot(container);
+    root.render(createElement(Router, null, createElement(PathDisplay, null)));
+    expect(capturedPathname).toBe('/');
+
+    // Navigate programmatically — this triggers the subscribe callback (line 26)
+    navigate('/new-path');
+
+    // The Router should re-render with the new pathname
+    // Allow microtasks to flush
+    for (let i = 0; i < 8; i++) {
+      await new Promise((r) => queueMicrotask(r));
+    }
+    expect(capturedPathname).toBe('/new-path');
+    root.unmount();
+  });
+});
+
 describe('useRouter', () => {
   it('returns router context with pathname', () => {
     window.location.hash = '#/test';

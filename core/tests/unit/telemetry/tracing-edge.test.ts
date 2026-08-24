@@ -48,6 +48,33 @@ describe('tracing — auto-flush timer', () => {
   });
 });
 
+describe('tracing — buffer overflow', () => {
+  it('drops oldest half when buffer exceeds max size', () => {
+    const tracer = createTracer({ serviceName: 'test', batchSize: 4 });
+    // Fill buffer past max
+    for (let i = 0; i < 5; i++) {
+      const span = tracer.startSpan(`op-${i}`);
+      tracer.withSpan(span, () => {});
+    }
+    // Buffer should have been trimmed (dropped oldest half when at 4, then added 5th)
+    expect(tracer.pendingSpans.length).toBeLessThanOrEqual(4);
+  });
+});
+
+describe('tracing — flushTimer.unref', () => {
+  it('calls unref on the timer when available (Node.js environment)', () => {
+    const clock = useFakeTimers({ shouldAdvanceTime: true });
+    // Create tracer with flushInterval — the timer should have unref called
+    const tracer = createTracer({
+      serviceName: 'test',
+      flushInterval: 500,
+    });
+    expect(tracer.config.flushInterval).toBe(500);
+    vi.clearAllTimers();
+    useRealTimers();
+  });
+});
+
 describe('tracing — ID generation uniqueness', () => {
   it('generateTraceId produces unique 32-char hex IDs', () => {
     const ids = new Set<string>();

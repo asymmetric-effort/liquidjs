@@ -263,7 +263,40 @@ describe('useTracing', () => {
     expect(active!.name).toBe('TestComponent');
     expect(active!.events.some((e: { name: string }) => e.name === 'mount')).toBe(true);
 
-    // Simulate unmount
+    // Simulate unmount — this covers spanRef.current check and endSpan call
     hooksMod.__cleanups.forEach((fn) => fn());
+
+    // After cleanup, the span should have an unmount event
+    expect(active!.events.some((e: { name: string }) => e.name === 'unmount')).toBe(true);
+    expect(active!.endTime).toBeDefined();
+  });
+
+  it('cleanup handles null spanRef gracefully', async () => {
+    // Mock the hooks module with useRef returning null current
+    vi.module('../../../src/hooks/index', () => {
+      const _cleanups: Array<() => void> = [];
+      return {
+        useEffect: (fn: () => void | (() => void)) => {
+          const cleanup = fn();
+          if (typeof cleanup === 'function') {
+            _cleanups.push(cleanup);
+          }
+        },
+        useRef: <T>(_initial: T) => ({ current: null }),
+        __cleanups: _cleanups,
+      };
+    });
+
+    const { useTracing: useTracingMocked2, createTracer: createTracerMocked2 } =
+      await import('../../../src/telemetry/tracing');
+    const hooksMod2 = (await import('../../../src/hooks/index')) as unknown as {
+      __cleanups: Array<() => void>;
+    };
+
+    const tracer2 = createTracerMocked2({ serviceName: 'null-ref-test' });
+    useTracingMocked2(tracer2, 'NullRefComponent');
+
+    // Cleanup should not throw even if spanRef.current is null
+    expect(() => hooksMod2.__cleanups.forEach((fn) => fn())).not.toThrow();
   });
 });

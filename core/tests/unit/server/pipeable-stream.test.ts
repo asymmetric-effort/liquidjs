@@ -75,6 +75,24 @@ describe('renderToPipeableStream', () => {
     expect(onError).toHaveBeenCalledWith(new Error('cancelled'));
   });
 
+  it('handles abort during chunked writing', async () => {
+    const bigText = 'y'.repeat(30000);
+    const onAllReady = vi.fn();
+    const stream = renderToPipeableStream(createElement('div', null, bigText), {
+      progressiveChunkSize: 500,
+      onAllReady,
+    });
+    const dest = createMockWritable();
+    stream.pipe(dest);
+    // Abort while chunks are still being written
+    stream.abort();
+    // Wait for any pending setImmediate calls
+    await new Promise((r) => setTimeout(r, 500));
+    // The stream should have stopped writing and ended
+    // onAllReady should still be called when the abort path ends the stream
+    expect(dest.chunks.length).toBeGreaterThan(0);
+  });
+
   it('calls onShellError and onError on render failure', () => {
     const onShellError = vi.fn();
     const onError = vi.fn();

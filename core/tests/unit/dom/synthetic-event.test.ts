@@ -4,6 +4,8 @@ import {
   SyntheticMouseEvent,
   SyntheticKeyboardEvent,
   SyntheticFocusEvent,
+  SyntheticInputEvent,
+  SyntheticTouchEvent,
   SyntheticWheelEvent,
   createSyntheticEvent,
   EVENT_NAME_MAP,
@@ -82,6 +84,16 @@ describe('SyntheticMouseEvent', () => {
   });
 });
 
+describe('SyntheticMouseEvent — getModifierState', () => {
+  it('delegates getModifierState to native event', () => {
+    const native = new MouseEvent('click', { shiftKey: true });
+    const synthetic = new SyntheticMouseEvent(native);
+    // getModifierState('Shift') should return true when shiftKey is set
+    expect(synthetic.getModifierState('Shift')).toBe(true);
+    expect(synthetic.getModifierState('Control')).toBe(false);
+  });
+});
+
 describe('SyntheticKeyboardEvent', () => {
   it('captures keyboard properties', () => {
     const native = new KeyboardEvent('keydown', {
@@ -95,6 +107,15 @@ describe('SyntheticKeyboardEvent', () => {
     expect(synthetic.code).toBe('Enter');
     expect(synthetic.shiftKey).toBe(true);
     expect(synthetic.repeat).toBe(false);
+  });
+});
+
+describe('SyntheticKeyboardEvent — getModifierState', () => {
+  it('delegates getModifierState to native event', () => {
+    const native = new KeyboardEvent('keydown', { ctrlKey: true, key: 'a' });
+    const synthetic = new SyntheticKeyboardEvent(native);
+    expect(synthetic.getModifierState('Control')).toBe(true);
+    expect(synthetic.getModifierState('Alt')).toBe(false);
   });
 });
 
@@ -117,6 +138,39 @@ describe('SyntheticWheelEvent', () => {
     expect(synthetic.deltaX).toBe(10);
     expect(synthetic.deltaY).toBe(-20);
     expect(synthetic.deltaMode).toBe(0);
+  });
+});
+
+describe('SyntheticInputEvent', () => {
+  it('captures input event properties', () => {
+    const native = new InputEvent('input', {
+      data: 'a',
+      inputType: 'insertText',
+    });
+    const synthetic = new SyntheticInputEvent(native);
+    expect(synthetic.data).toBe('a');
+    expect(synthetic.inputType).toBe('insertText');
+    expect(synthetic.type).toBe('input');
+  });
+});
+
+describe('SyntheticTouchEvent', () => {
+  it('captures touch event properties', () => {
+    const native = new TouchEvent('touchstart', {
+      altKey: true,
+      ctrlKey: false,
+      metaKey: true,
+      shiftKey: false,
+    });
+    const synthetic = new SyntheticTouchEvent(native);
+    expect(synthetic.altKey).toBe(true);
+    expect(synthetic.ctrlKey).toBe(false);
+    expect(synthetic.metaKey).toBe(true);
+    expect(synthetic.shiftKey).toBe(false);
+    expect(synthetic.type).toBe('touchstart');
+    expect(synthetic.touches).toBeDefined();
+    expect(synthetic.targetTouches).toBeDefined();
+    expect(synthetic.changedTouches).toBeDefined();
   });
 });
 
@@ -143,6 +197,18 @@ describe('createSyntheticEvent', () => {
     const native = new WheelEvent('wheel');
     const synthetic = createSyntheticEvent(native);
     expect(synthetic).toBeInstanceOf(SyntheticWheelEvent);
+  });
+
+  it('creates SyntheticInputEvent for InputEvent', () => {
+    const native = new InputEvent('input', { data: 'x', inputType: 'insertText' });
+    const synthetic = createSyntheticEvent(native);
+    expect(synthetic).toBeInstanceOf(SyntheticInputEvent);
+  });
+
+  it('creates SyntheticTouchEvent for TouchEvent', () => {
+    const native = new TouchEvent('touchstart');
+    const synthetic = createSyntheticEvent(native);
+    expect(synthetic).toBeInstanceOf(SyntheticTouchEvent);
   });
 
   it('falls back to SyntheticEvent for generic Event', () => {

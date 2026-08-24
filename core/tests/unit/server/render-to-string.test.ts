@@ -325,6 +325,107 @@ describe('edge cases', () => {
 // Type import for edge case test
 import type { SpecNode } from '../../../src/shared/types';
 
+describe('renderNode edge cases — nested arrays and invalid elements', () => {
+  it('renders deeply nested arrays', () => {
+    // Exercises the Array.isArray(child) branch inside the array processing loop (lines 158-160)
+    const nested = [[createElement('span', null, 'deep')]];
+    const html = renderToString(createElement('div', null, ...nested));
+    expect(html).toContain('deep');
+  });
+
+  it('renders array containing numbers inside arrays', () => {
+    // Exercises the typeof child === 'number' branch (lines 154-156)
+    const html = renderToString([42, 99] as unknown as SpecNode);
+    expect(html).toBe('4299');
+  });
+
+  it('renders array containing booleans and nulls (skips them)', () => {
+    // Exercises the null/boolean continue branch (line 149)
+    const html = renderToString([null, true, false, undefined, 'visible'] as unknown as SpecNode);
+    expect(html).toBe('visible');
+  });
+
+  it('renders array containing strings', () => {
+    // Exercises the typeof child === 'string' branch (lines 150-153)
+    const html = renderToString(['hello', ' ', 'world'] as unknown as SpecNode);
+    expect(html).toBe('hello world');
+  });
+
+  it('returns empty string for non-valid element object', () => {
+    // Exercises the !isValidElement(node) return '' path (lines 168-169)
+    const html = renderToString({ notAnElement: true } as unknown as SpecNode);
+    expect(html).toBe('');
+  });
+
+  it('renders memo component with function type', () => {
+    // Exercises the memo inner type path (lines 208-213)
+    const Inner = (props: { val: string }) => createElement('em', null, props.val);
+    const Memoized = memo(Inner);
+    const html = renderToString(
+      createElement(Memoized as unknown as () => null, { val: 'memo-val' }),
+    );
+    expect(html).toBe('<em>memo-val</em>');
+  });
+
+  it('returns empty string for unknown element type', () => {
+    // Exercises the final return '' in renderElement (line 236)
+    // Create a spec element with a non-string, non-function, non-object type
+    const el = createElement('div', null);
+    (el as any).type = 12345; // set to a number
+    const html = renderToString(el);
+    expect(html).toBe('');
+  });
+});
+
+describe('renderHostElement — value/checked/selected attributes', () => {
+  it('renders checked as boolean attribute when true', () => {
+    const html = renderToString(createElement('input', { type: 'checkbox', checked: true }));
+    expect(html).toContain('checked');
+    expect(html).not.toContain('checked="');
+  });
+
+  it('renders selected attribute as boolean', () => {
+    const html = renderToString(createElement('option', { selected: true }, 'Opt'));
+    expect(html).toContain('selected');
+  });
+
+  it('renders value attribute with string', () => {
+    const html = renderToString(createElement('input', { type: 'text', value: 'hello' }));
+    expect(html).toContain('value="hello"');
+  });
+
+  it('skips attributes with invalid names', () => {
+    // Tests the attribute name validation regex (line 252)
+    const html = renderToString(createElement('div', { '"><script>': 'bad' } as any));
+    expect(html).not.toContain('<script>');
+    expect(html).toBe('<div></div>');
+  });
+});
+
+describe('escapeHtml edge cases', () => {
+  it('escapes single quotes', () => {
+    const html = renderToString(createElement('div', null, "it's"));
+    expect(html).toContain('&#x27;');
+  });
+
+  it('handles string with no special characters', () => {
+    // Exercises the lastIndex === 0 early return (line 408)
+    const html = renderToString(createElement('div', null, 'plain text'));
+    expect(html).toBe('<div>plain text</div>');
+  });
+
+  it('handles string ending with special character', () => {
+    // Exercises the lastIndex < str.length tail check (lines 409-410)
+    const html = renderToString(createElement('div', null, 'end&'));
+    expect(html).toBe('<div>end&amp;</div>');
+  });
+
+  it('handles string starting with special character followed by text', () => {
+    const html = renderToString(createElement('div', null, '<start'));
+    expect(html).toBe('<div>&lt;start</div>');
+  });
+});
+
 describe('GHSA-5m8c-jcpx-h89h: style attribute escaping', () => {
   it('escapes double quotes in style values to prevent attribute breakout', () => {
     const html = renderToString(
