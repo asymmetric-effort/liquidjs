@@ -736,7 +736,7 @@ export function DraggableWindow(props: DraggableWindowProps) {
   );
 
   // Status bar (between body and end of window)
-  if (statusBar && statusBar !== false) {
+  if (statusBar) {
     windowChildren.push(createElement(StatusBar, statusBar));
   }
 
