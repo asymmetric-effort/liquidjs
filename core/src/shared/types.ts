@@ -80,9 +80,9 @@ export type ComponentType<P extends Props = Props> =
   | symbol;
 
 /** The core element structure — equivalent to React.Element */
-export interface SpecElement<P extends Props = Props> {
+export interface SpecElement<out P extends Props = Props> {
   $$typeof: typeof SPEC_ELEMENT_TYPE;
-  type: ComponentType<P>;
+  type: ComponentType;
   props: P;
   key: Key;
   ref: Ref;

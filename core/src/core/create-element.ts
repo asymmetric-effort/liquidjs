@@ -66,7 +66,7 @@ export function createElement<P extends Props>(
 
   return {
     $$typeof: SPEC_ELEMENT_TYPE,
-    type,
+    type: type as ComponentType,
     props: props as P,
     key,
     ref,
