@@ -6,6 +6,7 @@
       "name": "@asymmetric-effort/specifyjs",
       "devDependencies": {
         "@asymmetric-effort/nogginlessdom": "^0.0.28",
+        "@asymmetric-effort/steamroller": "^0.2.8",
         "@playwright/test": "^1.59.0",
         "@types/node": "^26.2.0",
         "@typescript-eslint/eslint-plugin": "^8.0.0",
@@ -20,6 +21,8 @@
   },
   "packages": {
     "@asymmetric-effort/nogginlessdom": ["@asymmetric-effort/nogginlessdom@0.0.28", "", {}, "sha512-1SOP09xiE63dNpdBeQ+3h+UWb9LoEfQU7o3mXnVKRmN3qHhaeTuMfg7QqD7spBneTRl988n6AdF2jICGjitw2w=="],
+
+    "@asymmetric-effort/steamroller": ["@asymmetric-effort/steamroller@0.2.8", "", { "bin": { "steamroller": "dist/cli/main.js" } }, "sha512-e/JcEKoJNEhox1wUpTopHAm0SRD762CAfYu10yai99NdlOr8fkm45RfwyByxTQEjEu8na2ciIRPBG9YGjVlE3g=="],
 
     "@esbuild/aix-ppc64": ["@esbuild/aix-ppc64@0.25.12", "", { "os": "aix", "cpu": "ppc64" }, "sha512-Hhmwd6CInZ3dwpuGTF8fJG6yoWmsToE+vYgD4nytZVxcu1ulHpUQRAB1UJ8+N1Am3Mz4+xOByoQoSZf4D+CpkA=="],
 

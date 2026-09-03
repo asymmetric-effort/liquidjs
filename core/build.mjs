@@ -1,7 +1,7 @@
 // (c) 2025-2026 Asymmetric Effort, LLC. MIT LICENSE
 // SPDX-License-Identifier: MIT
 
-import { build } from 'esbuild';
+import { build } from '@asymmetric-effort/steamroller';
 import { execSync } from 'child_process';
 import { writeFileSync, readdirSync, renameSync, existsSync } from 'fs';
 import { join } from 'path';
